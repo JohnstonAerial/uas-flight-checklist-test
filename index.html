@@ -199,6 +199,15 @@
   .xfer-box { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 16px; color: var(--text); background: var(--section-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-top: 6px; resize: vertical; }
   .xfer-msg { min-height: 14px; margin-top: 6px; line-height: 1.4; color: var(--green); }
   .xfer-msg.bad { color: var(--red, #c0392b); }
+  .item-grip { display: none; flex-shrink: 0; align-self: center; width: 28px; height: 32px; margin: -4px 0 -4px -6px; align-items: center; justify-content: center; font-size: 22px; line-height: 1; color: var(--text-light); cursor: grab; touch-action: none; -webkit-user-select: none; user-select: none; }
+  .panel.editing .item-grip { display: flex; }
+  .panel.editing .check-circle { display: none; }
+  .section-card.drag-on { overflow: visible; }
+  .item.dragging { position: relative; z-index: 30; background: var(--card); box-shadow: 0 6px 18px rgba(0,0,0,0.3); border-radius: 10px; transition: none; }
+  .panel.editing .item.dragging, .panel.editing .item.dragging:active { background: var(--card); }
+  .item.dragging .item-grip { cursor: grabbing; color: var(--blue-mid); }
+  .item.drop-before { box-shadow: inset 0 3px 0 var(--blue-mid); }
+  .item.drop-end { box-shadow: inset 0 -3px 0 var(--blue-mid); }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -299,7 +308,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9l</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9m</p>
     </div>
   </div>
   <div class="tabs">
@@ -887,6 +896,80 @@ function baseKeyMap(panelEl) {            // stable key per built-in item: its t
   return map;
 }
 const sectionTitleOf = (secEl) => secEl.querySelector('.section-header').firstChild.textContent.trim();
+// ── Reorder items within a section: drag the ≡ handle while customizing ──
+function orderKeys(card) {
+  const seen = {};
+  return [...card.querySelectorAll(':scope > .item')].map(it => { const t = itemTextOf(it); seen[t] = (seen[t] || 0) + 1; return [t + '#' + seen[t], it]; });
+}
+function applyOrder(panelEl) {
+  const c = cust[panelEl.id];
+  if (!c || !c.order) return;
+  panelEl.querySelectorAll('.section').forEach(sec => {
+    const want = c.order[sectionTitleOf(sec)];
+    if (!want || !want.length) return;
+    const card = sec.querySelector('.section-card'), pairs = orderKeys(card), byKey = new Map(pairs);
+    const placed = new Set(), out = [];
+    want.forEach(k => { if (byKey.has(k) && !placed.has(k)) { out.push(byKey.get(k)); placed.add(k); } });
+    pairs.forEach(([k, it]) => { if (!placed.has(k)) out.push(it); });
+    out.forEach(it => card.appendChild(it));
+  });
+}
+function saveOrder(panelEl, sec) {
+  const c = custFor(panelEl.id);
+  c.order = c.order || {};
+  c.order[sectionTitleOf(sec)] = orderKeys(sec.querySelector('.section-card')).map(p => p[0]);
+  custSave(); saveProgress();
+}
+let drag = null;
+function gripDown(e) {
+  if (drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
+  const it = e.currentTarget.closest('.item'), card = it.parentElement;
+  e.preventDefault();
+  drag = { it, card, startY: e.clientY, curY: e.clientY, startScroll: window.scrollY, target: null, end: false, raf: 0 };
+  it.classList.add('dragging'); card.classList.add('drag-on');
+  document.addEventListener('pointermove', gripMove, { passive: false });
+  document.addEventListener('pointerup', gripUp);
+  document.addEventListener('pointercancel', gripCancel);
+  gripTick();
+}
+function gripMove(e) { if (!drag) return; e.preventDefault(); drag.curY = e.clientY; if (Math.abs(drag.curY - drag.startY) > 8) drag.moved = true; gripUpdate(); }
+function gripUpdate() {
+  const d = drag; if (!d) return;
+  d.it.style.transform = 'translateY(' + (d.curY - d.startY + (window.scrollY - d.startScroll)) + 'px)';
+  const others = [...d.card.querySelectorAll(':scope > .item')].filter(x => x !== d.it);
+  others.forEach(x => x.classList.remove('drop-before', 'drop-end'));
+  d.target = others.find(x => { const r = x.getBoundingClientRect(); return r.top + r.height / 2 > d.curY; }) || null;
+  d.end = !d.target && others.length > 0;
+  if (d.target) d.target.classList.add('drop-before'); else if (d.end) others[others.length - 1].classList.add('drop-end');
+}
+function gripTick() {
+  const d = drag; if (!d) return;
+  const vh = window.innerHeight, top = 80, bottom = vh - 120;
+  let v = 0;
+  if (!d.moved) { d.raf = requestAnimationFrame(gripTick); return; }
+  if (d.curY < top) v = -Math.min(12, (top - d.curY) / 5 + 2);
+  else if (d.curY > bottom) v = Math.min(12, (d.curY - bottom) / 5 + 2);
+  if (v) { window.scrollBy(0, v); gripUpdate(); }
+  d.raf = requestAnimationFrame(gripTick);
+}
+function gripEnd() {
+  const d = drag; if (!d) return null;
+  cancelAnimationFrame(d.raf);
+  document.removeEventListener('pointermove', gripMove);
+  document.removeEventListener('pointerup', gripUp);
+  document.removeEventListener('pointercancel', gripCancel);
+  d.it.classList.remove('dragging'); d.it.style.transform = ''; d.card.classList.remove('drag-on');
+  d.card.querySelectorAll(':scope > .item').forEach(x => x.classList.remove('drop-before', 'drop-end'));
+  drag = null; return d;
+}
+function gripUp() {
+  const d = gripEnd(); if (!d) return;
+  if (d.target) { if (d.target !== d.it.nextElementSibling) d.card.insertBefore(d.it, d.target); }
+  else if (d.end) d.card.appendChild(d.it);
+  saveOrder(d.it.closest('.panel'), d.it.closest('.section'));
+}
+function gripCancel() { gripEnd(); }
+
 function makeItem(text) {
   const it = document.createElement('div');
   it.className = 'item custom';
@@ -897,6 +980,12 @@ function makeItem(text) {
   return it;
 }
 function addItemButton(it) {
+  if (!it.querySelector('.item-grip')) {
+    const g = document.createElement('div');
+    g.className = 'item-grip'; g.setAttribute('role', 'button'); g.setAttribute('aria-label', 'Drag to move this item');
+    g.setAttribute('onpointerdown', 'gripDown(event)'); g.textContent = '≡';
+    it.insertBefore(g, it.firstChild);
+  }
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'item-x';
   b.setAttribute('onclick', 'itemX(event, this)');
@@ -958,10 +1047,11 @@ function toggleEdit(btn) {
 }
 function restoreDefaults(btn) {
   const panelEl = btn.closest('.panel'), c = cust[panelEl.id], pid = panelEl.id.replace('panel-', '');
-  const hasItems = c && (c.hidden.length || c.added.length), hasName = !!tabsCfg.names[pid];
+  const hasItems = c && ((c.hidden || []).length || (c.added || []).length || (c.order && Object.keys(c.order).length)), hasName = !!tabsCfg.names[pid];
   if (!hasItems && !hasName) return;
-  if (!confirm('Restore this tab to the original list? Hidden items come back, the items you added are removed, and the tab name is reset.')) return;
+  if (!confirm('Restore this tab to the original list? Hidden items come back, the items you added are removed, the order is reset and the tab name is reset.')) return;
   panelEl.querySelectorAll('.item.custom').forEach(i => i.remove());
+  panelEl.querySelectorAll('.section-card').forEach(card => [...card.querySelectorAll(':scope > .item')].sort((a, b) => a.dataset.i - b.dataset.i).forEach(it => card.appendChild(it)));
   panelEl.querySelectorAll('.item.is-hidden').forEach(i => i.classList.remove('is-hidden'));
   delete cust[panelEl.id];
   if (hasName) { delete tabsCfg.names[pid]; tabsSave(); refreshTabs(); }
@@ -970,6 +1060,7 @@ function restoreDefaults(btn) {
 
 document.querySelectorAll('.panel').forEach(panelEl => {
   const c = cust[panelEl.id];
+  panelEl.querySelectorAll('.section-card').forEach(card => card.querySelectorAll(':scope > .item').forEach((it, i) => { it.dataset.i = i; }));
   panelEl.querySelectorAll('.item').forEach(addItemButton);
   panelEl.querySelectorAll('.section').forEach(sec => {
     const form = document.createElement('form');
@@ -986,12 +1077,13 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     });
     const keys = baseKeyMap(panelEl);
     keys.forEach((k, it) => { if ((c.hidden || []).includes(k)) it.classList.add('is-hidden'); });
+    applyOrder(panelEl);
   }
   const row = document.createElement('div');
   row.className = 'cust-row';
   row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize list</button>' +
     '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
-    '<div class="cust-tip">💡 To customize another tab, just tap it at the top — Settings stays open. Press <b>Done</b> when you\'re finished.</div>' +
+    '<div class="cust-tip">💡 Drag the <b>≡</b> handle to move an item up or down within its section. To customize another tab, just tap it at the top — Settings stays open. Press <b>Done</b> when you\'re finished.</div>' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name only. Use Hide and Add to change what\'s in it.</div>' +
