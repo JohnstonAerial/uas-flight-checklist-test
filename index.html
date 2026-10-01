@@ -288,7 +288,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9d</p>
     </div>
   </div>
   <div class="tabs">
@@ -917,7 +917,10 @@ function addCustomItem(e, form) {
 function toggleEdit(btn) {
   const panelEl = btn.closest('.panel');
   const on = panelEl.classList.toggle('editing');
-  if (!on) panelEl.querySelector('.cust-row').scrollIntoView({ block: 'center' });
+  if (!on) {
+    const st = panelEl.querySelector('.settings');
+    if (st) { st.classList.remove('open'); const t = st.querySelector('.settings-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); st.scrollIntoView({ block: 'start' }); }
+  }
   refreshCust(panelEl);
 }
 function restoreDefaults(btn) {
@@ -1097,7 +1100,8 @@ function hideTab(btn) {
   if (!tabsCfg.hidden.includes(pid)) tabsCfg.hidden.push(pid);
   tabsSave();
   panelEl.classList.remove('editing');
-    refreshTabs();
+  { const st = panelEl.querySelector('.settings'); if (st) st.classList.remove('open'); }
+  refreshTabs();
   const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
   showPanel(next.dataset.pid, next);
 }
