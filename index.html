@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>UAS Test</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<meta name="apple-mobile-web-app-title" content="UAS Test">
+<meta name="theme-color" content="#0f2a4a">
+<style>
+  :root {
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --blue-mid: #378ADD;
+    --green: #0F6E56;
+    --green-light: #E1F5EE;
+    --amber: #B45309;
+    --amber-light: #FFF4E0;
+    --text: #1a1a1a;
+    --text-muted: #666;
+    --text-light: #999;
+    --border: #e0e0e0;
+    --bg: #f5f5f5;
+    --card: #ffffff;
+    --section-bg: #f9f9f9;
+    --tab-active: #185FA5;
+    --tab-inactive: #fff;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text: #f0f0f0;
+      --text-muted: #aaa;
+      --text-light: #777;
+      --border: #333;
+      --bg: #111;
+      --card: #1e1e1e;
+      --section-bg: #181818;
+      --blue-light: #0c2a45;
+      --green-light: #0a2a22;
+      --amber: #F59E0B;
+      --amber-light: #33240a;
+      --shadow: 0 2px 12px rgba(0,0,0,0.4);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; width: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+  html { overflow-x: hidden; width: 100%; }
+
+  .header {
+    background: var(--blue);
+    padding: 16px 16px 0;
+    padding-top: max(16px, env(safe-area-inset-top));
+    color: white;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+  }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+  .reset-all { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; font-family: inherit; }
+
+  .tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 1 0 auto; white-space: nowrap; padding: 10px 8px; text-align: center; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.65); border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s; letter-spacing: 0.2px; }
+  .tab.tab-hidden { display: none; }
+  .tab-edit { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+  .tab-edit input { font-family: inherit; font-size: 16px; width: 11em; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; }
+  .tab-edit .cust-btn:disabled { opacity: 0.4; cursor: default; }
+  .tab-note { margin-top: 4px; }
+  .tab-hidden-list { margin-top: 6px; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+  .tab.active { color: white; border-bottom-color: white; }
+
+  .progress-bar-wrap { background: rgba(0,0,0,0.15); height: 3px; }
+  .progress-bar-fill { height: 3px; background: #7EC8F7; transition: width 0.4s ease; }
+
+  .content { padding: 12px 12px 40px; max-width: 600px; margin: 0 auto; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .progress-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-ring { flex-shrink: 0; }
+  .progress-info { flex: 1; }
+  .progress-pct { font-size: 26px; font-weight: 700; color: var(--blue); line-height: 1; }
+  .progress-label { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .progress-track { background: var(--border); border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden; }
+  .progress-track-fill { height: 6px; background: var(--blue); border-radius: 4px; transition: width 0.4s ease; }
+
+  .complete-banner {
+    background: var(--green-light);
+    border: 1.5px solid var(--green);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: none;
+    text-align: center;
+    color: var(--green);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .complete-banner.show { display: block; }
+
+  .section { margin-bottom: 10px; }
+  .section-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 10px 14px 6px;
+  }
+  .section-card {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 14px;
+    border-bottom: 0.5px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:active { background: var(--section-bg); }
+  .item.checked { background: var(--section-bg); }
+  .item { -webkit-touch-callout: none; }
+  .item.flagged { background: var(--amber-light); }
+  .item.flagged .check-circle { background: var(--amber); border-color: var(--amber); }
+  .item.flagged .check-circle::after { content: '!'; color: #fff; font-weight: 800; font-size: 14px; line-height: 1; }
+  .attn-count { color: var(--amber); font-weight: 600; }
+  .reset-inline { flex-shrink: 0; background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-family: inherit; cursor: pointer; }
+  .reset-inline:active { background: var(--section-bg); }
+  .item-x { display: none; flex-shrink: 0; margin-left: auto; align-self: center; font-family: inherit; font-size: 11px; color: var(--text-muted); background: transparent; border: 1px solid var(--border); border-radius: 12px; padding: 3px 9px; cursor: pointer; }
+  .panel.editing .item-x { display: inline-block; }
+  .panel.editing .item { cursor: default; }
+  .panel.editing .item:active { background: transparent; }
+  .item.is-hidden { display: none; }
+  .panel.editing .item.is-hidden { display: flex; opacity: 0.5; }
+  .panel.editing .item.is-hidden .item-text { text-decoration: line-through; }
+  .section.all-hidden { display: none; }
+  .panel.editing .section.all-hidden { display: block; }
+  .add-row { display: none; gap: 8px; padding: 8px 4px 0; }
+  .panel.editing .add-row { display: flex; }
+  .add-row input { flex: 1; min-width: 0; font-family: inherit; font-size: 16px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+  .add-row button { font-family: inherit; font-size: 13px; color: #fff; background: var(--blue-mid); border: none; border-radius: 10px; padding: 8px 14px; cursor: pointer; }
+  .cust-row { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; text-align: center; font-size: 11px; color: var(--text-light); }
+  .cust-btn { font-family: inherit; font-size: 12px; color: var(--blue-mid); background: none; border: 1px solid var(--border); border-radius: 14px; padding: 4px 12px; cursor: pointer; }
+  .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
+  .panel.editing .cust-help { display: block; }
+  .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
+  .sec-meta { margin-left: auto; display: flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-weight: 600; }
+  .sec-count { font-size: 11px; color: var(--text-light); }
+  .sec-count.done { color: var(--green); }
+  .sec-count.attn { color: var(--amber); }
+  .sec-arrow { font-size: 12px; color: var(--text-light); transition: transform 0.15s; }
+  .section.collapsed .sec-arrow { transform: rotate(-90deg); }
+  .section.collapsed .section-card, .section.collapsed .add-row { display: none; }
+  .panel.editing .section.collapsed .section-card { display: block; }
+  .panel.editing .section.collapsed .add-row { display: flex; }
+  .cust-row .sec-all { margin: 0 4px; }
+  .item.region-hidden, .panel.editing .item.region-hidden { display: none !important; }
+  body.intl .wx-tfr-row { display: none; }
+  .region-card { text-align: center; }
+  .region-card .rc-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .region-card .rc-sub { font-size: 12px; color: var(--text-muted); margin: 4px 0 10px; }
+  .region-card .rc-btns { display: flex; gap: 8px; }
+  .region-card .rc-btns button { flex: 1; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--blue-mid); background: var(--section-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; cursor: pointer; }
+  .keep-row { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-light); text-align: center; }
+  .keep-row select { font-family: inherit; font-size: 11px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 4px 8px; }
+  .flag-hint { font-size: 11px; color: var(--text-light); text-align: center; padding: 2px 16px 8px; }
+
+  .check-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: var(--card);
+  }
+  .item.checked .check-circle {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .check-icon { display: none; width: 12px; height: 12px; }
+  .item.checked .check-icon { display: block; }
+
+  .item-text {
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--text);
+    flex: 1;
+    padding-top: 3px;
+    transition: color 0.2s;
+  }
+  .item.checked .item-text {
+    color: var(--text-light);
+    text-decoration: line-through;
+    text-decoration-color: var(--text-light);
+  }
+
+  /* Weather Panel */
+  .wx-panel { background: var(--card); border-radius: 14px; padding: 12px 14px; margin: 12px 12px 0; box-shadow: var(--shadow); max-width: 600px; margin-left: auto; margin-right: auto; }
+  .wx-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .wx-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+  .wx-units { font-size: 11px; color: var(--blue-mid); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; padding: 2px 9px; margin-left: auto; margin-right: 6px; }
+  .wx-refresh { font-size: 11px; color: var(--blue-mid); cursor: pointer; background: none; border: none; font-family: inherit; padding: 2px 6px; }
+  .wx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .wx-item { background: var(--section-bg); border-radius: 10px; padding: 9px 11px; }
+  .wx-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .wx-value { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .wx-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .wx-loc { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: -4px 0 10px; font-size: 13px; color: var(--text); }
+  .wx-loc-label { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wx-loc-btn { flex-shrink: 0; font-size: 12px; color: var(--blue-mid); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; padding: 3px 10px; }
+  .wx-picker { background: var(--section-bg); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
+  .wx-search { display: flex; gap: 6px; }
+  .wx-search input { flex: 1; min-width: 0; font-size: 16px; font-family: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--text); }
+  .wx-search button { font-size: 13px; font-family: inherit; padding: 0 12px; border: none; border-radius: 8px; background: var(--blue); color: #fff; cursor: pointer; }
+  .wx-result { display: block; width: 100%; text-align: left; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 6px; cursor: pointer; }
+  .wx-result small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 1px; }
+  .wx-note { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .wx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .wx-chip { font-family: inherit; font-size: 12px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
+  .wx-status { font-size: 12px; color: var(--text-muted); text-align: center; padding: 6px 0 2px; }
+  .wx-alert { color: #c0392b; } .wx-warn { color: #e67e22; } .wx-good { color: var(--green); }
+  .wx-key-prompt { font-size: 12px; color: var(--text-muted); background: var(--section-bg); border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .wx-key-prompt a { color: var(--blue-mid); }
+  .wx-updated.wx-stale { color: var(--amber); font-weight: 600; }
+  .wx-updated { font-size: 10px; color: var(--text-light); text-align: right; margin-top: 8px; }
+  .wx-sun { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
+  .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .wx-tfr { display: block; width: 100%; padding: 9px; background: #c0392b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-notam { display: block; width: 100%; padding: 9px; background: #7f3fbf; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-radar { display: block; width: 100%; padding: 9px; background: #1a6b3c; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>UAS Flight Checklists</h1>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="showPanel('general',this)">🏞 General</div>
+    <div class="tab" onclick="showPanel('mapping',this)">🗺 Mapping</div>
+    <div class="tab" onclick="showPanel('zeitview',this)">📋 Commercial</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="header-bar" style="width:0%"></div>
+  </div>
+</div>
+
+
+<!-- WEATHER STATUS PANEL -->
+<div class="wx-panel" id="wx-panel">
+  <div class="wx-header">
+    <span class="wx-title">📡 Preflight Conditions</span>
+    <button class="wx-units" id="wx-units" onclick="toggleUnits()" aria-label="Switch between imperial and metric units"></button>
+    <button class="wx-refresh" onclick="loadWeather()">↻ Refresh</button>
+  </div>
+  <div class="wx-loc">
+    <span class="wx-loc-label">📍 <span id="wx-loc-name">My location</span></span>
+    <button class="wx-loc-btn" onclick="toggleLocPicker()">Change</button>
+  </div>
+  <div class="wx-picker" id="wx-picker" hidden>
+    <form class="wx-search" onsubmit="searchSite(event)">
+      <input id="wx-q" type="search" placeholder="Town, ZIP, or lat, lon" autocomplete="off" autocapitalize="words" enterkeyhint="search">
+      <button type="submit">Search</button>
+    </form>
+    <div id="wx-results"></div>
+    <div class="wx-chips" id="wx-chips"></div>
+  </div>
+  <div id="wx-body">
+    <div class="wx-status">Locating...</div>
+  </div>
+  <div class="wx-tfr-row" style="margin-top:10px;">
+    <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank">⚠️ TFRs — FAA.gov</a>
+    <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank">📋 NOTAMs — AIM</a>
+    <a class="wx-radar" href="https://radar.weather.gov" target="_blank">🌧 Radar — NWS</a>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- COMMERCIAL -->
+<div class="panel" id="panel-zeitview">
+  <div class="progress-card">
+    <div class="progress-info">
+      <div class="progress-pct" id="pct-zeitview">0%</div>
+      <div class="progress-label" id="lbl-zeitview">0 of 0 items complete</div>
+      <div class="progress-track"><div class="progress-track-fill" id="bar-zeitview" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="complete-banner" id="done-zeitview">✓ All checks complete — cleared for flight</div>
+
+  <div class="section">
+    <div class="section-header">Before leaving home</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Open your mission platform app — review mission brief, deliverable requirements, altitudes, overlap %</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm mission type — roof inspection, mapping, progress photo, video walkthrough</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm equipment required — check brief for any specific drone, camera, or resolution requirements</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Note job ID / order number — needed for upload and platform completion</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Download or screenshot mission brief — for offline reference if signal drops on site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check weather forecast — wind speed, gusts, cloud cover, precipitation</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check airspace — use B4UFLY, Air Aware, or your preferred airspace app to confirm class and restrictions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check TFRs at tfr.faa.gov</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">LAANC — check if authorization required and apply; allow time if manual approval needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check NOTAMs at notams.aim.faa.gov — look for notices affecting your flight area</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">All drone batteries fully charged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Batteries inspected for damage — check for swelling, cracks, or corrosion</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Controller fully charged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Strobes charged and packed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Storage ready — confirm sufficient space available on SD card or internal storage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Drone firmware up to date — check drone app before leaving home</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pilot certificate or licence in hand (if required where you fly)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Self check — am I physically and mentally fit for this flight?</div></div>
+    </div>
+  </div>
+
+    <div class="section">
+    <div class="section-header">On site — pre-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">PPE — put on safety vest, hard hat, steel toe boots as required for this site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Contact site coordinator if required by mission brief</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Insurance — confirm coverage is active for this flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check actual wind speed and direction on site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check radar for approaching weather</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Survey site — note hazards (power lines, trees, antennas, structures)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Note structure heights — tallest obstacles near flight path</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Identify safe takeoff and landing zone</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Secondary landing zone identified — know your backup before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Note bystanders — establish safe perimeter if needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Inspect drone body — no cracks, damage, or debris from last flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal lock and lens cap removed — confirm before powering on
+      </div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal check — movement free, no obstruction, calibrated</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Props attached and locked — no damage or debris</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Strobes — attach if flying near dusk, dawn, or low visibility conditions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Power on controller first, then drone — confirm link established</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Wait for GPS lock — good satellite count (10+) before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm active lens — if your drone has multiple cameras, verify the correct lens is selected</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm recording format — color profile and file type per mission brief</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Filters — select and attach appropriate filter based on conditions: ND (bright sun), CPL (glare/reflections), UV (haze), or specialty filters as needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">White balance — lock manually before flight; do not leave on Auto</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Compass calibration — calibrate if in a new location or near large metal structures</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Load waypoint/mission file in your mission planning app</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Review mission path on map — confirm no conflicts with obstacles</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Flight mode — set to Normal for autonomous missions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Custom buttons — verify C1, C2 and any other programmable buttons are mapped correctly for this flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Obstacle avoidance — enable and set sensitivity appropriate for your environment</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm RTH altitude set above tallest obstacle</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Max altitude — set to mission altitude + buffer, within 400 ft (120m) AGL or your regional limit</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Loss of signal action — set to RTH (not Hover or Land)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">No drone app warnings or errors — clear before arming</div></div>
+    </div>
+  </div>
+
+<div class="section">
+    <div class="section-header">During flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Hover check at 10ft (3m) — confirm stability, no drift, no warnings · briefly test all four directions (forward, back, left, right) before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check wind at altitude — hover at mission height briefly and confirm conditions before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Monitor battery throughout — confirm RTH battery level set</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Monitor signal strength — maintain awareness of connection quality</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Watch for airspace conflicts — manned aircraft, other drones</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm mission is capturing — SSD writing, image count incrementing in drone app</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Post-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Safe landing confirmed — props stopped before approach</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Review captured images on controller — confirm coverage, no gaps</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Transfer/back up data before leaving site — copy all files to a backup drive before leaving</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Upload deliverables via platform portal — your platform portal</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm upload complete and submission accepted in platform app</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Mark mission complete in platform app — do not leave job open</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log flight time in records</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT/VIDEO -->
+<div class="panel" id="panel-mapping">
+  <div class="progress-card">
+    <div class="progress-info">
+      <div class="progress-pct" id="pct-mapping">0%</div>
+      <div class="progress-label" id="lbl-mapping">0 of 0 items complete</div>
+      <div class="progress-track"><div class="progress-track-fill" id="bar-mapping" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="complete-banner" id="done-mapping">✓ All checks complete — cleared for flight</div>
+
+  <div class="section">
+    <div class="section-header">Mission planning (before leaving home)</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Define mapping area — confirm boundaries in DJI Pilot / mission planner</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Set flight altitude appropriate for desired GSD (ground sample distance)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Set overlap — frontal 80%+ and side 70%+ for quality ortho</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Estimate image count and flight time — confirm batteries sufficient</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check weather — winds under 15mph ideal, no rain, good visibility</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check Air Aware for airspace restrictions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check TFRs at tfr.faa.gov</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">LAANC — check if authorization required and apply; allow time if manual approval needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check NOTAMs at notams.aim.faa.gov — look for notices affecting your flight area</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Storage ready — confirm sufficient space available on SD card or internal storage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">All batteries fully charged — bring spares for large areas</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Batteries inspected for damage — check for swelling, cracks, or corrosion</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Controller fully charged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Strobes charged and packed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pilot certificate or licence in hand (if required where you fly)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Self check — am I physically and mentally fit for this flight?</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Drone firmware up to date — check drone app before leaving home</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Save mission file to controller — confirm it loads correctly</div></div>
+    </div>
+  </div>
+
+    <div class="section">
+    <div class="section-header">On site — pre-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">PPE — put on safety vest, hard hat, steel toe boots as required for this site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check in with property owner / site contact</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Contact site coordinator if required by mission brief</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Insurance — confirm coverage is active for this flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check actual wind speed and direction</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check radar — no weather approaching for mission duration</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Walk perimeter of mapping area — note all hazards</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Identify and record tallest obstacles (trees, structures, power lines)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Select safe takeoff/landing zone — level ground, clear overhead</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Secondary landing zone identified — know your backup before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Inspect drone body — no cracks, damage, or debris from last flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal lock and lens cap removed — confirm before powering on
+      </div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal check — nadir position, no obstruction</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Filters — typically not needed for mapping; remove all filters for accurate exposure</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Props attached and locked — inspect for damage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Power on controller, then drone — wait for strong GPS lock before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm GPS — strong signal, good satellite count before launch</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Load waypoint mission file — review path on map against actual site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Verify mission altitude clears all obstacles on flight path</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm active lens — if your drone has multiple cameras, select WIDE for consistent photogrammetry coverage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Set camera — nadir (straight down), correct resolution, exposure</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm file format — RAW (DNG)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">White balance — lock manually; consistent WB critical for photogrammetry</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Compass calibration — calibrate if in a new location or near large metal structures</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Disable HDR — consistent exposure critical for photogrammetry</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Flight mode — Normal (required for waypoint missions)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Custom buttons — verify C1, C2 and any other programmable buttons are mapped correctly for this flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Obstacle avoidance — enable and confirm it will not interrupt waypoint path at mission altitude</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm RTH altitude set well above tallest obstacle</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Max altitude — confirm set at or above mission altitude</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Loss of signal action — RTH</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">No drone app warnings or errors — clear before arming</div></div>
+    </div>
+  </div>
+
+<div class="section">
+    <div class="section-header">During flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Hover check at 10ft (3m) — confirm stability, no drift, no warnings · briefly test all four directions (forward, back, left, right) before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check wind at altitude — hover at mission height briefly and confirm conditions before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm mission starts correctly — drone following planned path</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm images capturing — image count incrementing on controller</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Monitor battery — plan battery swaps for multi-battery missions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Note where mission paused if swapping battery — ensure no coverage gap</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Watch for manned aircraft and airspace conflicts</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Monitor signal strength throughout mission</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Post-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Safe landing — props stopped, drone secured</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Review image count — matches expected total for coverage area</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Spot check images on controller — sharp, correct angle, no gaps</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Transfer/back up data before leaving site — copy all files to a backup drive before leaving</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Import all images to backup drive — verify file count matches SSD transfer</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Upload to Maps Made Easy or processing platform</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log flight time and mission details</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TIMELAPSE -->
+<div class="panel active" id="panel-general">
+  <div class="progress-card">
+    <div class="progress-info">
+      <div class="progress-pct" id="pct-general">0%</div>
+      <div class="progress-label" id="lbl-general">0 of 0 items complete</div>
+      <div class="progress-track"><div class="progress-track-fill" id="bar-general" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="complete-banner" id="done-general">✓ All checks complete — cleared for flight</div>
+
+  <div class="section">
+    <div class="section-header">Before leaving home</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check weather — wind under 23 mph (37 km/h), no rain, good visibility</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check airspace — use B4UFLY, Air Aware, or your preferred airspace app to confirm class and restrictions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check TFRs at tfr.faa.gov</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">LAANC — check if authorization required and apply; allow time if manual approval needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check NOTAMs at notams.aim.faa.gov — look for notices affecting your flight area</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">All batteries fully charged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Batteries inspected for damage — check for swelling, cracks, or corrosion</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Controller fully charged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Strobes charged and packed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Storage ready — confirm sufficient space available on SD card or internal storage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Remote ID — if your drone requires an external module, confirm it is charged and attached</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pilot certificate or licence in hand (if required where you fly)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Self check — am I physically and mentally fit for this flight?</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Drone firmware up to date — check drone app before leaving home</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Drone and props inspected — no cracks, no damage from last flight</div></div>
+    </div>
+  </div>
+
+      <div class="section">
+    <div class="section-header">On site — pre-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">PPE — put on safety vest, hard hat, steel toe boots as required for this site</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Notify property owner or site contact if applicable</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Assess the area — obstacles, people, animals, power lines, trees</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Choose a clear, flat launch spot — away from people and obstacles</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Secondary landing zone identified — know your backup before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Inspect drone body — no cracks, damage, or debris from last flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal lock and lens cap removed — confirm before powering on
+      </div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Gimbal check — movement free, no obstruction</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Filters — select and attach appropriate filter based on conditions: ND (bright sun), CPL (glare/reflections), UV (haze), or specialty filters as needed</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Props attached and locked — inspect for chips or cracks</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Strobes — attach if flying near dusk, dawn, or low visibility conditions</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Power on controller first, then drone — confirm link established</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Wait 60 seconds for GPS lock — do not rush arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">GPS satellite count — confirm strong lock (10+ satellites) before arming</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Set RTH altitude — above the tallest obstacle in the area</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm active lens — if your drone has multiple cameras, verify the correct lens is selected</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Set camera — resolution, frame rate, exposure mode for the session</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Confirm recording format — color profile (Normal / D-Log / D-Log M) and file type (RAW, JPEG, or RAW+JPEG) set for intended use</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">White balance — lock manually before flight; do not leave on Auto</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Compass calibration — calibrate if in a new location or near large metal structures</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Flight mode — Normal for general flying; Sport only in open areas clear of people and obstacles</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Custom buttons — verify C1, C2 and any other programmable buttons are mapped correctly for this flight</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Obstacle avoidance — enable and set sensitivity appropriate for your environment</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Max altitude — set a sensible ceiling for the location</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Loss of signal action — RTH</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">No drone app warnings or errors — clear before arming</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">During flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Hover check at 10ft (3m) — confirm stability, no drift, no warnings · briefly test all four directions (forward, back, left, right) before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Check wind at altitude — hover at mission height briefly and confirm conditions before proceeding</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Stay within visual line of sight at all times</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Stay at or below the maximum altitude allowed in your country/region — 400 ft AGL in the US</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Monitor battery — begin return by 30%, land by 20%</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Watch for manned aircraft — yield immediately</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Be aware of people entering your fly zone — pause or land if needed</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Post-flight</div>
+    <div class="section-card">
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Safe landing — props stopped before approaching drone</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Inspect drone after landing — props, body, gimbal, no damage</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Power off drone, then controller</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Transfer/back up footage if needed — copy files to backup drive</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Put batteries on charger when home — don't leave discharged</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log flight time in your records</div></div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+<script>
+let current = 'general';
+
+// ── Save progress on this device so a reload or phone lock doesn't wipe the checklist ──
+const PROGRESS_KEY = 'uasChecklistProgress';
+const KEEP_KEY = 'uasProgressHours';
+const KEEP_CHOICES = [1, 4, 12, 24, 72];      // hours the user can pick; default 12
+function keepHours() {
+  try { const h = Number(localStorage.getItem(KEEP_KEY)); return KEEP_CHOICES.includes(h) ? h : 12; } catch (e) { return 12; }
+}
+function progTtl() { return keepHours() * 60 * 60 * 1000; }
+function setKeepHours(v) {
+  try { localStorage.setItem(KEEP_KEY, String(Number(v))); } catch (e) {}
+  document.querySelectorAll('.keep-hours').forEach(sel => { sel.value = String(keepHours()); });
+}
+let restoredAt = null;
+
+function progGet() { try { const v = localStorage.getItem(PROGRESS_KEY); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+function progSet(v) { try { if (v) localStorage.setItem(PROGRESS_KEY, JSON.stringify(v)); else localStorage.removeItem(PROGRESS_KEY); } catch (e) {} }
+
+// Stable key per item: its text plus which occurrence of that text it is in the panel
+function itemKeys(panelEl) {
+  const seen = {};
+  return [...panelEl.querySelectorAll('.item')].map(it => {
+    const t = it.dataset.orig || (it.querySelector('.item-text') ? it.querySelector('.item-text').textContent : '').trim();
+    seen[t] = (seen[t] || 0) + 1;
+    return t + '#' + seen[t];
+  });
+}
+
+function saveProgress() {
+  const data = { savedAt: Date.now(), panels: {} };
+  document.querySelectorAll('.panel').forEach(p => {
+    const keys = itemKeys(p), checked = [], flagged = [];
+    p.querySelectorAll('.item').forEach((it, i) => {
+      if (it.classList.contains('checked')) checked.push(keys[i]);
+      else if (it.classList.contains('flagged')) flagged.push(keys[i]);
+    });
+    if (checked.length || flagged.length) data.panels[p.id.replace('panel-', '')] = { checked, flagged };
+  });
+  progSet(Object.keys(data.panels).length ? data : null);
+}
+
+function restoreProgress() {
+  const data = progGet();
+  if (!data || !data.savedAt || Date.now() - data.savedAt > progTtl()) { progSet(null); return; }
+  let n = 0;
+  document.querySelectorAll('.panel').forEach(p => {
+    const d = data.panels && data.panels[p.id.replace('panel-', '')];
+    if (!d) return;
+    const keys = itemKeys(p), c = new Set(d.checked || []), f = new Set(d.flagged || []);
+    p.querySelectorAll('.item').forEach((it, i) => {
+      if (c.has(keys[i])) { it.classList.add('checked'); n++; }
+      else if (f.has(keys[i])) { it.classList.add('flagged'); n++; }
+    });
+  });
+  if (n) restoredAt = data.savedAt;
+}
+
+function ageText(ms) {
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.floor(m / 60);
+  return h + ' hr' + (h > 1 ? 's' : '') + ' ago';
+}
+
+let lpFired = false;
+
+function toggle(el) {
+  if (el.closest('.panel.editing')) return;
+  if (lpFired) { lpFired = false; return; }
+  if (el.classList.contains('flagged')) {
+    el.classList.remove('flagged');   // tap on a flagged item = resolved
+    el.classList.add('checked');
+  } else {
+    el.classList.toggle('checked');
+  }
+  updateProgress(current);
+  saveProgress();
+}
+
+function toggleFlag(el) {
+  if (el.closest('.panel.editing')) return;
+  if (el.classList.contains('flagged')) {
+    el.classList.remove('flagged');
+  } else {
+    el.classList.remove('checked');
+    el.classList.add('flagged');
+  }
+  updateProgress(current);
+  saveProgress();
+}
+
+function updateProgress(panel) {
+  const p = document.getElementById('panel-' + panel);
+  const items = p.querySelectorAll('.item:not(.is-hidden):not(.region-hidden)');
+  const checked = p.querySelectorAll('.item.checked:not(.is-hidden):not(.region-hidden)').length;
+  const flagged = p.querySelectorAll('.item.flagged:not(.is-hidden):not(.region-hidden)').length;
+  const total = items.length;
+  const pct = total ? Math.round(checked / total * 100) : 0;
+  document.getElementById('pct-' + panel).textContent = pct + '%';
+  document.getElementById('lbl-' + panel).innerHTML = checked + ' of ' + total + ' items complete' +
+    (flagged ? ' · <span class="attn-count">⚠ ' + flagged + ' need' + (flagged === 1 ? 's' : '') + ' attention</span>' : '');
+  document.getElementById('bar-' + panel).style.width = pct + '%';
+  document.getElementById('header-bar').style.width = pct + '%';
+  const done = document.getElementById('done-' + panel);
+  done.classList.toggle('show', checked === total && total > 0);
+  updateSectionMeta(p);
+}
+
+// Press and hold an item (~0.5 s) to flag it as "needs attention"
+(function () {
+  let timer = null, startX = 0, startY = 0;
+  const clear = () => { clearTimeout(timer); timer = null; };
+  document.addEventListener('pointerdown', (e) => {
+    const el = e.target.closest('.item');
+    if (!el || el.closest('.panel.editing')) return;
+    startX = e.clientX; startY = e.clientY;
+    clear();
+    timer = setTimeout(() => { lpFired = true; toggleFlag(el); timer = null; }, 500);
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (timer && Math.hypot(e.clientX - startX, e.clientY - startY) > 10) clear();
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(t => document.addEventListener(t, clear));
+  document.addEventListener('contextmenu', (e) => { if (e.target.closest('.item')) e.preventDefault(); });
+})();
+
+function showPanel(panel, tab) {
+  current = panel;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + panel).classList.add('active');
+  tab.classList.add('active');
+  tab.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  updateProgress(panel);
+  window.scrollTo(0, 0);
+}
+
+function resetCurrent() {
+  const p = document.getElementById('panel-' + current);
+  const n = p.querySelectorAll('.item.checked, .item.flagged').length;
+  if (!n) return;
+  if (!confirm('Reset this checklist? This clears ' + n + ' checked or flagged item' + (n === 1 ? '' : 's') + ' on this tab.')) return;
+  p.querySelectorAll('.item').forEach(i => i.classList.remove('checked', 'flagged'));
+  updateProgress(current);
+  saveProgress();
+  const h = p.querySelector('.flag-hint');
+  if (h) h.textContent = 'Tip: press and hold an item to flag it as needs attention';
+}
+
+document.querySelectorAll('.panel .progress-card').forEach(c => {
+  const r = document.createElement('button');
+  r.className = 'reset-inline';
+  r.textContent = 'Reset';
+  r.onclick = resetCurrent;
+  c.appendChild(r);
+});
+
+document.querySelectorAll('.panel .complete-banner').forEach(b => {
+  const h = document.createElement('div');
+  h.className = 'flag-hint';
+  h.textContent = 'Tip: press and hold an item to flag it as needs attention';
+  b.after(h);
+  const row = document.createElement('div');
+  row.className = 'keep-row';
+  row.innerHTML = '<span>💾 Saved on this device only · clears after</span>' +
+    '<select class="keep-hours" aria-label="How long this device keeps your saved checklist progress" onchange="setKeepHours(this.value)">' +
+    '<option value="1">1 hour</option><option value="4">4 hours</option><option value="12">12 hours</option><option value="24">24 hours</option><option value="72">3 days</option></select>';
+  h.after(row);
+});
+setKeepHours(keepHours());
+
+
+// ── Region: tailor the checklist for the USA or for flying elsewhere ──
+const REGION_KEY = 'uasRegion';
+let region = (function () { try { const v = localStorage.getItem(REGION_KEY); return v === 'us' || v === 'intl' ? v : null; } catch (e) { return null; } })();
+const US_ONLY_ITEMS = [/^Check TFRs at tfr\.faa\.gov$/, /^LAANC —/];               // hidden outside the USA
+const INTL_SWAPS = [                                                               // reworded outside the USA
+  { re: /^Check NOTAMs at notams\.aim\.faa\.gov/, text: "Check NOTAMs — look for notices affecting your flight area (use your country's aviation authority or NOTAM service)" },
+  { re: /^Check airspace — use B4UFLY/, text: "Check airspace — use your country's drone airspace map or app to confirm class and restrictions" }
+];
+document.querySelectorAll('.item').forEach(it => {
+  const te = it.querySelector('.item-text'); if (!te) return;
+  const t = te.textContent.trim();
+  if (US_ONLY_ITEMS.some(r => r.test(t))) it.dataset.region = 'us';
+  const sw = INTL_SWAPS.find(x => x.re.test(t));
+  if (sw) { it.dataset.orig = t; it.dataset.intl = sw.text; }
+});
+
+function applyRegion(r, changeUnits) {
+  const prev = region;
+  region = r;
+  try { localStorage.setItem(REGION_KEY, r); } catch (e) {}
+  const intl = r === 'intl';
+  document.body.classList.toggle('intl', intl);
+  document.querySelectorAll('.item[data-region="us"]').forEach(it => it.classList.toggle('region-hidden', intl));
+  document.querySelectorAll('.item[data-orig]').forEach(it => { it.querySelector('.item-text').textContent = intl ? it.dataset.intl : it.dataset.orig; });
+  const q = document.getElementById('wx-q'); if (q) q.placeholder = intl ? 'Town, postcode, or lat, lon' : 'Town, ZIP, or lat, lon';
+  document.querySelectorAll('.region-sel').forEach(sel => { sel.value = r; });
+  const card = document.getElementById('region-card'); if (card) card.remove();
+  if (changeUnits && (intl || prev === 'intl') && typeof toggleUnits === 'function') {
+    units = intl ? 'metric' : 'imperial'; store('wxUnits', units); updateUnitsButton(); if (lastDraw) lastDraw();
+  }
+  document.querySelectorAll('.panel').forEach(p => { if (typeof refreshCust === 'function') refreshCust(p); });
+}
+if (region === 'intl') applyRegion('intl', false);
+
+
+// ── Customize: hide items that don't apply where you fly, or add your own (saved on this device) ──
+const CUSTOM_KEY = 'uasCustomItems';
+let cust = (function () { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || {}; } catch (e) { return {}; } })();
+function custSave() { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(cust)); } catch (e) {} }
+function custFor(id) { return cust[id] || (cust[id] = { hidden: [], added: [] }); }
+const itemTextOf = (it) => it.dataset.orig || (it.querySelector('.item-text') ? it.querySelector('.item-text').textContent : '').trim();
+function baseKeyMap(panelEl) {            // stable key per built-in item: its text + which occurrence
+  const seen = {}, map = new Map();
+  panelEl.querySelectorAll('.item:not(.custom)').forEach(it => { const t = itemTextOf(it); seen[t] = (seen[t] || 0) + 1; map.set(it, t + '#' + seen[t]); });
+  return map;
+}
+const sectionTitleOf = (secEl) => secEl.querySelector('.section-header').firstChild.textContent.trim();
+function makeItem(text) {
+  const it = document.createElement('div');
+  it.className = 'item custom';
+  it.setAttribute('onclick', 'toggle(this)');
+  it.innerHTML = document.querySelector('.item .check-circle').outerHTML + '<div class="item-text"></div>';
+  it.querySelector('.item-text').textContent = text;
+  addItemButton(it);
+  return it;
+}
+function addItemButton(it) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'item-x';
+  b.setAttribute('onclick', 'itemX(event, this)');
+  it.appendChild(b);
+  labelItemButton(it);
+}
+function labelItemButton(it) {
+  const b = it.querySelector('.item-x');
+  if (!b) return;
+  b.textContent = it.classList.contains('custom') ? 'Delete' : it.classList.contains('is-hidden') ? 'Show' : 'Hide';
+}
+function refreshCust(panelEl) {
+  panelEl.querySelectorAll('.section').forEach(sec => {
+    sec.classList.toggle('all-hidden', !sec.querySelector('.item:not(.is-hidden):not(.region-hidden)'));
+  });
+  panelEl.querySelectorAll('.item').forEach(labelItemButton);
+  updateProgress(panelEl.id.replace('panel-', ''));
+}
+function itemX(e, btn) {
+  e.stopPropagation();
+  const it = btn.closest('.item'), panelEl = it.closest('.panel'), c = custFor(panelEl.id);
+  if (it.classList.contains('custom')) {
+    const sec = sectionTitleOf(it.closest('.section')), text = itemTextOf(it);
+    const i = c.added.findIndex(a => a.sec === sec && a.text === text);
+    if (i >= 0) c.added.splice(i, 1);
+    it.remove();
+  } else {
+    const key = baseKeyMap(panelEl).get(it);
+    if (it.classList.contains('is-hidden')) {
+      it.classList.remove('is-hidden');
+      c.hidden = c.hidden.filter(k => k !== key);
+    } else {
+      it.classList.remove('checked', 'flagged');
+      it.classList.add('is-hidden');
+      if (!c.hidden.includes(key)) c.hidden.push(key);
+    }
+  }
+  custSave(); refreshCust(panelEl); saveProgress();
+}
+function addCustomItem(e, form) {
+  e.preventDefault();
+  const input = form.querySelector('input'), text = input.value.trim();
+  if (!text) return;
+  const secEl = form.closest('.section'), panelEl = form.closest('.panel');
+  custFor(panelEl.id).added.push({ sec: sectionTitleOf(secEl), text });
+  secEl.querySelector('.section-card').appendChild(makeItem(text));
+  input.value = '';
+  custSave(); refreshCust(panelEl); saveProgress();
+}
+function toggleEdit(btn) {
+  const panelEl = btn.closest('.panel');
+  const on = panelEl.classList.toggle('editing');
+  btn.textContent = on ? '✓ Done' : '✎ Customize list';
+  refreshCust(panelEl);
+}
+function restoreDefaults(btn) {
+  const panelEl = btn.closest('.panel'), c = cust[panelEl.id], pid = panelEl.id.replace('panel-', '');
+  const hasItems = c && (c.hidden.length || c.added.length), hasName = !!tabsCfg.names[pid];
+  if (!hasItems && !hasName) return;
+  if (!confirm('Restore this tab to the original list? Hidden items come back, the items you added are removed, and the tab name is reset.')) return;
+  panelEl.querySelectorAll('.item.custom').forEach(i => i.remove());
+  panelEl.querySelectorAll('.item.is-hidden').forEach(i => i.classList.remove('is-hidden'));
+  delete cust[panelEl.id];
+  if (hasName) { delete tabsCfg.names[pid]; tabsSave(); refreshTabs(); }
+  custSave(); refreshCust(panelEl); saveProgress();
+}
+
+document.querySelectorAll('.panel').forEach(panelEl => {
+  const c = cust[panelEl.id];
+  panelEl.querySelectorAll('.item').forEach(addItemButton);
+  panelEl.querySelectorAll('.section').forEach(sec => {
+    const form = document.createElement('form');
+    form.className = 'add-row';
+    form.setAttribute('onsubmit', 'addCustomItem(event, this)');
+    form.innerHTML = '<input type="text" maxlength="140" placeholder="Add your own item" enterkeyhint="done" autocomplete="off"><button type="submit">Add</button>';
+    sec.appendChild(form);
+  });
+  if (c) {
+    const secs = [...panelEl.querySelectorAll('.section')];
+    (c.added || []).forEach(a => {
+      const sec = secs.find(s => sectionTitleOf(s) === a.sec) || secs[secs.length - 1];
+      if (sec) sec.querySelector('.section-card').appendChild(makeItem(a.text));
+    });
+    const keys = baseKeyMap(panelEl);
+    keys.forEach((k, it) => { if ((c.hidden || []).includes(k)) it.classList.add('is-hidden'); });
+  }
+  const row = document.createElement('div');
+  row.className = 'cust-row';
+  row.innerHTML = '<button type="button" class="cust-btn" onclick="toggleEdit(this)">✎ Customize list</button>' +
+    '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
+    '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
+    '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
+    '<div class="tab-note">Renaming changes the tab\'s name only. Use Hide and Add to change what\'s in it.</div>' +
+    '<div class="tab-hidden-list"></div>' +
+    '<div style="margin-top:8px"><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
+  panelEl.querySelector('.keep-row').after(row);
+  refreshCust(panelEl);
+});
+
+
+// ── Collapsible sections: tap a header to fold it; counts and ✓ / ⚠ stay visible ──
+const COLLAPSE_KEY = 'uasCollapsedSections';
+let collapsed = (function () { try { return JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || {}; } catch (e) { return {}; } })();
+function collapseSave() { try { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed)); } catch (e) {} }
+const secTitle = (sec) => sec.querySelector('.section-header').firstChild.textContent.trim();
+
+function updateSectionMeta(panelEl) {
+  panelEl.querySelectorAll('.section').forEach(sec => {
+    const cnt = sec.querySelector('.sec-count');
+    if (!cnt) return;
+    const total = sec.querySelectorAll('.item:not(.is-hidden):not(.region-hidden)').length;
+    const done = sec.querySelectorAll('.item.checked:not(.is-hidden):not(.region-hidden)').length;
+    const fl = sec.querySelectorAll('.item.flagged:not(.is-hidden):not(.region-hidden)').length;
+    const complete = total > 0 && done === total;
+    cnt.className = 'sec-count' + (fl ? ' attn' : complete ? ' done' : '');
+    cnt.textContent = (fl ? '⚠ ' : complete ? '✓ ' : '') + done + '/' + total;
+  });
+}
+function syncAllButton(panelEl) {
+  const b = panelEl.querySelector('.sec-all');
+  if (!b) return;
+  const anyOpen = [...panelEl.querySelectorAll('.section')].some(s => !s.classList.contains('collapsed'));
+  b.textContent = anyOpen ? 'Collapse all' : 'Expand all';
+}
+function setCollapsed(sec, on, save) {
+  sec.classList.toggle('collapsed', on);
+  sec.querySelector('.section-header').setAttribute('aria-expanded', on ? 'false' : 'true');
+  const pid = sec.closest('.panel').id, title = secTitle(sec);
+  const list = collapsed[pid] || (collapsed[pid] = []), i = list.indexOf(title);
+  if (on && i < 0) list.push(title);
+  if (!on && i >= 0) list.splice(i, 1);
+  if (save) collapseSave();
+}
+function toggleSection(head) {
+  const sec = head.closest('.section');
+  if (sec.closest('.panel.editing')) return;          // everything stays open while customizing
+  setCollapsed(sec, !sec.classList.contains('collapsed'), true);
+  syncAllButton(sec.closest('.panel'));
+}
+function toggleAllSections(btn) {
+  const panelEl = btn.closest('.panel'), secs = [...panelEl.querySelectorAll('.section')];
+  const anyOpen = secs.some(s => !s.classList.contains('collapsed'));
+  secs.forEach(s => setCollapsed(s, anyOpen, false));
+  collapseSave(); syncAllButton(panelEl);
+}
+
+document.querySelectorAll('.panel').forEach(panelEl => {
+  panelEl.querySelectorAll('.section').forEach(sec => {
+    const head = sec.querySelector('.section-header');
+    head.setAttribute('role', 'button'); head.setAttribute('tabindex', '0'); head.setAttribute('aria-expanded', 'true');
+    const meta = document.createElement('span');
+    meta.className = 'sec-meta';
+    meta.innerHTML = '<span class="sec-count"></span><span class="sec-arrow">▾</span>';
+    head.appendChild(meta);
+    head.addEventListener('click', () => toggleSection(head));
+    head.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleSection(head); } });
+    if ((collapsed[panelEl.id] || []).includes(secTitle(sec))) setCollapsed(sec, true, false);
+  });
+  let row = panelEl.querySelector('.cust-row');
+  if (!row) { row = document.createElement('div'); row.className = 'cust-row'; panelEl.querySelector('.keep-row').after(row); }
+  const all = document.createElement('button');
+  all.type = 'button'; all.className = 'cust-btn sec-all'; all.setAttribute('onclick', 'toggleAllSections(this)');
+  const first = row.querySelector('.cust-btn');
+  if (first) first.after(all); else row.appendChild(all);
+  updateSectionMeta(panelEl); syncAllButton(panelEl);
+});
+
+
+document.querySelectorAll('.panel').forEach(panelEl => {
+  const row = document.createElement('div');
+  row.className = 'keep-row region-row';
+  row.innerHTML = '<span>🌍 Checklist for</span><select class="region-sel" aria-label="Where you fly" onchange="applyRegion(this.value, true)"><option value="us">USA</option><option value="intl">Outside the USA</option></select>';
+  row.querySelector('select').value = region || 'us';
+  panelEl.querySelector('.keep-row').after(row);
+});
+if (!region) {
+  const card = document.createElement('div');
+  card.className = 'wx-panel region-card'; card.id = 'region-card';
+  card.innerHTML = '<div class="rc-title">Where do you fly?</div><div class="rc-sub">This tailors the checklist and the weather units. You can change it any time.</div>' +
+    '<div class="rc-btns"><button type="button" onclick="applyRegion(\'us\', true)">🇺🇸 USA</button><button type="button" onclick="applyRegion(\'intl\', true)">🌍 Outside the USA</button></div>';
+  document.getElementById('wx-panel').before(card);
+}
+
+
+// ── Tabs: rename or hide (saved on this device) ──
+const TABS_KEY = 'uasTabs';
+let tabsCfg = (function () {
+  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [] }; }
+  catch (e) { return { names: {}, hidden: [] }; }
+})();
+function tabsSave() { try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
+const tabEls = [...document.querySelectorAll('.tabs .tab')];
+tabEls.forEach(t => {
+  const txt = t.textContent.trim(), m = txt.match(/^(\S+)\s+(.+)$/), id = (t.getAttribute('onclick') || '').match(/showPanel\('([^']+)'/);
+  t.dataset.pid = id ? id[1] : '';
+  if (m && !/[A-Za-z0-9]/.test(m[1])) { t.dataset.emoji = m[1]; t.dataset.name = m[2]; } else { t.dataset.emoji = ''; t.dataset.name = txt; }
+});
+const tabName = (t) => tabsCfg.names[t.dataset.pid] || t.dataset.name;
+function refreshTabs() {
+  tabEls.forEach(t => {
+    t.textContent = (t.dataset.emoji ? t.dataset.emoji + ' ' : '') + tabName(t);
+    t.classList.toggle('tab-hidden', tabsCfg.hidden.includes(t.dataset.pid));
+  });
+  const visible = tabEls.filter(t => !t.classList.contains('tab-hidden'));
+  document.querySelectorAll('.panel').forEach(p => {
+    const t = tabEls.find(x => x.dataset.pid === p.id.replace('panel-', ''));
+    const inp = p.querySelector('.tab-name');
+    if (inp && t && document.activeElement !== inp) inp.value = tabName(t);
+    const hb = p.querySelector('.tab-hide-btn'); if (hb) hb.disabled = visible.length <= 1;
+    const list = p.querySelector('.tab-hidden-list');
+    if (list) {
+      list.innerHTML = '';
+      tabEls.filter(x => x.classList.contains('tab-hidden')).forEach(x => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'cust-btn'; b.textContent = 'Show tab: ' + tabName(x);
+        b.onclick = () => showTab(x.dataset.pid);
+        list.appendChild(b);
+      });
+    }
+  });
+}
+function saveTabName(inp) {
+  const pid = inp.closest('.panel').id.replace('panel-', ''), v = inp.value.trim().slice(0, 24);
+  if (v) tabsCfg.names[pid] = v; else delete tabsCfg.names[pid];
+  tabsSave(); refreshTabs();
+}
+function hideTab(btn) {
+  const panelEl = btn.closest('.panel'), pid = panelEl.id.replace('panel-', '');
+  if (tabEls.filter(t => !t.classList.contains('tab-hidden')).length <= 1) return;
+  if (!tabsCfg.hidden.includes(pid)) tabsCfg.hidden.push(pid);
+  tabsSave();
+  panelEl.classList.remove('editing');
+  const cb = panelEl.querySelector('.cust-btn'); if (cb) cb.textContent = '✎ Customize list';
+  refreshTabs();
+  const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
+  showPanel(next.dataset.pid, next);
+}
+function showTab(pid) {
+  tabsCfg.hidden = tabsCfg.hidden.filter(x => x !== pid);
+  tabsSave(); refreshTabs();
+}
+refreshTabs();
+(function () {
+  const active = tabEls.find(t => t.classList.contains('active'));
+  if (active && active.classList.contains('tab-hidden')) {
+    const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
+    if (next) showPanel(next.dataset.pid, next);
+  }
+})();
+
+restoreProgress();
+if (restoredAt) {
+  document.querySelectorAll('.flag-hint').forEach(h => {
+    h.textContent = 'Progress restored (saved ' + ageText(Date.now() - restoredAt) + ') · tap Reset to start fresh';
+  });
+}
+
+['zeitview','mapping','general'].forEach(updateProgress);
+</script>
+
+<script>
+function kpColor(kp) {
+  if (kp >= 4) return 'wx-alert';
+  if (kp >= 3) return 'wx-warn';
+  return 'wx-good';
+}
+function windColor(mph) {
+  if (mph >= 23) return 'wx-alert';
+  if (mph >= 15) return 'wx-warn';
+  return 'wx-good';
+}
+
+function windArrow(deg) {
+  // Arrow points the direction wind is GOING (blowing toward)
+  // dirs indexed by compass direction: N=↑, NE=↗, E=→, SE=↘, S=↓, SW=↙, W=←, NW=↖
+  const dirs = ['↑','↗','→','↘','↓','↙','←','↖','↑'];
+  const goingTo = (deg + 180) % 360;
+  const idx = Math.round(goingTo / 45) % 8;
+  return dirs[idx];
+}
+
+function windCardinal(deg) {
+  // Cardinal direction wind is coming FROM
+  const cards = ['N','NE','E','SE','S','SW','W','NW','N'];
+  const idx = Math.round(deg / 45) % 8;
+  return 'From ' + cards[idx];
+}
+function ceilingColor(ft) {
+  if (ft < 500) return 'wx-alert';
+  if (ft < 1000) return 'wx-warn';
+  return 'wx-good';
+}
+
+async function fetchKP() {
+  try {
+    // 1-minute estimated feed — confirmed working via CORS
+    const res = await fetch('https://services.swpc.noaa.gov/json/planetary_k_index_1m.json');
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    if (!data || data.length === 0) throw new Error('no data');
+    // Take the maximum KP from the last 20 entries (last ~20 minutes)
+    // to avoid low transient readings
+    const recent = data.slice(-20);
+    let maxKp = null;
+    for (const entry of recent) {
+      const kp = parseFloat(entry.kp_index);
+      if (!isNaN(kp) && (maxKp === null || kp > maxKp)) maxKp = kp;
+    }
+    if (maxKp !== null && maxKp > 0) return maxKp;
+    // If all zeros, go back further
+    for (let i = data.length - 1; i >= 0; i--) {
+      const kp = parseFloat(data[i].kp_index);
+      if (!isNaN(kp) && kp > 0) return kp;
+    }
+  } catch(e) { console.warn('KP fetch failed:', e.message); }
+  return null;
+}
+
+// Keyless METAR via a small Cloudflare Worker that forwards to aviationweather.gov
+const METAR_PROXY = 'https://uas-metar.fisherofmen58.workers.dev';
+
+function distMi(lat1, lon1, lat2, lon2) {
+  const R = 3958.8, r = Math.PI / 180;
+  const dLat = (lat2 - lat1) * r, dLon = (lon2 - lon1) * r;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+async function fetchMetar(lat, lon) {
+  try {
+    const res = await fetch(`${METAR_PROXY}/metar?lat=${lat}&lon=${lon}`);
+    if (!res.ok) throw new Error('METAR service error: ' + res.status);
+    const list = await res.json();
+    if (!Array.isArray(list) || list.length === 0) return null;
+    // Nearest reporting station
+    list.sort((a, b) => distMi(lat, lon, a.lat, a.lon) - distMi(lat, lon, b.lat, b.lon));
+    const m = list[0];
+    // Normalize to the shape the ceiling helpers expect
+    m.clouds = (m.clouds || []).map(c => ({ code: c.cover, text: c.cover, base_feet_agl: c.base }));
+    return { metar: m, station: m.icaoId || '?' };
+  } catch (e) {
+    console.warn('METAR fetch failed:', e.message);
+    return null;
+  }
+}
+
+function parseCeiling(metar) {
+  // Ceiling helper (no direct ceiling field from AWC; scan cloud layers)
+  if (metar.ceiling && metar.ceiling.feet_agl != null) {
+    return metar.ceiling.feet_agl;
+  }
+  // Fallback: scan clouds for lowest BKN or OVC
+  const clouds = metar.clouds || [];
+  let ceiling = null;
+  for (const layer of clouds) {
+    const cover = layer.code || layer.cover;
+    const base = layer.base_feet_agl || (layer.base ? layer.base * 100 : null);
+    if ((cover === 'BKN' || cover === 'OVC' || cover === 'OVX') && base != null) {
+      if (ceiling === null || base < ceiling) ceiling = base;
+    }
+  }
+  return ceiling;
+}
+
+function ceilingColor(ft) {
+  if (ft === null) return 'wx-good';
+  if (ft < 500) return 'wx-alert';
+  if (ft < 1000) return 'wx-warn';
+  return 'wx-good';
+}
+
+function ceilingText(ft, metar) {
+  if (ft === null) {
+    const clouds = metar?.clouds || [];
+    const hasClouds = clouds.some(c => {
+      const cover = c.code || c.cover;
+      return cover !== 'CLR' && cover !== 'SKC' && cover !== 'NSC' && cover !== 'CAVOK';
+    });
+    return hasClouds ? 'No ceiling' : 'Clear';
+  }
+  return fmtAlt(ft) + ' AGL';
+}
+
+function ceilingNote(ft, metar) {
+  if (ft === null) {
+    const clouds = metar?.clouds || [];
+    return clouds.length > 0 ? clouds.map(c => (c.text || c.code || '') + (c.base_feet_agl ? ' ' + fmtAlt(c.base_feet_agl) : '')).join(', ').trim() || 'Clear skies' : 'Clear skies';
+  }
+  if (ft < 500) return '⛔ Cannot fly — below minimums';
+  if (ft < 1000) return '⚠️ Very low — use caution';
+  if (ft < 3000) return 'Low ceiling — check waiver';
+  return 'Good for ops';
+}
+
+// ── Flight site: weather for the current location or a chosen site ──
+const STATES = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming'};
+const STATE_ABBR = Object.fromEntries(Object.entries(STATES).map(([a, n]) => [n, a]));
+
+function recall(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+}
+function store(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {}
+}
+
+// ── Units: readings are fetched in imperial and converted for display, so switching needs no refetch ──
+let units = recall('wxUnits', 'imperial') === 'metric' ? 'metric' : 'imperial';
+let lastDraw = null;
+const isMetric = () => units === 'metric';
+const fmtSpeed = (mph) => isMetric() ? Math.round(mph * 1.609344) + ' km/h' : Math.round(mph) + ' mph';
+const fmtSpeedNum = (mph) => isMetric() ? Math.round(mph * 1.609344) : Math.round(mph);
+const speedUnit = () => isMetric() ? 'km/h' : 'mph';
+const fmtTemp = (f) => isMetric() ? Math.round((f - 32) * 5 / 9) + '°C' : Math.round(f) + '°F';
+const fmtVis = (m) => m == null ? '—' : isMetric() ? (m / 1000).toFixed(1) + ' km' : (m / 1609.34).toFixed(1) + ' mi';
+const fmtAlt = (ft) => isMetric() ? (Math.round(ft * 0.3048 / 10) * 10).toLocaleString() + ' m' : Number(ft).toLocaleString() + ' ft';
+function updateUnitsButton() {
+  const b = document.getElementById('wx-units');
+  if (b) b.textContent = isMetric() ? 'km/h · °C' : 'mph · °F';
+}
+function toggleUnits() {
+  units = isMetric() ? 'imperial' : 'metric';
+  store('wxUnits', units);
+  updateUnitsButton();
+  if (lastDraw) { lastDraw(); }
+}
+
+let site = recall('wxSite', null);       // {name, lat, lon}, or null = use my current location
+let recentSites = recall('wxRecent', []);
+let wxReq = 0;
+let lastWeatherAt = null;
+
+function updateLocLabel() {
+  document.getElementById('wx-loc-name').textContent = site ? site.name : 'My location';
+}
+
+function toggleLocPicker() {
+  const picker = document.getElementById('wx-picker');
+  picker.hidden = !picker.hidden;
+  if (!picker.hidden) { renderChips(); document.getElementById('wx-q').focus(); }
+}
+
+function renderChips() {
+  const box = document.getElementById('wx-chips');
+  box.innerHTML = '';
+  const add = (label, fn) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'wx-chip'; b.textContent = label; b.onclick = fn;
+    box.appendChild(b);
+  };
+  if (site) add('📍 Use my location', () => chooseSite(null));
+  recentSites.forEach(r => add(r.name, () => chooseSite(r)));
+}
+
+function chooseSite(s) {
+  site = s;
+  store('wxSite', site);
+  if (s) {
+    recentSites = [s, ...recentSites.filter(r => Math.abs(r.lat - s.lat) > 0.01 || Math.abs(r.lon - s.lon) > 0.01)].slice(0, 5);
+    store('wxRecent', recentSites);
+  }
+  document.getElementById('wx-picker').hidden = true;
+  document.getElementById('wx-results').innerHTML = '';
+  document.getElementById('wx-q').value = '';
+  loadWeather();
+}
+
+async function searchSite(e) {
+  e.preventDefault();
+  const q = document.getElementById('wx-q').value.trim();
+  const out = document.getElementById('wx-results');
+  if (!q) return;
+  out.innerHTML = '';
+  const note = (t) => { const d = document.createElement('div'); d.className = 'wx-note'; d.textContent = t; out.appendChild(d); };
+
+  // "35.59, -78.50" style coordinates
+  const c = q.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+  if (c) {
+    const lat = parseFloat(c[1]), lon = parseFloat(c[2]);
+    if (Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+      chooseSite({ name: lat.toFixed(3) + ', ' + lon.toFixed(3), lat, lon });
+      return;
+    }
+  }
+
+  // "Angier NC" / "Angier, NC" -> search the town, then prefer that state
+  let name = q, state = null;
+  const m = q.match(/^(.*?)[,\s]+([A-Za-z]{2})$/);
+  if (m && STATES[m[2].toUpperCase()]) { name = m[1].trim(); state = STATES[m[2].toUpperCase()]; }
+
+  note('Searching…');
+  try {
+    const res = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(name) + '&count=10&language=en&format=json');
+    if (!res.ok) throw new Error('search ' + res.status);
+    const data = await res.json();
+    let list = data.results || [];
+    if (state) { const f = list.filter(r => r.admin1 === state); if (f.length) list = f; }
+    list = list.slice(0, 6);
+    out.innerHTML = '';
+    if (!list.length) { note('No matches. Try a nearby town, a ZIP code, or coordinates.'); return; }
+    list.forEach(r => {
+      const region = r.admin1 ? (r.country_code === 'US' && STATE_ABBR[r.admin1] ? STATE_ABBR[r.admin1] : r.admin1) : '';
+      const label = r.name + (region ? ', ' + region : '') + (r.country_code && r.country_code !== 'US' ? ', ' + r.country_code : '');
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'wx-result';
+      b.appendChild(document.createTextNode(label));
+      if (r.admin2) { const sm = document.createElement('small'); sm.textContent = r.admin2; b.appendChild(sm); }
+      b.onclick = () => chooseSite({ name: label, lat: r.latitude, lon: r.longitude });
+      out.appendChild(b);
+    });
+  } catch (err) {
+    out.innerHTML = '';
+    note('Search unavailable right now. You can also enter coordinates like 35.59, -78.50.');
+  }
+}
+
+async function loadWeather() {
+  const body = document.getElementById('wx-body');
+  body.innerHTML = '<div class="wx-status">Loading...</div>';
+  updateLocLabel();
+
+  if (site) { renderWeather(site.lat, site.lon); return; }
+
+  if (!navigator.geolocation) {
+    body.innerHTML = '<div class="wx-status wx-alert">Location not available on this device. Tap Change to pick a flight site.</div>';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => renderWeather(pos.coords.latitude, pos.coords.longitude),
+    () => { body.innerHTML = '<div class="wx-status wx-warn">Location permission denied — enable it, or tap Change to pick a flight site.</div>'; }
+  );
+}
+
+async function renderWeather(lat, lon) {
+  const body = document.getElementById('wx-body');
+  const my = ++wxReq;
+  lastDraw = null;
+  try {
+      const [wxRes, kpData, metarData] = await Promise.allSettled([
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m&hourly=visibility,wind_speed_120m&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=1`),
+        fetchKP(),
+        fetchMetar(lat, lon)
+      ]);
+
+      if (my !== wxReq) return;   // a newer request replaced this one
+      if (wxRes.status === 'rejected') throw new Error('Weather API unreachable');
+      if (!wxRes.value.ok) throw new Error('Weather service error ' + wxRes.value.status);
+      const om = await wxRes.value.json();
+      if (!om.current) throw new Error('No weather data returned');
+      const kpData2 = kpData.status === 'fulfilled' ? kpData.value : null;
+      const metarData2 = metarData.status === 'fulfilled' ? metarData.value : null;
+
+      // Normalize Open-Meteo response
+      const cur = om.current;
+      const hIdx = om.hourly ? om.hourly.time.indexOf(cur.time.slice(0, 13) + ':00') : -1;
+      const wx = {
+        wind: { speed: cur.wind_speed_10m, gust: cur.wind_gusts_10m, deg: cur.wind_direction_10m },
+        main: { temp: cur.temperature_2m },
+        visibility: hIdx >= 0 ? om.hourly.visibility[hIdx] : null,
+        wind120: hIdx >= 0 ? om.hourly.wind_speed_120m[hIdx] : null,
+        sunrise: om.daily && om.daily.sunrise ? om.daily.sunrise[0] : null,
+        sunset: om.daily && om.daily.sunset ? om.daily.sunset[0] : null
+      };
+
+      const windMph = Math.round(wx.wind.speed);
+      const gustMph = wx.wind.gust && Math.round(wx.wind.gust) > windMph ? Math.round(wx.wind.gust) : null;
+      const fmtT = (iso) => iso ? new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '—';
+
+      // Ceiling from METAR (kept in feet; converted for display)
+      let ceilFt = null, stationId = '', m = null;
+      if (metarData2) {
+        stationId = metarData2.station;
+        m = metarData2.metar;
+        ceilFt = parseCeiling(m);
+      }
+      const ceilClass = metarData2 ? ceilingColor(ceilFt) : 'wx-good';
+
+      const kp = kpData2;
+      const kpVal = kp !== null ? kp.toFixed(1) : '—';
+      const kpClass = kp !== null ? kpColor(kp) : '';
+      const kpNote = kp >= 4 ? '⛔ High — GPS/compass risk' : kp >= 3 ? '⚠️ Elevated — monitor' : 'Normal — good to fly';
+
+      const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+      lastWeatherAt = Date.now();
+      const draw = () => {
+        const ceilTxt = metarData2 ? ceilingText(ceilFt, m) : '—';
+        const ceilNote = metarData2 ? ceilingNote(ceilFt, m) : 'No METAR data';
+        const wind120Txt = wx.wind120 != null ? ` · ${isMetric() ? '120 m' : '400 ft'}: ${fmtSpeed(wx.wind120)}` : '';
+        body.innerHTML = `
+        <div class="wx-grid">
+          <div class="wx-item">
+            <div class="wx-label">Wind</div>
+            <div class="wx-value ${windColor(windMph)}">${fmtSpeedNum(windMph)}${gustMph ? ' / ' + fmtSpeedNum(gustMph) : ''} ${speedUnit()} ${windArrow(wx.wind.deg)}</div>
+            <div class="wx-sub">${gustMph ? 'Sustained / Gusts' : 'No gusts reported'} · ${windCardinal(wx.wind.deg)}${wind120Txt}</div>
+          </div>
+          <div class="wx-item">
+            <div class="wx-label">Cloud Ceiling ${stationId ? '<span style="font-weight:400;opacity:0.7">· ' + stationId + '</span>' : ''}</div>
+            <div class="wx-value ${ceilClass}">${ceilTxt}</div>
+            <div class="wx-sub">${ceilNote}</div>
+          </div>
+          <div class="wx-item">
+            <div class="wx-label">Temperature</div>
+            <div class="wx-value">${fmtTemp(wx.main.temp)}</div>
+            <div class="wx-sub">Visibility ${fmtVis(wx.visibility)}</div>
+          </div>
+          <div class="wx-item">
+            <div class="wx-label">KP Index</div>
+            <div class="wx-value ${kpClass}">${kpVal}</div>
+            <div class="wx-sub">${kpNote}</div>
+          </div>
+        </div>
+        <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}</div>
+        <div class="wx-updated" id="wx-updated">Updated ${now} · ${stationId ? 'METAR ' + stationId : lat.toFixed(2) + ', ' + lon.toFixed(2)}<span id="wx-age"></span></div>
+        `;
+        refreshAge();
+      };
+      lastDraw = draw;
+      draw();
+  } catch (e) {
+    if (my !== wxReq) return;
+    body.innerHTML = `<div class="wx-status wx-alert">Weather unavailable: ${e.message}</div>`;
+  }
+}
+
+// ── Weather freshness: show how old the reading is, refresh when you come back to the app ──
+const STALE_MS = 30 * 60 * 1000;      // amber after 30 minutes
+const RETURN_REFRESH_MS = 10 * 60 * 1000;
+
+function refreshAge() {
+  const el = document.getElementById('wx-updated');
+  const span = document.getElementById('wx-age');
+  if (!el || !span || !lastWeatherAt) return;
+  const ms = Date.now() - lastWeatherAt;
+  span.textContent = ' · ' + ageText(ms) + (ms >= STALE_MS ? ' — tap Refresh' : '');
+  el.classList.toggle('wx-stale', ms >= STALE_MS);
+}
+
+function refreshIfStale() {
+  if (document.visibilityState !== 'visible') return;
+  if (!lastWeatherAt || Date.now() - lastWeatherAt > RETURN_REFRESH_MS) loadWeather();
+  else refreshAge();
+}
+
+updateUnitsButton();
+setInterval(refreshAge, 60000);
+document.addEventListener('visibilitychange', refreshIfStale);
+window.addEventListener('pageshow', (e) => { if (e.persisted) refreshIfStale(); });
+
+
+loadWeather();
+</script>
+
+</body>
+</html>
