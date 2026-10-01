@@ -289,7 +289,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9i</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9j</p>
     </div>
   </div>
   <div class="tabs">
@@ -343,7 +343,7 @@
       <div class="progress-track"><div class="progress-track-fill" id="bar-zeitview" style="width:0%"></div></div>
     </div>
   </div>
-  <div class="complete-banner" id="done-zeitview">✓ All checks complete — cleared for flight</div>
+  <div class="complete-banner" id="done-zeitview">✓ Pre-flight checks complete — ready to fly</div>
 
   <div class="section">
     <div class="section-header">Before leaving home</div>
@@ -443,7 +443,7 @@
       <div class="progress-track"><div class="progress-track-fill" id="bar-mapping" style="width:0%"></div></div>
     </div>
   </div>
-  <div class="complete-banner" id="done-mapping">✓ All checks complete — cleared for flight</div>
+  <div class="complete-banner" id="done-mapping">✓ Pre-flight checks complete — ready to fly</div>
 
   <div class="section">
     <div class="section-header">Mission planning (before leaving home)</div>
@@ -547,7 +547,7 @@
       <div class="progress-track"><div class="progress-track-fill" id="bar-general" style="width:0%"></div></div>
     </div>
   </div>
-  <div class="complete-banner" id="done-general">✓ All checks complete — cleared for flight</div>
+  <div class="complete-banner" id="done-general">✓ Pre-flight checks complete — ready to fly</div>
 
   <div class="section">
     <div class="section-header">Before leaving home</div>
@@ -740,8 +740,19 @@ function updateProgress(panel) {
     (flagged ? ' · <span class="attn-count">⚠ ' + flagged + ' need' + (flagged === 1 ? 's' : '') + ' attention</span>' : '');
   document.getElementById('bar-' + panel).style.width = pct + '%';
   document.getElementById('header-bar').style.width = pct + '%';
+  // Two stages: ready to fly once every section before "During flight" is checked; flight complete at 100%
   const done = document.getElementById('done-' + panel);
-  done.classList.toggle('show', checked === total && total > 0);
+  const secs = [...p.querySelectorAll('.section')];
+  const fi = secs.findIndex(sc => /^during flight/i.test(sc.querySelector('.section-header').firstChild.textContent.trim()));
+  let preTotal = 0, preLeft = 0;
+  if (fi > 0) secs.slice(0, fi).forEach(sc => {
+    preTotal += sc.querySelectorAll('.item:not(.is-hidden):not(.region-hidden)').length;
+    preLeft += sc.querySelectorAll('.item:not(.checked):not(.is-hidden):not(.region-hidden)').length;
+  });
+  const allDone = total > 0 && checked === total;
+  const preReady = !allDone && preTotal > 0 && preLeft === 0;
+  done.textContent = allDone ? '✓ Flight complete — all checks done' : '✓ Pre-flight checks complete — ready to fly';
+  done.classList.toggle('show', allDone || preReady);
   updateSectionMeta(p);
 }
 
