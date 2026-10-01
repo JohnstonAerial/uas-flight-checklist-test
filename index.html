@@ -189,6 +189,14 @@
   .panel.editing { padding-bottom: 76px; }
   .panel.editing .edit-bar { display: flex; }
   .cust-tip { margin-top: 8px; padding: 8px 10px; background: var(--section-bg); border-radius: 10px; line-height: 1.4; }
+  .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
+  .panel.editing .xfer { display: none; }
+  .xfer-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+  .xfer-incl { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 4px; cursor: pointer; }
+  .xfer-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
+  .xfer-box { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: 16px; color: var(--text); background: var(--section-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-top: 6px; resize: vertical; }
+  .xfer-msg { min-height: 14px; margin-top: 6px; line-height: 1.4; color: var(--green); }
+  .xfer-msg.bad { color: var(--red, #c0392b); }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -289,7 +297,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9k</p>
     </div>
   </div>
   <div class="tabs">
@@ -1140,6 +1148,125 @@ refreshTabs();
   }
 })();
 
+// ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
+const XFER_PROGRESS = 'uasChecklistProgress';
+const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', XFER_PROGRESS];
+function makeXfer() {
+  const d = document.createElement('div');
+  d.className = 'xfer';
+  d.innerHTML = '<div class="xfer-title">📲 Move to another device</div>' +
+    '<label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
+    '<div class="xfer-btns"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button><button type="button" class="cust-btn" onclick="xferSave(this)">Save file</button></div>' +
+    '<textarea class="xfer-box" rows="2" placeholder="On the other device, paste the code here" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>' +
+    '<div class="xfer-btns"><button type="button" class="cust-btn primary" onclick="xferRestore(this)">Restore from code</button><button type="button" class="cust-btn" onclick="xferFile(this)">Restore from file…</button>' +
+    '<input type="file" class="xfer-file" accept=".json,application/json,text/plain" hidden onchange="xferFileChosen(this)"></div>' +
+    '<div class="xfer-msg" role="status"></div>';
+  return d;
+}
+function xferSnapshot(withProgress) {
+  const data = {};
+  XFER_KEYS.forEach(k => {
+    if (k === XFER_PROGRESS && !withProgress) return;
+    let v = null; try { v = localStorage.getItem(k); } catch (e) {}
+    if (v !== null) data[k] = v;
+  });
+  return { app: 'uas-checklist', v: 1, at: Date.now(), data };
+}
+function b64enc(bytes) { let s = ''; bytes.forEach(b => { s += String.fromCharCode(b); }); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function b64dec(str) { str = str.replace(/-/g, '+').replace(/_/g, '/'); while (str.length % 4) str += '='; return Uint8Array.from(atob(str), c => c.charCodeAt(0)); }
+async function xferEncode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if (window.CompressionStream) {
+    try {
+      const out = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer());
+      return 'UAS1.' + b64enc(out);
+    } catch (e) {}
+  }
+  return 'UAS0.' + b64enc(bytes);
+}
+async function xferDecode(text) {
+  text = String(text || '').trim();
+  if (text[0] === '{') return JSON.parse(text);                       // a saved file
+  const m = text.replace(/\s+/g, '').match(/UAS([01])\.([A-Za-z0-9_-]+)/);
+  if (!m) throw new Error('not a code');
+  let bytes = b64dec(m[2]);
+  if (m[1] === '1') {
+    if (!window.DecompressionStream) { const err = new Error('This browser can\'t read that code. Use Save file instead.'); err.friendly = true; throw err; }
+    bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function xferMsg(el, text, bad) {
+  const m = el.closest('.xfer').querySelector('.xfer-msg');
+  m.textContent = text; m.className = 'xfer-msg' + (bad ? ' bad' : '');
+}
+async function xferCopy(btn) {
+  const box = btn.closest('.xfer'), codeP = xferEncode(xferSnapshot(box.querySelector('.xfer-prog').checked));
+  const ok = '✓ Code copied. On your other device, open Settings and paste it into the box.';
+  try {
+    if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+      await navigator.clipboard.write([new ClipboardItem({ 'text/plain': codeP.then(t => new Blob([t], { type: 'text/plain' })) })]);
+      xferMsg(btn, ok); return;
+    }
+  } catch (e) {}
+  const code = await codeP;
+  try { await navigator.clipboard.writeText(code); xferMsg(btn, ok); return; } catch (e) {}
+  const ta = box.querySelector('.xfer-box'); ta.value = code; ta.focus(); ta.select();
+  xferMsg(btn, 'Couldn\'t copy automatically. Touch and hold the code in the box, then choose Copy.', true);
+}
+async function xferSave(btn) {
+  const json = JSON.stringify(xferSnapshot(btn.closest('.xfer').querySelector('.xfer-prog').checked));
+  const name = 'uas-checklist-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  const file = new File([json], name, { type: 'application/json' });
+  try {
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'UAS checklist backup' });
+      xferMsg(btn, '✓ Backup ready. Save it or send it to your other device.'); return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  xferMsg(btn, '✓ File saved to your downloads.');
+}
+function xferApply(el, obj) {
+  if (!obj || obj.app !== 'uas-checklist' || !obj.data || typeof obj.data !== 'object') { xferMsg(el, 'That isn\'t a checklist backup.', true); return; }
+  const data = {};
+  XFER_KEYS.forEach(k => { const v = obj.data[k]; if (typeof v === 'string' && v.length < 400000) data[k] = v; });
+  let note = '';
+  if (XFER_PROGRESS in data) {
+    let ok = false;
+    try {
+      const pr = JSON.parse(data[XFER_PROGRESS]), hrs = KEEP_CHOICES.includes(Number(data.uasProgressHours)) ? Number(data.uasProgressHours) : keepHours();
+      ok = !!pr.savedAt && Date.now() - pr.savedAt <= hrs * 3600000;
+    } catch (e) {}
+    if (!ok) { delete data[XFER_PROGRESS]; note = ' The progress in this backup has already expired, so it will be left out.'; }
+  }
+  const withProg = XFER_PROGRESS in data;
+  const when = obj.at ? new Date(obj.at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : 'an earlier time';
+  if (!confirm('Replace this device\'s settings' + (withProg ? ' and progress' : '') + ' with the backup from ' + when + '?' + note)) return;
+  XFER_KEYS.forEach(k => {
+    if (k === XFER_PROGRESS && !withProg) return;               // no progress in the backup: keep what is here
+    try { if (k in data) localStorage.setItem(k, data[k]); else localStorage.removeItem(k); } catch (e) {}
+  });
+  location.reload();
+}
+async function xferRestore(btn) {
+  const box = btn.closest('.xfer').querySelector('.xfer-box');
+  if (!box.value.trim()) { xferMsg(btn, 'Paste a code into the box first.', true); return; }
+  let obj;
+  try { obj = await xferDecode(box.value); }
+  catch (e) { xferMsg(btn, e && e.friendly ? e.message : 'That code didn\'t work. Check that you copied all of it.', true); return; }
+  xferApply(btn, obj);
+}
+function xferFile(btn) { btn.closest('.xfer').querySelector('.xfer-file').click(); }
+async function xferFileChosen(inp) {
+  const f = inp.files && inp.files[0]; if (!f) return;
+  let obj;
+  try { obj = await xferDecode(await f.text()); } catch (e) { inp.value = ''; xferMsg(inp, 'That file didn\'t work.', true); return; }
+  inp.value = '';
+  xferApply(inp, obj);
+}
+
 // ── Layout: collapsed Settings panel, progress + Collapse all next to the list, sticky Editing bar ──
 document.querySelectorAll('.panel').forEach(panelEl => {
   const card = panelEl.querySelector('.progress-card');
@@ -1153,8 +1280,8 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   tg.onclick = () => { const o = wrap.classList.toggle('open'); tg.setAttribute('aria-expanded', String(o)); };
   const body = document.createElement('div'); body.className = 'settings-body';
   const note = document.createElement('div'); note.className = 'settings-note';
-  note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync to your other phones, tablets or browsers, and the Home Screen app keeps its own copy.';
-  body.append(keep, reg, note, cust);
+  note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync by themselves, and the Home Screen app keeps its own copy. To copy them to another phone, tablet or browser, use Move to another device below.';
+  body.append(keep, reg, note, cust, makeXfer());
   wrap.append(tg, body);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
