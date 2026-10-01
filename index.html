@@ -174,8 +174,20 @@
   .cust-btn.primary { background: var(--blue-mid); color: #fff; border-color: var(--blue-mid); font-weight: 600; }
   .panel.editing .cust-toggle, .panel.editing .sec-all { display: none; }
   .cust-actions { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
-  .done-bottom { display: none; max-width: 600px; margin: 4px auto 18px; padding: 0 16px; text-align: center; }
-  .panel.editing .done-bottom { display: block; }
+  .settings { margin-bottom: 12px; }
+  .settings-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: none; border-radius: 14px; padding: 11px 16px; box-shadow: var(--shadow); cursor: pointer; }
+  .settings-toggle .chev { transition: transform 0.2s; }
+  .settings.open .settings-toggle .chev { transform: rotate(180deg); }
+  .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 4px 6px; margin-top: 8px; }
+  .settings.open .settings-body, .panel.editing .settings-body { display: block; }
+  .panel.editing .settings-toggle { display: none; }
+  .settings-note { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; text-align: center; font-size: 11px; color: var(--text-light); line-height: 1.4; }
+  .pc-btns { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+  .pc-btns .reset-inline, .pc-btns .sec-all { width: 100%; text-align: center; border-radius: 20px; padding: 6px 12px; font-size: 12px; margin: 0; color: var(--text-muted); background: transparent; border: 1px solid var(--border); font-family: inherit; cursor: pointer; }
+  .saved-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 0 16px 8px; }
+  .edit-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; max-width: 600px; margin: 0 auto; z-index: 50; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-bottom: none; border-radius: 14px 14px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.18); padding: 10px 14px calc(10px + env(safe-area-inset-bottom)) 16px; font-size: 13px; font-weight: 600; color: var(--text); }
+  .panel.editing { padding-bottom: 76px; }
+  .panel.editing .edit-bar { display: flex; }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -276,7 +288,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9c</p>
     </div>
   </div>
   <div class="tabs">
@@ -633,6 +645,8 @@ function progTtl() { return keepHours() * 60 * 60 * 1000; }
 function setKeepHours(v) {
   try { localStorage.setItem(KEEP_KEY, String(Number(v))); } catch (e) {}
   document.querySelectorAll('.keep-hours').forEach(sel => { sel.value = String(keepHours()); });
+  const s0 = document.querySelector('.keep-hours');
+  if (s0) document.querySelectorAll('.saved-hours').forEach(el => { el.textContent = s0.options[s0.selectedIndex].text; });
 }
 let restoredAt = null;
 
@@ -947,10 +961,6 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="tab-hidden-list"></div>' +
     '<div class="cust-actions"><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
   panelEl.querySelector('.keep-row').after(row);
-  const db = document.createElement('div');
-  db.className = 'done-bottom';
-  db.innerHTML = '<button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
-  panelEl.appendChild(db);
   refreshCust(panelEl);
 });
 
@@ -1103,6 +1113,36 @@ refreshTabs();
     if (next) showPanel(next.dataset.pid, next);
   }
 })();
+
+// ── Layout: collapsed Settings panel, progress + Collapse all next to the list, sticky Editing bar ──
+document.querySelectorAll('.panel').forEach(panelEl => {
+  const card = panelEl.querySelector('.progress-card');
+  const keep = panelEl.querySelector('.keep-row:not(.region-row)');
+  const reg = panelEl.querySelector('.region-row');
+  const cust = panelEl.querySelector('.cust-row');
+  keep.querySelector('span').textContent = '💾 Clear saved progress after';
+  const wrap = document.createElement('div'); wrap.className = 'settings';
+  const tg = document.createElement('button'); tg.type = 'button'; tg.className = 'settings-toggle'; tg.setAttribute('aria-expanded', 'false');
+  tg.innerHTML = '<span>⚙ Settings &amp; customize</span><span class="chev">▾</span>';
+  tg.onclick = () => { const o = wrap.classList.toggle('open'); tg.setAttribute('aria-expanded', String(o)); };
+  const body = document.createElement('div'); body.className = 'settings-body';
+  const note = document.createElement('div'); note.className = 'settings-note';
+  note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync to your other phones, tablets or browsers, and the Home Screen app keeps its own copy.';
+  body.append(keep, reg, note, cust);
+  wrap.append(tg, body);
+  card.before(wrap);
+  const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
+  const col = document.createElement('div'); col.className = 'pc-btns';
+  card.appendChild(col); col.appendChild(reset); if (all) col.appendChild(all);
+  const tip = panelEl.querySelector('.flag-hint');
+  const sn = document.createElement('div'); sn.className = 'saved-note';
+  sn.innerHTML = '💾 Saved on this device only · clears after <span class="saved-hours"></span>';
+  tip.after(sn);
+  const bar = document.createElement('div'); bar.className = 'edit-bar';
+  bar.innerHTML = '<span>✎ Editing your list</span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
+  panelEl.prepend(bar);
+});
+setKeepHours(keepHours());
 
 restoreProgress();
 if (restoredAt) {
