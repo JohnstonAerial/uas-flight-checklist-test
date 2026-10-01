@@ -288,7 +288,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9f</p>
     </div>
   </div>
   <div class="tabs">
@@ -1105,6 +1105,10 @@ function hideTab(btn) {
   refreshTabs();
   const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
   showPanel(next.dataset.pid, next);
+  // keep customizing: carry on in the next tab so more tabs can be hidden or restored
+  const np = document.getElementById('panel-' + next.dataset.pid);
+  np.classList.add('editing'); refreshCust(np);
+  const nst = np.querySelector('.settings'); if (nst) { nst.classList.add('open'); nst.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 }
 function showTab(pid) {
   tabsCfg.hidden = tabsCfg.hidden.filter(x => x !== pid);
