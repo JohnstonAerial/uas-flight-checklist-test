@@ -188,6 +188,7 @@
   .edit-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; max-width: 600px; margin: 0 auto; z-index: 50; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-bottom: none; border-radius: 14px 14px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.18); padding: 10px 14px calc(10px + env(safe-area-inset-bottom)) 16px; font-size: 13px; font-weight: 600; color: var(--text); }
   .panel.editing { padding-bottom: 76px; }
   .panel.editing .edit-bar { display: flex; }
+  .cust-tip { margin-top: 8px; padding: 8px 10px; background: var(--section-bg); border-radius: 10px; line-height: 1.4; }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -288,7 +289,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9h</p>
     </div>
   </div>
   <div class="tabs">
@@ -969,6 +970,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   row.className = 'cust-row';
   row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize list</button>' +
     '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
+    '<div class="cust-tip">💡 To customize another tab, just tap it at the top — Settings stays open. Press <b>Done</b> when you\'re finished.</div>' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name only. Use Hide and Add to change what\'s in it.</div>' +
