@@ -288,7 +288,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9g</p>
     </div>
   </div>
   <div class="tabs">
@@ -764,6 +764,16 @@ function updateProgress(panel) {
 
 function showPanel(panel, tab) {
   current = panel;
+  // while customizing, switching tabs keeps Settings and editing open on the new tab
+  const prevP = document.querySelector('.panel.active'), nextP = document.getElementById('panel-' + panel);
+  if (prevP && prevP !== nextP) {
+    const pst = prevP.querySelector('.settings'), nst = nextP.querySelector('.settings');
+    const wasEditing = prevP.classList.contains('editing'), wasOpen = !!(pst && pst.classList.contains('open'));
+    prevP.classList.remove('editing'); if (pst) pst.classList.remove('open');
+    if (wasEditing) nextP.classList.add('editing');
+    if (nst && wasOpen) nst.classList.add('open');
+    if (wasEditing || wasOpen) { const t = nextP.querySelector('.settings-toggle'); if (t) t.setAttribute('aria-expanded', 'true'); if (typeof refreshCust === 'function') refreshCust(nextP); }
+  }
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('panel-' + panel).classList.add('active');
@@ -1100,15 +1110,9 @@ function hideTab(btn) {
   if (tabEls.filter(t => !t.classList.contains('tab-hidden')).length <= 1) return;
   if (!tabsCfg.hidden.includes(pid)) tabsCfg.hidden.push(pid);
   tabsSave();
-  panelEl.classList.remove('editing');
-  { const st = panelEl.querySelector('.settings'); if (st) st.classList.remove('open'); }
   refreshTabs();
   const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
   showPanel(next.dataset.pid, next);
-  // keep customizing: carry on in the next tab so more tabs can be hidden or restored
-  const np = document.getElementById('panel-' + next.dataset.pid);
-  np.classList.add('editing'); refreshCust(np);
-  const nst = np.querySelector('.settings'); if (nst) { nst.classList.add('open'); nst.scrollIntoView({ block: 'start', behavior: 'smooth' }); }
 }
 function showTab(pid) {
   tabsCfg.hidden = tabsCfg.hidden.filter(x => x !== pid);
