@@ -189,6 +189,8 @@
   .panel.editing { padding-bottom: 76px; }
   .panel.editing .edit-bar { display: flex; }
   .cust-tip { margin-top: 8px; padding: 8px 10px; background: var(--section-bg); border-radius: 10px; line-height: 1.4; }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; max-width: 90%; background: var(--green); color: #fff; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3); text-align: center; transition: opacity 0.4s; }
+  .toast.gone { opacity: 0; }
   .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
   .panel.editing .xfer { display: none; }
   .xfer-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
@@ -297,7 +299,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9k</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9l</p>
     </div>
   </div>
   <div class="tabs">
@@ -1248,7 +1250,8 @@ function xferApply(el, obj) {
     if (k === XFER_PROGRESS && !withProg) return;               // no progress in the backup: keep what is here
     try { if (k in data) localStorage.setItem(k, data[k]); else localStorage.removeItem(k); } catch (e) {}
   });
-  location.reload();
+  try { sessionStorage.setItem('uasRestored', withProg ? 'progress' : 'settings'); } catch (e) {}
+  location.replace(location.pathname + location.search);       // fresh load, starts at the top
 }
 async function xferRestore(btn) {
   const box = btn.closest('.xfer').querySelector('.xfer-box');
@@ -1305,6 +1308,19 @@ if (restoredAt) {
 }
 
 ['zeitview','mapping','general'].forEach(updateProgress);
+
+// After a restore from a code or file: start at the top with Settings closed, and say so
+(function () {
+  let f = null;
+  try { f = sessionStorage.getItem('uasRestored'); sessionStorage.removeItem('uasRestored'); } catch (e) {}
+  if (!f) return;
+  try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+  window.scrollTo(0, 0); setTimeout(() => window.scrollTo(0, 0), 150); window.addEventListener('load', () => window.scrollTo(0, 0));
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+  t.textContent = '✓ Restored from your backup' + (f === 'progress' ? ' (settings and progress)' : ' (settings)');
+  document.body.appendChild(t);
+  setTimeout(() => { t.classList.add('gone'); setTimeout(() => t.remove(), 500); }, 5000);
+})();
 </script>
 
 <script>
