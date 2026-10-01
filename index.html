@@ -288,7 +288,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9e</p>
     </div>
   </div>
   <div class="tabs">
@@ -919,7 +919,8 @@ function toggleEdit(btn) {
   const on = panelEl.classList.toggle('editing');
   if (!on) {
     const st = panelEl.querySelector('.settings');
-    if (st) { st.classList.remove('open'); const t = st.querySelector('.settings-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); st.scrollIntoView({ block: 'start' }); }
+    if (st) { st.classList.remove('open'); const t = st.querySelector('.settings-toggle'); if (t) t.setAttribute('aria-expanded', 'false'); }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   refreshCust(panelEl);
 }
