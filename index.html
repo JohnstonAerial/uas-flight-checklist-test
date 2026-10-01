@@ -289,7 +289,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9i</p>
     </div>
   </div>
   <div class="tabs">
@@ -1002,8 +1002,8 @@ function updateSectionMeta(panelEl) {
 function syncAllButton(panelEl) {
   const b = panelEl.querySelector('.sec-all');
   if (!b) return;
-  const anyOpen = [...panelEl.querySelectorAll('.section')].some(s => !s.classList.contains('collapsed'));
-  b.textContent = anyOpen ? 'Collapse all' : 'Expand all';
+  const anyCollapsed = [...panelEl.querySelectorAll('.section:not(.all-hidden)')].some(s => s.classList.contains('collapsed'));
+  b.textContent = anyCollapsed ? 'Expand all' : 'Collapse all';
 }
 function setCollapsed(sec, on, save) {
   sec.classList.toggle('collapsed', on);
@@ -1022,8 +1022,8 @@ function toggleSection(head) {
 }
 function toggleAllSections(btn) {
   const panelEl = btn.closest('.panel'), secs = [...panelEl.querySelectorAll('.section')];
-  const anyOpen = secs.some(s => !s.classList.contains('collapsed'));
-  secs.forEach(s => setCollapsed(s, anyOpen, false));
+  const anyCollapsed = secs.filter(s => !s.classList.contains('all-hidden')).some(s => s.classList.contains('collapsed'));
+  secs.forEach(s => setCollapsed(s, !anyCollapsed, false));
   collapseSave(); syncAllButton(panelEl);
 }
 
