@@ -171,6 +171,11 @@
   .add-row button { font-family: inherit; font-size: 13px; color: #fff; background: var(--blue-mid); border: none; border-radius: 10px; padding: 8px 14px; cursor: pointer; }
   .cust-row { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; text-align: center; font-size: 11px; color: var(--text-light); }
   .cust-btn { font-family: inherit; font-size: 12px; color: var(--blue-mid); background: none; border: 1px solid var(--border); border-radius: 14px; padding: 4px 12px; cursor: pointer; }
+  .cust-btn.primary { background: var(--blue-mid); color: #fff; border-color: var(--blue-mid); font-weight: 600; }
+  .panel.editing .cust-toggle { display: none; }
+  .cust-actions { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
+  .done-bottom { display: none; max-width: 600px; margin: 4px auto 18px; padding: 0 16px; text-align: center; }
+  .panel.editing .done-bottom { display: block; }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -271,7 +276,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9a</p>
     </div>
   </div>
   <div class="tabs">
@@ -898,7 +903,7 @@ function addCustomItem(e, form) {
 function toggleEdit(btn) {
   const panelEl = btn.closest('.panel');
   const on = panelEl.classList.toggle('editing');
-  btn.textContent = on ? '✓ Done' : '✎ Customize list';
+  if (!on) panelEl.querySelector('.cust-row').scrollIntoView({ block: 'center' });
   refreshCust(panelEl);
 }
 function restoreDefaults(btn) {
@@ -934,14 +939,18 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   }
   const row = document.createElement('div');
   row.className = 'cust-row';
-  row.innerHTML = '<button type="button" class="cust-btn" onclick="toggleEdit(this)">✎ Customize list</button>' +
+  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize list</button>' +
     '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name only. Use Hide and Add to change what\'s in it.</div>' +
     '<div class="tab-hidden-list"></div>' +
-    '<div style="margin-top:8px"><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
+    '<div class="cust-actions"><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
   panelEl.querySelector('.keep-row').after(row);
+  const db = document.createElement('div');
+  db.className = 'done-bottom';
+  db.innerHTML = '<button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
+  panelEl.appendChild(db);
   refreshCust(panelEl);
 });
 
@@ -1078,8 +1087,7 @@ function hideTab(btn) {
   if (!tabsCfg.hidden.includes(pid)) tabsCfg.hidden.push(pid);
   tabsSave();
   panelEl.classList.remove('editing');
-  const cb = panelEl.querySelector('.cust-btn'); if (cb) cb.textContent = '✎ Customize list';
-  refreshTabs();
+    refreshTabs();
   const next = tabEls.find(t => !t.classList.contains('tab-hidden'));
   showPanel(next.dataset.pid, next);
 }
