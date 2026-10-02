@@ -308,7 +308,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v2.9o</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.0</p>
     </div>
   </div>
   <div class="tabs">
@@ -1376,7 +1376,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   tg.onclick = () => { const o = wrap.classList.toggle('open'); tg.setAttribute('aria-expanded', String(o)); };
   const body = document.createElement('div'); body.className = 'settings-body';
   const note = document.createElement('div'); note.className = 'settings-note';
-  note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync by themselves, and the Home Screen app keeps its own copy. To copy them to another phone, tablet or browser, use Back up & restore below.';
+  note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync by themselves, and on some devices a Home Screen app keeps its own separate copy. To copy them to another phone, tablet or browser, use Back up & restore below.';
   body.append(keep, reg, note, cust, makeXfer());
   wrap.append(tg, body);
   card.before(wrap);
