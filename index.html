@@ -295,7 +295,6 @@
   .wx-key-prompt a { color: var(--blue-mid); }
   .wx-updated.wx-stale { color: var(--amber); font-weight: 600; }
   .wx-updated { font-size: 10px; color: var(--text-light); text-align: right; margin-top: 8px; }
-  .wx-item.wide { grid-column: 1 / -1; }
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
   .wx-sun { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
   .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
@@ -1610,7 +1609,7 @@ const fmtSpeedNum = (mph) => isMetric() ? Math.round(mph * 1.609344) : Math.roun
 const speedUnit = () => isMetric() ? 'km/h' : 'mph';
 const fmtTemp = (f) => isMetric() ? Math.round((f - 32) * 5 / 9) + '°C' : Math.round(f) + '°F';
 const fmtVis = (m) => m == null ? '—' : isMetric() ? (m / 1000).toFixed(1) + ' km' : (m / 1609.34).toFixed(1) + ' mi';
-const fmtPrecip = (mm) => isMetric() ? (mm < 10 ? mm.toFixed(1) : Math.round(mm)) + ' mm' : (mm / 25.4).toFixed(2) + ' in';
+const fmtPrecip = (mm) => isMetric() ? (mm < 10 ? mm.toFixed(1) : Math.round(mm)) + '\u00a0mm' : (mm / 25.4).toFixed(2) + '\u00a0in';
 const fmtDist = (mi) => isMetric() ? Math.round(mi * 1.609344) + ' km' : Math.round(mi) + ' mi';
 const fmtAlt = (ft) => isMetric() ? (Math.round(ft * 0.3048 / 10) * 10).toLocaleString() + ' m' : Number(ft).toLocaleString() + ' ft';
 function updateUnitsButton() {
@@ -1737,7 +1736,7 @@ async function renderWeather(lat, lon) {
   lastDraw = null;
   try {
       const [wxRes, kpData, metarData] = await Promise.allSettled([
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code&hourly=visibility,wind_speed_120m,precipitation_probability,precipitation&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_120m,precipitation_probability,precipitation&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
         fetchKP(),
         fetchMetar(lat, lon)
       ]);
@@ -1761,6 +1760,8 @@ async function renderWeather(lat, lon) {
         sunrise: om.daily && om.daily.sunrise ? om.daily.sunrise[0] : null,
         sunset: om.daily && om.daily.sunset ? om.daily.sunset[0] : null,
         weatherCode: cur.weather_code,
+        humidity: cur.relative_humidity_2m,
+        dewPoint: cur.dew_point_2m,
         precipNow: cur.precipitation,
         precipNext: (() => {
           // next 6 hours: peak chance of rain and total expected
@@ -1792,6 +1793,13 @@ async function renderWeather(lat, lon) {
         ? '☁️ Lowest cloud nearby: ' + lc.cover + ' ' + fmtAlt(lc.base) + ' (' + lc.station + ')' : '';
 
       if (lc && lc.base < 1000 && ceilClass === 'wx-good') ceilClass = 'wx-warn';   // a low layer nearby is worth a caution colour
+
+      // Humidity and dew point: a small gap between temperature and dew point means fog, mist or lens fogging
+      const dewOk = wx.dewPoint != null && wx.humidity != null;
+      const dewSpreadF = dewOk ? wx.main.temp - wx.dewPoint : null;
+      const dewClass = !dewOk ? '' : dewSpreadF <= 2 ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good';
+      const dewNote = !dewOk ? 'No data' : dewSpreadF <= 2 ? 'Fog likely' : dewSpreadF <= 4 ? 'Fog or lens fogging possible' : 'Low fog risk';
+      const dewSub = !dewOk ? '' : 'Dew point ' + fmtTemp(wx.dewPoint) + ' · ' + dewNote;
 
       // Precipitation: current conditions + next 6 hours
       const WX_CODES = { 51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle', 56:'Freezing drizzle', 57:'Freezing drizzle',
@@ -1842,10 +1850,15 @@ async function renderWeather(lat, lon) {
             <div class="wx-value ${kpClass}">${kpVal}</div>
             <div class="wx-sub">${kpNote}</div>
           </div>
-          <div class="wx-item wide">
+          <div class="wx-item">
             <div class="wx-label">Precipitation</div>
             <div class="wx-value ${precipClass}">${precipVal}</div>
             <div class="wx-sub">${precipSub}</div>
+          </div>
+          <div class="wx-item">
+            <div class="wx-label">Humidity</div>
+            <div class="wx-value ${dewClass}">${dewOk ? Math.round(wx.humidity) + '%' : '—'}</div>
+            <div class="wx-sub">${dewSub}</div>
           </div>
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}</div>
