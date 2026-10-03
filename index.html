@@ -295,6 +295,8 @@
   .wx-key-prompt a { color: var(--blue-mid); }
   .wx-updated.wx-stale { color: var(--amber); font-weight: 600; }
   .wx-updated { font-size: 10px; color: var(--text-light); text-align: right; margin-top: 8px; }
+  .wx-link { display: inline-block; margin-top: 4px; font-size: 11px; color: var(--blue-mid); text-decoration: none; }
+  .wx-disclaimer a { color: inherit; }
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
   .wx-sun { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
   .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
@@ -309,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1b</p>
     </div>
   </div>
   <div class="tabs">
@@ -1485,6 +1487,85 @@ function distMi(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
+// ── Present weather from airport reports (rain, drizzle, snow, storms) ──
+function decodePrecip(wx) {
+  if (!wx) return null;
+  const NAMES = { DZ: 'drizzle', RA: 'rain', SN: 'snow', SG: 'snow grains', IC: 'ice crystals', PL: 'ice pellets', GR: 'hail', GS: 'small hail', UP: 'precipitation' };
+  for (const g of String(wx).split(/\\s+/)) {
+    const vic = g.startsWith('VC');
+    const inten = g[0] === '-' ? 'light ' : g[0] === '+' ? 'heavy ' : '';
+    const body = g.replace(/^[-+]|^VC/, '');
+    const types = (body.match(/DZ|RA|SN|SG|IC|PL|GR|GS|UP/g) || []).map(t => NAMES[t]);
+    let txt = null;
+    if (types.length) txt = inten + types.join(' and ');
+    else if (/TS/.test(body)) txt = 'thunderstorm';
+    else if (/SH/.test(body)) txt = 'showers';
+    if (!txt) continue;
+    if (/TS/.test(body) && types.length) txt = 'thunderstorm with ' + txt;
+    return vic ? txt + ' in the vicinity' : txt;
+  }
+  return null;
+}
+
+// ── Radar at your location: RainViewer (free, worldwide, no key) ──
+const RADAR_ZOOM = 7;          // about 1 km per pixel
+const RADAR_NEAR_PX = 5;       // "nearby" = within about 5 pixels (roughly 3 miles)
+const RADAR_MAX_AGE_MIN = 30;  // ignore radar frames older than this
+
+async function loadTilePixels(url, signal) {
+  const res = await fetch(url, { signal });
+  if (!res.ok) throw new Error('tile ' + res.status);
+  const bmp = await createImageBitmap(await res.blob());
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(bmp, 0, 0);
+  return g.getImageData(0, 0, 256, 256).data;
+}
+
+async function fetchRadar(lat, lon) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 8000);
+  try {
+    const res = await fetch('https://api.rainviewer.com/public/weather-maps.json', { signal: ctl.signal });
+    if (!res.ok) throw new Error('radar index ' + res.status);
+    const idx = await res.json();
+    const frames = idx.radar && idx.radar.past;
+    if (!frames || !frames.length) throw new Error('no radar frames');
+    const fr = frames[frames.length - 1];
+    const ageMin = Math.max(0, (Date.now() / 1000 - fr.time) / 60);
+    if (ageMin > RADAR_MAX_AGE_MIN) throw new Error('radar frame is stale');
+    const z = RADAR_ZOOM, n = 2 ** z, r = Math.PI / 180;
+    const fx = (lon + 180) / 360 * n;
+    const fy = (1 - Math.asinh(Math.tan(lat * r)) / Math.PI) / 2 * n;
+    const tx = Math.floor(fx), ty = Math.floor(fy);
+    const px = Math.floor((fx - tx) * 256), py = Math.floor((fy - ty) * 256);
+    const [cov, rad] = await Promise.all([
+      loadTilePixels(`${idx.host}/v2/coverage/0/256/${z}/${tx}/${ty}/0/0_0.png`, ctl.signal),
+      loadTilePixels(`${idx.host}${fr.path}/256/${z}/${tx}/${ty}/0/0_0.png`, ctl.signal)
+    ]);
+    const alphaAt = (data, x, y) => (x < 0 || y < 0 || x > 255 || y > 255) ? 0 : data[(y * 256 + x) * 4 + 3];
+    // The coverage layer is opaque where there is NO radar
+    const covered = alphaAt(cov, px, py) === 0;
+    let over = false, near = false;
+    if (covered) {
+      for (let dy = -RADAR_NEAR_PX; dy <= RADAR_NEAR_PX; dy++) {
+        for (let dx = -RADAR_NEAR_PX; dx <= RADAR_NEAR_PX; dx++) {
+          const d = Math.hypot(dx, dy);
+          if (d > RADAR_NEAR_PX) continue;
+          if (alphaAt(rad, px + dx, py + dy) > 0) { near = true; if (d <= 1.5) over = true; }
+        }
+      }
+    }
+    const nearMi = RADAR_NEAR_PX * 1223 * Math.cos(lat * r) / 1609.34;
+    return { covered, over, near, ageMin, nearMi };
+  } catch (e) {
+    console.warn('Radar fetch failed:', e.message);
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 const METAR_RADIUS_MI = 30;      // look at every reporting station within this distance
 const METAR_MAX_AGE_MIN = 180;   // ignore reports older than 3 hours when fresher ones exist
 
@@ -1530,7 +1611,13 @@ async function fetchMetar(lat, lon) {
     // Lowest cloud layer of any cover across all stations in range (for the 500 ft below clouds rule)
     let lowCloud = null;
     for (const x of pool) if (x.low && (!lowCloud || x.low.base < lowCloud.base)) lowCloud = { ...x.low, station: x.st.icaoId || '?' };
-    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud };
+    // Nearest station that is reporting rain, drizzle, snow or storms right now
+    let precipReport = null;
+    for (const x of pool) {
+      const t = decodePrecip(x.st.wxString);
+      if (t && (!precipReport || x.d < precipReport.dist)) precipReport = { station: x.st.icaoId || '?', dist: x.d, text: t };
+    }
+    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, precipReport };
   } catch (e) {
     console.warn('METAR fetch failed:', e.message);
     return null;
@@ -1735,10 +1822,11 @@ async function renderWeather(lat, lon) {
   const my = ++wxReq;
   lastDraw = null;
   try {
-      const [wxRes, kpData, metarData] = await Promise.allSettled([
+      const [wxRes, kpData, metarData, radarRes] = await Promise.allSettled([
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_120m,precipitation_probability,precipitation&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
         fetchKP(),
-        fetchMetar(lat, lon)
+        fetchMetar(lat, lon),
+        fetchRadar(lat, lon)
       ]);
 
       if (my !== wxReq) return;   // a newer request replaced this one
@@ -1748,6 +1836,7 @@ async function renderWeather(lat, lon) {
       if (!om.current) throw new Error('No weather data returned');
       const kpData2 = kpData.status === 'fulfilled' ? kpData.value : null;
       const metarData2 = metarData.status === 'fulfilled' ? metarData.value : null;
+      const radarData2 = radarRes.status === 'fulfilled' ? radarRes.value : null;
 
       // Normalize Open-Meteo response
       const cur = om.current;
@@ -1808,11 +1897,26 @@ async function renderWeather(lat, lon) {
         85:'Snow showers', 86:'Snow showers', 95:'Thunderstorm', 96:'Thunderstorm, hail', 99:'Thunderstorm, hail' };
       const precipLabel = WX_CODES[wx.weatherCode] || (wx.precipNow > 0 ? 'Precipitation' : null);
       const precipNext = wx.precipNext;
-      const precipClass = precipLabel ? 'wx-alert' : (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good';
-      const precipVal = precipLabel || 'None now';
       const precipSub = precipNext
-        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) : '')
+        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (model)' : ' (model)')
         : 'No forecast data';
+      // Best evidence first: radar over you, then the forecast model's current conditions, then airport reports, then radar nearby
+      const precipBlock = () => {
+        const rd = radarData2, pm = metarData2 && metarData2.precipReport;
+        let val, cls;
+        if (rd && rd.covered && rd.over) { val = 'Precip. over you'; cls = 'wx-alert'; }
+        else if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
+        else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
+        else if (rd && rd.covered && rd.near) { val = 'Precip. nearby'; cls = 'wx-warn'; }
+        else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
+        const lines = [];
+        if (!rd) lines.push('Radar unavailable');
+        else if (!rd.covered) lines.push('No radar coverage here');
+        else lines.push('Radar: ' + (rd.over ? 'echo over you' : rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + ageText(rd.ageMin * 60000));
+        if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
+        lines.push(precipSub);
+        return { val, cls, lines };
+      };
 
       const kp = kpData2;
       const kpVal = kp !== null ? kp.toFixed(1) : '—';
@@ -1825,6 +1929,7 @@ async function renderWeather(lat, lon) {
       const draw = () => {
         const ceilTxt = metarData2 ? ceilingText(ceilFt, m) : '—';
         const ceilNote = metarData2 ? ceilingNote(ceilFt, m) : 'No METAR data';
+        const pb = precipBlock();
         const wind120Txt = wx.wind120 != null ? ` · ${isMetric() ? '120 m' : '400 ft'}: ${fmtSpeed(wx.wind120)}` : '';
         body.innerHTML = `
         <div class="wx-grid">
@@ -1852,8 +1957,9 @@ async function renderWeather(lat, lon) {
           </div>
           <div class="wx-item">
             <div class="wx-label">Precipitation</div>
-            <div class="wx-value ${precipClass}">${precipVal}</div>
-            <div class="wx-sub">${precipSub}</div>
+            <div class="wx-value ${pb.cls}">${pb.val}</div>
+            ${pb.lines.map(l => `<div class="wx-sub">${l}</div>`).join('')}
+            <a class="wx-link" href="https://www.rainviewer.com/map.html?loc=${lat.toFixed(3)},${lon.toFixed(3)},8&layer=radar" target="_blank" rel="noopener">Radar map ›</a>
           </div>
           <div class="wx-item">
             <div class="wx-label">Humidity</div>
@@ -1863,7 +1969,7 @@ async function renderWeather(lat, lon) {
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}</div>
         <div class="wx-updated" id="wx-updated">Updated ${now} · ${stationId ? 'METAR ' + stationId : lat.toFixed(2) + ', ' + lon.toFixed(2)}<span id="wx-age"></span></div>
-        <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly.</div>
+        <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
         `;
         refreshAge();
       };
