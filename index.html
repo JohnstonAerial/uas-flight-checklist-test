@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1g</p>
     </div>
   </div>
   <div class="tabs">
@@ -1956,7 +1956,9 @@ async function renderWeather(lat, lon) {
         else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + ageText(rd.ageMin * 60000) + ')');
         if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
         lines.push(precipSub);
-        if (wx.outlook && wx.outlook.rain) lines.push(wx.outlook.rain);
+        // Live evidence (radar echoes nearby or an airport reporting precipitation) outranks the model's timing
+        const liveWet = !!pm || !!(rd && rd.covered && rd.near);
+        if (wx.outlook && wx.outlook.rain && !liveWet) lines.push(wx.outlook.rain);
         if (wx.outlook && wx.outlook.storm) lines.push(wx.outlook.storm);
         return { val, cls, lines };
       };
