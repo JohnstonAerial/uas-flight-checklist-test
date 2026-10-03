@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1k</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1l</p>
     </div>
   </div>
   <div class="tabs">
@@ -1975,17 +1975,17 @@ async function renderWeather(lat, lon, attempt = 1) {
         return 'Precipitation';
       })();
       const precipSub = precipNext
-        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (model)' : ' (model)')
+        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (forecast)' : ' (forecast)')
         : 'No forecast data';
       // Best evidence first: the model's current conditions; radar + airport agreeing; radar nearby; an airport report alone
       const precipBlock = () => {
         const rd = radarData2, pm = metarData2 && metarData2.precipReport;
-        let val, cls;
+        let val, cls, forecastOnly = false;
         const radarNear = !!(rd && rd.covered && rd.near);
         if (precipLabel && pm) { val = pm.text.charAt(0).toUpperCase() + pm.text.slice(1); cls = 'wx-alert'; }   // model + airport agree: use the airport's observed wording
         else if (pm && radarNear) { val = 'Precip. likely'; cls = 'wx-alert'; }                                  // radar echoes close AND an airport reports precipitation
         else if (precipLabel && radarNear) { val = 'Precip. likely'; cls = 'wx-alert'; }                         // model + radar agree (no strength word: the model is unreliable on intensity)
-        else if (precipLabel) { val = modelPrecipType + ' (model)'; cls = /thunder/i.test(modelPrecipType) ? 'wx-alert' : 'wx-warn'; }  // model alone: type only, no strength
+        else if (precipLabel) { val = (modelPrecipType === 'Precipitation' ? 'Precip.' : modelPrecipType) + ' possible'; forecastOnly = true; cls = /thunder/i.test(modelPrecipType) ? 'wx-alert' : 'wx-warn'; }  // model alone: type only, no strength
         else if (radarNear) { val = 'Precip. nearby'; cls = 'wx-warn'; }
         else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
         else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
@@ -1994,6 +1994,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         else if (!rd.covered) lines.push('No radar coverage here');
         else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + ageText(rd.ageMin * 60000) + ')');
         if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
+        if (forecastOnly) lines.push(rd && rd.covered ? 'Forecast only \u2014 nothing on radar' : 'Forecast only');
         lines.push(precipSub);
         // Live evidence (radar echoes nearby or an airport reporting precipitation) outranks the model's timing
         const liveWet = !!pm || !!(rd && rd.covered && rd.near);
