@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1f</p>
     </div>
   </div>
   <div class="tabs">
@@ -1833,7 +1833,7 @@ async function renderWeather(lat, lon) {
   lastDraw = null;
   try {
       const [wxRes, kpData, metarData, radarRes] = await Promise.allSettled([
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_120m,precipitation_probability,precipitation&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_120m,precipitation_probability,precipitation,weather_code,cape&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
         fetchKP(),
         fetchMetar(lat, lon),
         fetchRadar(lat, lon)
@@ -1862,6 +1862,38 @@ async function renderWeather(lat, lon) {
         humidity: cur.relative_humidity_2m,
         dewPoint: cur.dew_point_2m,
         precipNow: cur.precipitation,
+        // Outlook for the next 12 hours: when rain is expected / the next dry stretch, and storm potential.
+        // Only produces lines when there is something worth saying (rain in the forecast or storms possible).
+        outlook: (() => {
+          const H = om.hourly;
+          if (hIdx < 0 || !H || !H.precipitation_probability) return null;
+          const hrLabel = (i) => new Date(H.time[i]).toLocaleTimeString([], { hour: 'numeric' });
+          const n = Math.min(12, H.time.length - hIdx);
+          const wet = (i) => (H.precipitation_probability[i] >= 40) || ((H.precipitation || [])[i] >= 0.2);
+          const hrs = Array.from({ length: n }, (_, k) => hIdx + k);
+          const out = { rain: null, storm: null };
+          if (hrs.some(wet)) {
+            if (wet(hIdx)) {
+              // wet now: find the next dry stretch of at least 2 hours
+              let found = null;
+              for (let k = 1; k < n - 1 && !found; k++) {
+                if (!wet(hIdx + k) && !wet(hIdx + k + 1)) {
+                  let e = k; while (e + 1 < n && !wet(hIdx + e + 1)) e++;
+                  found = { from: hIdx + k, to: hIdx + e + 1 };
+                }
+              }
+              out.rain = found ? 'Dry window ~' + hrLabel(found.from) + ' – ' + hrLabel(Math.min(found.to, H.time.length - 1))
+                               : 'No dry window in the next 12 hrs';
+            } else {
+              const first = hrs.find(wet);
+              out.rain = 'Rain likely ~' + hrLabel(first);
+            }
+          }
+          const cape = H.cape || [], wc = H.weather_code || [];
+          const stormHr = hrs.find(i => wc[i] >= 95 || (cape[i] >= 1000 && H.precipitation_probability[i] >= 30));
+          if (stormHr !== undefined) out.storm = '⚡ Storms possible ~' + hrLabel(stormHr);
+          return (out.rain || out.storm) ? out : null;
+        })(),
         precipNext: (() => {
           // next 6 hours: peak chance of rain and total expected
           if (hIdx < 0 || !om.hourly.precipitation_probability) return null;
@@ -1924,6 +1956,8 @@ async function renderWeather(lat, lon) {
         else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + ageText(rd.ageMin * 60000) + ')');
         if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
         lines.push(precipSub);
+        if (wx.outlook && wx.outlook.rain) lines.push(wx.outlook.rain);
+        if (wx.outlook && wx.outlook.storm) lines.push(wx.outlook.storm);
         return { val, cls, lines };
       };
 
