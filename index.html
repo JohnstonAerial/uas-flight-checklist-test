@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1l</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1m</p>
     </div>
   </div>
   <div class="tabs">
@@ -1894,7 +1894,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           if (hIdx < 0 || !H || !H.precipitation_probability) return null;
           const hrLabel = (i) => new Date(H.time[i]).toLocaleTimeString([], { hour: 'numeric' });
           const n = Math.min(12, H.time.length - hIdx);
-          const wet = (i) => (H.precipitation_probability[i] >= 40) || ((H.precipitation || [])[i] >= 0.2);
+          const wet = (i) => (H.precipitation_probability[i] >= 30) || ((H.precipitation || [])[i] >= 0.2);
           const hrs = Array.from({ length: n }, (_, k) => hIdx + k);
           const out = { rain: null, storm: null };
           if (hrs.some(wet)) {
@@ -1907,8 +1907,8 @@ async function renderWeather(lat, lon, attempt = 1) {
                   found = { from: hIdx + k, to: hIdx + e + 1 };
                 }
               }
-              out.rain = found ? 'Dry window ~' + hrLabel(found.from) + ' – ' + hrLabel(Math.min(found.to, H.time.length - 1))
-                               : 'No dry window in the next 12 hrs';
+              out.rain = found ? 'Lower rain chance ~' + hrLabel(found.from) + ' – ' + hrLabel(Math.min(found.to, H.time.length - 1))
+                               : 'No lower-chance window in the next 12 hrs';
             } else {
               const first = hrs.find(wet);
               out.rain = 'Rain likely ~' + hrLabel(first);
@@ -1988,7 +1988,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         else if (precipLabel) { val = (modelPrecipType === 'Precipitation' ? 'Precip.' : modelPrecipType) + ' possible'; forecastOnly = true; cls = /thunder/i.test(modelPrecipType) ? 'wx-alert' : 'wx-warn'; }  // model alone: type only, no strength
         else if (radarNear) { val = 'Precip. nearby'; cls = 'wx-warn'; }
         else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
-        else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
+        else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 30 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
         const lines = [];
         if (!rd) lines.push('Radar unavailable');
         else if (!rd.covered) lines.push('No radar coverage here');
