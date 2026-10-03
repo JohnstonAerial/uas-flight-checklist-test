@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1d</p>
     </div>
   </div>
   <div class="tabs">
@@ -1906,7 +1906,7 @@ async function renderWeather(lat, lon) {
         let val, cls;
         if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
         else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
-        else if (rd && rd.covered && rd.near) { val = 'Precip. near you'; cls = 'wx-warn'; }
+        else if (rd && rd.covered && rd.near) { val = 'Precip. nearby'; cls = 'wx-warn'; }
         else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
         const lines = [];
         if (!rd) lines.push('Radar unavailable');
