@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1k</p>
     </div>
   </div>
   <div class="tabs">
@@ -1520,6 +1520,7 @@ function decodePrecip(wx) {
 // ── Radar at your location: RainViewer (free, worldwide, no key) ──
 const RADAR_ZOOM = 7;          // about 1 km per pixel
 const RADAR_NEAR_PX = 5;       // "nearby" = within about 5 pixels (roughly 3 miles)
+const RADAR_MIN_ALPHA = 120;   // ignore the faint tan haze (very light returns, drizzle aloft, clutter)
 const RADAR_MAX_AGE_MIN = 30;  // ignore radar frames older than this
 
 async function loadTilePixels(url, signal) {
@@ -1549,20 +1550,32 @@ async function fetchRadar(lat, lon) {
     const fy = (1 - Math.asinh(Math.tan(lat * r)) / Math.PI) / 2 * n;
     const tx = Math.floor(fx), ty = Math.floor(fy);
     const px = Math.floor((fx - tx) * 256), py = Math.floor((fy - ty) * 256);
-    const [cov, rad] = await Promise.all([
-      loadTilePixels(`${idx.host}/v2/coverage/0/256/${z}/${tx}/${ty}/0/0_0.png`, ctl.signal),
-      loadTilePixels(`${idx.host}${fr.path}/256/${z}/${tx}/${ty}/0/0_0.png`, ctl.signal)
-    ]);
-    const alphaAt = (data, x, y) => (x < 0 || y < 0 || x > 255 || y > 255) ? 0 : data[(y * 256 + x) * 4 + 3];
+    // Read the home tile plus any neighbor the search circle reaches into
+    const tiles = {};
+    const need = new Set(['0,0']);
+    for (const ddx of [-RADAR_NEAR_PX, RADAR_NEAR_PX]) for (const ddy of [-RADAR_NEAR_PX, RADAR_NEAR_PX]) {
+      need.add(Math.floor((px + ddx) / 256) + ',' + Math.floor((py + ddy) / 256));
+    }
+    const get = (u) => loadTilePixels(u, ctl.signal);
+    const cov = await get(`${idx.host}/v2/coverage/0/256/${z}/${tx}/${ty}/0/0_0.png`);
+    await Promise.all([...need].map(async k => {
+      const [ox, oy] = k.split(',').map(Number);
+      try { tiles[k] = await get(`${idx.host}${fr.path}/256/${z}/${tx + ox}/${ty + oy}/0/0_0.png`); }
+      catch (e) { if (k === '0,0') throw e; tiles[k] = null; }
+    }));
+    const alphaAt = (x, y) => {
+      const t = tiles[Math.floor(x / 256) + ',' + Math.floor(y / 256)];
+      if (!t) return 0;
+      return t[(((y % 256) + 256) % 256 * 256 + ((x % 256) + 256) % 256) * 4 + 3];
+    };
     // The coverage layer is opaque where there is NO radar
-    const covered = alphaAt(cov, px, py) === 0;
+    const covered = cov[(py * 256 + px) * 4 + 3] === 0;
     let near = false;
     if (covered) {
       for (let dy = -RADAR_NEAR_PX; dy <= RADAR_NEAR_PX; dy++) {
         for (let dx = -RADAR_NEAR_PX; dx <= RADAR_NEAR_PX; dx++) {
-          const d = Math.hypot(dx, dy);
-          if (d > RADAR_NEAR_PX) continue;
-          if (alphaAt(rad, px + dx, py + dy) > 0) near = true;
+          if (Math.hypot(dx, dy) > RADAR_NEAR_PX) continue;
+          if (alphaAt(px + dx, py + dy) >= RADAR_MIN_ALPHA) near = true;
         }
       }
     }
