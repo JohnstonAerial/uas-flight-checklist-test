@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1m</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1n</p>
     </div>
   </div>
   <div class="tabs">
@@ -1907,8 +1907,8 @@ async function renderWeather(lat, lon, attempt = 1) {
                   found = { from: hIdx + k, to: hIdx + e + 1 };
                 }
               }
-              out.rain = found ? 'Lower rain chance ~' + hrLabel(found.from) + ' – ' + hrLabel(Math.min(found.to, H.time.length - 1))
-                               : 'No lower-chance window in the next 12 hrs';
+              out.rain = found ? 'Best window ~' + hrLabel(found.from) + ' – ' + hrLabel(Math.min(found.to, H.time.length - 1))
+                               : 'No clear window next 12 hrs';
             } else {
               const first = hrs.find(wet);
               out.rain = 'Rain likely ~' + hrLabel(first);
