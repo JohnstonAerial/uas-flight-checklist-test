@@ -1485,7 +1485,7 @@ function distMi(lat1, lon1, lat2, lon2) {
   return 2 * R * Math.asin(Math.sqrt(a));
 }
 
-const METAR_RADIUS_MI = 25;      // look at every reporting station within this distance
+const METAR_RADIUS_MI = 30;      // look at every reporting station within this distance
 const METAR_MAX_AGE_MIN = 180;   // ignore reports older than 3 hours when fresher ones exist
 
 const SKY_CLEAR = ['CLR', 'SKC', 'NSC', 'NCD', 'CAVOK'];
