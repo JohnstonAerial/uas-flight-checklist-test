@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1c</p>
     </div>
   </div>
   <div class="tabs">
@@ -1546,18 +1546,18 @@ async function fetchRadar(lat, lon) {
     const alphaAt = (data, x, y) => (x < 0 || y < 0 || x > 255 || y > 255) ? 0 : data[(y * 256 + x) * 4 + 3];
     // The coverage layer is opaque where there is NO radar
     const covered = alphaAt(cov, px, py) === 0;
-    let over = false, near = false;
+    let near = false;
     if (covered) {
       for (let dy = -RADAR_NEAR_PX; dy <= RADAR_NEAR_PX; dy++) {
         for (let dx = -RADAR_NEAR_PX; dx <= RADAR_NEAR_PX; dx++) {
           const d = Math.hypot(dx, dy);
           if (d > RADAR_NEAR_PX) continue;
-          if (alphaAt(rad, px + dx, py + dy) > 0) { near = true; if (d <= 1.5) over = true; }
+          if (alphaAt(rad, px + dx, py + dy) > 0) near = true;
         }
       }
     }
     const nearMi = RADAR_NEAR_PX * 1223 * Math.cos(lat * r) / 1609.34;
-    return { covered, over, near, ageMin, nearMi };
+    return { covered, near, ageMin, nearMi, frameTime: fr.time * 1000 };
   } catch (e) {
     console.warn('Radar fetch failed:', e.message);
     return null;
@@ -1900,19 +1900,18 @@ async function renderWeather(lat, lon) {
       const precipSub = precipNext
         ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (model)' : ' (model)')
         : 'No forecast data';
-      // Best evidence first: radar over you, then the forecast model's current conditions, then airport reports, then radar nearby
+      // Best evidence first: the forecast model's current conditions, then airport reports, then radar nearby
       const precipBlock = () => {
         const rd = radarData2, pm = metarData2 && metarData2.precipReport;
         let val, cls;
-        if (rd && rd.covered && rd.over) { val = 'Precip. over you'; cls = 'wx-alert'; }
-        else if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
+        if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
         else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
-        else if (rd && rd.covered && rd.near) { val = 'Precip. nearby'; cls = 'wx-warn'; }
+        else if (rd && rd.covered && rd.near) { val = 'Precip. near you'; cls = 'wx-warn'; }
         else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
         const lines = [];
         if (!rd) lines.push('Radar unavailable');
         else if (!rd.covered) lines.push('No radar coverage here');
-        else lines.push('Radar: ' + (rd.over ? 'echo over you' : rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + ageText(rd.ageMin * 60000));
+        else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + ageText(rd.ageMin * 60000) + ')');
         if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
         lines.push(precipSub);
         return { val, cls, lines };
