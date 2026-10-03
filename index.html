@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1e</p>
     </div>
   </div>
   <div class="tabs">
@@ -713,6 +713,16 @@ function restoreProgress() {
     });
   });
   if (n) restoredAt = data.savedAt;
+}
+
+function nwsRadarUrl(lat, lon) {
+  // NWS radar page opens centered on the chosen location (settings are base64 JSON)
+  try {
+    const s = { agenda: { id: 'weather', center: [+lon.toFixed(3), +lat.toFixed(3)], location: [+lon.toFixed(3), +lat.toFixed(3)], zoom: 8, layer: 'bref_qcd' },
+      animating: false, base: 'standard', artcc: false, county: false, cwa: false, rfc: false, state: false, menu: true, shortFusedOnly: false,
+      opacity: { alerts: 0.8, local: 0.6, localStations: 0.8, national: 0.6 } };
+    return 'https://radar.weather.gov/?settings=v1_' + btoa(JSON.stringify(s));
+  } catch (e) { return 'https://radar.weather.gov'; }
 }
 
 function ageText(ms) {
@@ -1970,6 +1980,7 @@ async function renderWeather(lat, lon) {
         <div class="wx-updated" id="wx-updated">Updated ${now} · ${stationId ? 'METAR ' + stationId : lat.toFixed(2) + ', ' + lon.toFixed(2)}<span id="wx-age"></span></div>
         <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
         `;
+        document.querySelectorAll('.wx-radar').forEach(a => { a.href = nwsRadarUrl(lat, lon); });
         refreshAge();
       };
       lastDraw = draw;
