@@ -294,7 +294,7 @@
   .wx-key-prompt { font-size: 12px; color: var(--text-muted); background: var(--section-bg); border-radius: 8px; padding: 8px 10px; text-align: center; }
   .wx-key-prompt a { color: var(--blue-mid); }
   .wx-updated.wx-stale { color: var(--amber); font-weight: 600; }
-  .wx-updated { font-size: 10px; color: var(--text-light); text-align: right; margin-top: 8px; }
+  .wx-updated { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; }
   .wx-link { display: inline-block; margin-top: 4px; font-size: 11px; color: var(--blue-mid); text-decoration: none; }
   .wx-disclaimer a { color: inherit; }
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1i</p>
     </div>
   </div>
   <div class="tabs">
@@ -1964,6 +1964,14 @@ async function renderWeather(lat, lon) {
         return { val, cls, lines };
       };
 
+      // Data sources for the footer: the forecast model, the airport station(s) behind the ceiling / precipitation reports, and radar
+      const srcStations = [stationId, metarData2 && metarData2.precipReport && metarData2.precipReport.station].filter((v, i, a) => v && a.indexOf(v) === i);
+      const srcParts = ['Open-Meteo'];
+      if (srcStations.length) srcParts.push('METAR ' + srcStations.join(', '));
+      else srcParts.push(lat.toFixed(2) + ', ' + lon.toFixed(2));
+      if (radarData2 && radarData2.covered && radarData2.frameTime) srcParts.push('Radar ' + new Date(radarData2.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      const srcText = srcParts.join(' · ');
+
       const kp = kpData2;
       const kpVal = kp !== null ? kp.toFixed(1) : '—';
       const kpClass = kp !== null ? kpColor(kp) : '';
@@ -2014,7 +2022,7 @@ async function renderWeather(lat, lon) {
           </div>
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}</div>
-        <div class="wx-updated" id="wx-updated">Updated ${now} · ${stationId ? 'METAR ' + stationId : lat.toFixed(2) + ', ' + lon.toFixed(2)}<span id="wx-age"></span></div>
+        <div class="wx-updated" id="wx-updated">Updated ${now} · ${srcText}<span id="wx-age"></span></div>
         <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
         `;
         document.querySelectorAll('.wx-radar').forEach(a => { a.href = nwsRadarUrl(lat, lon); });
