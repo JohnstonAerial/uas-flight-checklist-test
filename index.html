@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1h</p>
     </div>
   </div>
   <div class="tabs">
@@ -1942,13 +1942,14 @@ async function renderWeather(lat, lon) {
       const precipSub = precipNext
         ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (model)' : ' (model)')
         : 'No forecast data';
-      // Best evidence first: the forecast model's current conditions, then airport reports, then radar nearby
+      // Best evidence first: the model's current conditions; radar + airport agreeing; radar nearby; an airport report alone
       const precipBlock = () => {
         const rd = radarData2, pm = metarData2 && metarData2.precipReport;
         let val, cls;
         if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
-        else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
+        else if (pm && rd && rd.covered && rd.near) { val = 'Precip. likely'; cls = 'wx-alert'; }   // radar echoes close AND an airport reports precipitation
         else if (rd && rd.covered && rd.near) { val = 'Precip. nearby'; cls = 'wx-warn'; }
+        else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
         else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
         const lines = [];
         if (!rd) lines.push('Radar unavailable');
