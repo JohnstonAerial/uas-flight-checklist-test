@@ -311,7 +311,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1i</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1j</p>
     </div>
   </div>
   <div class="tabs">
@@ -1724,6 +1724,15 @@ let site = recall('wxSite', null);       // {name, lat, lon}, or null = use my c
 let recentSites = recall('wxRecent', []);
 let wxReq = 0;
 let lastWeatherAt = null;
+let goodDraw = null, goodKey = null;   // last successful weather drawing, kept for when a refresh fails (weak signal, rate limit)
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+function friendlyWxError(e) {
+  const m = (e && e.message) || '';
+  if (/429/.test(m)) return 'Weather service is busy — wait a minute, then tap Refresh.';
+  if (e && (e.name === 'SyntaxError' || e.name === 'TypeError') || /unreachable|did not match|JSON|network|fetch|Failed/i.test(m))
+    return 'No signal, or a weak one — couldn\'t load the weather. Tap Refresh when you\'re back online.';
+  return 'Weather unavailable: ' + m;
+}
 
 function updateLocLabel() {
   document.getElementById('wx-loc-name').textContent = site ? site.name : 'My location';
@@ -1811,7 +1820,10 @@ async function searchSite(e) {
 
 async function loadWeather() {
   const body = document.getElementById('wx-body');
-  body.innerHTML = '<div class="wx-status">Loading...</div>';
+  const key = site ? site.lat + ',' + site.lon : 'gps';
+  // Keep showing the last good reading (dimmed) while refreshing the same place; otherwise show Loading
+  if (goodDraw && goodKey === key && lastWeatherAt) body.style.opacity = '0.55';
+  else { body.style.opacity = ''; body.innerHTML = '<div class="wx-status">Loading...</div>'; }
   updateLocLabel();
 
   if (site) { renderWeather(site.lat, site.lon); return; }
@@ -1827,7 +1839,7 @@ async function loadWeather() {
   );
 }
 
-async function renderWeather(lat, lon) {
+async function renderWeather(lat, lon, attempt = 1) {
   const body = document.getElementById('wx-body');
   const my = ++wxReq;
   lastDraw = null;
@@ -1939,6 +1951,16 @@ async function renderWeather(lat, lon) {
         85:'Snow showers', 86:'Snow showers', 95:'Thunderstorm', 96:'Thunderstorm, hail', 99:'Thunderstorm, hail' };
       const precipLabel = WX_CODES[wx.weatherCode] || (wx.precipNow > 0 ? 'Precipitation' : null);
       const precipNext = wx.precipNext;
+      // Model-only wording: keep the type (rain / snow / storm) but drop the strength, which the model gets wrong
+      const modelPrecipType = (() => {
+        const c = wx.weatherCode;
+        if (c >= 95) return 'Thunderstorm';
+        if (c === 56 || c === 57 || c === 66 || c === 67) return 'Freezing rain';
+        if (c >= 71 && c <= 77 || c === 85 || c === 86) return 'Snow';
+        if (c >= 51 && c <= 55) return 'Drizzle';
+        if (c >= 61 && c <= 65 || c >= 80 && c <= 82) return 'Rain';
+        return 'Precipitation';
+      })();
       const precipSub = precipNext
         ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (model)' : ' (model)')
         : 'No forecast data';
@@ -1946,9 +1968,12 @@ async function renderWeather(lat, lon) {
       const precipBlock = () => {
         const rd = radarData2, pm = metarData2 && metarData2.precipReport;
         let val, cls;
-        if (precipLabel) { val = precipLabel; cls = 'wx-alert'; }
-        else if (pm && rd && rd.covered && rd.near) { val = 'Precip. likely'; cls = 'wx-alert'; }   // radar echoes close AND an airport reports precipitation
-        else if (rd && rd.covered && rd.near) { val = 'Precip. nearby'; cls = 'wx-warn'; }
+        const radarNear = !!(rd && rd.covered && rd.near);
+        if (precipLabel && pm) { val = pm.text.charAt(0).toUpperCase() + pm.text.slice(1); cls = 'wx-alert'; }   // model + airport agree: use the airport's observed wording
+        else if (pm && radarNear) { val = 'Precip. likely'; cls = 'wx-alert'; }                                  // radar echoes close AND an airport reports precipitation
+        else if (precipLabel && radarNear) { val = 'Precip. likely'; cls = 'wx-alert'; }                         // model + radar agree (no strength word: the model is unreliable on intensity)
+        else if (precipLabel) { val = modelPrecipType + ' (model)'; cls = /thunder/i.test(modelPrecipType) ? 'wx-alert' : 'wx-warn'; }  // model alone: type only, no strength
+        else if (radarNear) { val = 'Precip. nearby'; cls = 'wx-warn'; }
         else if (pm) { val = 'Reported nearby'; cls = 'wx-warn'; }
         else { val = 'None now'; cls = (precipNext && (precipNext.prob >= 40 || precipNext.mm >= 0.2)) ? 'wx-warn' : 'wx-good'; }
         const lines = [];
@@ -2029,10 +2054,28 @@ async function renderWeather(lat, lon) {
         refreshAge();
       };
       lastDraw = draw;
+      goodDraw = draw; goodKey = site ? site.lat + ',' + site.lon : 'gps';
+      body.style.opacity = '';
       draw();
   } catch (e) {
     if (my !== wxReq) return;
-    body.innerHTML = `<div class="wx-status wx-alert">Weather unavailable: ${e.message}</div>`;
+    // One automatic retry for a flaky connection (not for a rate limit, which a retry would only worsen)
+    if (attempt === 1 && !/429/.test(e.message || '')) {
+      await sleep(3000);
+      if (my !== wxReq) return;
+      return renderWeather(lat, lon, 2);
+    }
+    body.style.opacity = '';
+    const key = site ? site.lat + ',' + site.lon : 'gps';
+    if (goodDraw && goodKey === key && lastWeatherAt) {
+      // Keep the last good reading on screen, with a note
+      lastDraw = goodDraw;
+      goodDraw();
+      const t = new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      body.insertAdjacentHTML('afterbegin', `<div class="wx-status wx-warn">Couldn't refresh — showing ${t} data. ${friendlyWxError(e)}</div>`);
+    } else {
+      body.innerHTML = `<div class="wx-status wx-alert">${friendlyWxError(e)}</div>`;
+    }
   }
 }
 
