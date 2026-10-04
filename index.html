@@ -1979,7 +1979,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       const sunDown = !!(wx.sunrise && wx.sunset && cur.time && (cur.time < wx.sunrise || cur.time > wx.sunset));
       const nightTxt = () => region === 'intl'
         ? '🌙 Sun is down — check your local rules for night flying'
-        : '🌙 Sun is down — night flight needs an anti-collision light visible 3 mi';
+        : '🌙 Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 mi';
       const fmtT = (iso) => iso ? new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '—';
 
       // Ceiling from METAR (kept in feet; converted for display)
