@@ -2019,7 +2019,8 @@ async function renderWeather(lat, lon, attempt = 1) {
       // Humidity and dew point: a small gap between temperature and dew point means fog, mist or lens fogging
       const dewOk = wx.dewPoint != null && wx.humidity != null && wx.main.temp != null;
       const dewSpreadF = dewOk ? wx.main.temp - wx.dewPoint : null;
-      const dewClass = !dewOk ? '' : dewSpreadF <= 2 ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good';
+      // Amber for fog risk; red only when fog is likely AND visibility is already under 3 statute miles (US minimum)
+      const dewClassNow = () => { const visLow = region !== 'intl' && typeof wx.visibility === 'number' && wx.visibility < 4828; return !dewOk ? '' : (dewSpreadF <= 2 && visLow) ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good'; };
       const dewNote = !dewOk ? 'No data' : dewSpreadF <= 2 ? 'Fog likely' : dewSpreadF <= 4 ? 'Fog or lens fogging possible' : 'Low fog risk';
       const dewSub = () => !dewOk ? '' : 'Dew point ' + fmtTemp(wx.dewPoint) + ' · ' + dewNote;
 
@@ -2127,7 +2128,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           </div>
           <div class="wx-item">
             <div class="wx-label">Humidity</div>
-            <div class="wx-value ${dewClass}">${dewOk ? Math.round(wx.humidity) + '%' : '—'}</div>
+            <div class="wx-value ${dewClassNow()}">${dewOk ? Math.round(wx.humidity) + '%' : '—'}</div>
             <div class="wx-sub">${dewSub()}</div>
           </div>
         </div>
