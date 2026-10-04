@@ -324,7 +324,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.1.1</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.2</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -1764,6 +1764,7 @@ let wxReq = 0;
 let lastWeatherAt = null;
 let goodDraw = null, goodKey = null;   // last successful weather drawing, kept for when a refresh fails (weak signal, rate limit)
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+let nightUpdate = null;   // set each time the weather card is drawn; keeps the night notice in step with the clock
 function srSay(txt) { const el = document.getElementById('wx-sr'); if (el) { el.textContent = ''; setTimeout(() => { el.textContent = txt; }, 50); } }
 function friendlyWxError(e) {
   const m = (e && e.message) || '';
@@ -1976,7 +1977,12 @@ async function renderWeather(lat, lon, attempt = 1) {
       // Forecast times and sunrise/sunset are in the site's own time; say so when that differs from this device's clock
       const siteOff = om.utc_offset_seconds;
       const siteTag = typeof siteOff === 'number' && siteOff !== -new Date().getTimezoneOffset() * 60 ? ' (site time)' : '';
-      const sunDown = !!(wx.sunrise && wx.sunset && cur.time && (cur.time < wx.sunrise || cur.time > wx.sunset));
+      // Night notice: judged from this device's clock at the site (not from the moment the weather loaded), so it stays right on an old card
+      const siteHHMM = () => typeof siteOff === 'number' ? new Date(Date.now() + siteOff * 1000).toISOString().slice(11, 16) : String(cur.time || '').slice(11, 16);
+      const isSunDown = () => {
+        const sr = wx.sunrise && String(wx.sunrise).slice(11, 16), ss = wx.sunset && String(wx.sunset).slice(11, 16), n = siteHHMM();
+        return !!(sr && ss && n && (n < sr || n > ss));
+      };
       const nightTxt = () => region === 'intl'
         ? '🌙 Sun is down — check your local rules for night flying'
         : '🌙 Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 mi';
@@ -2071,6 +2077,10 @@ async function renderWeather(lat, lon, attempt = 1) {
         const ceilTxt = metarData2 ? ceilingText(ceilFt, m) : '—';
         const ceilNote = metarData2 ? ceilingNote(ceilFt, m) : (metarData.status === 'rejected' ? 'Airport reports unavailable — check another source' : 'No METAR data');
         const pb = precipBlock();
+        nightUpdate = () => {
+          const el = document.getElementById('wx-night'); if (!el) return;
+          const d = isSunDown(); el.hidden = !d; el.innerHTML = d ? nightTxt() : '';
+        };
         const wind120Txt = wx.wind120 != null ? ` · ${isMetric() ? '120 m' : '400 ft'}: ${fmtSpeed(wx.wind120)}` : '';
         body.innerHTML = `
         <div class="wx-grid">
@@ -2109,7 +2119,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           </div>
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}${siteTag}</div>
-        ${sunDown ? `<div class="wx-night">${nightTxt()}</div>` : ''}
+        <div class="wx-night" id="wx-night" hidden></div>
         <div class="wx-updated" id="wx-updated">Updated ${now} · ${srcText}<span id="wx-age"></span></div>
         <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
         `;
@@ -2150,6 +2160,7 @@ const STALE_MS = 30 * 60 * 1000;      // amber after 30 minutes
 const RETURN_REFRESH_MS = 10 * 60 * 1000;
 
 function refreshAge() {
+  if (nightUpdate) nightUpdate();
   const el = document.getElementById('wx-updated');
   const span = document.getElementById('wx-age');
   if (!el || !span || !lastWeatherAt) return;
