@@ -1,9 +1,42 @@
-[README.md](https://github.com/user-attachments/files/32913846/README.md)
 # UAS Flight Checklists
 
 A free, mobile-friendly drone preflight checklist web app with live weather conditions built in. It works for recreational and commercial pilots in any country — hide the items that don't apply to you, add your own, put things in the order you fly them, and back it all up. No app to download, no subscription required — just open it in any browser and fly.
 
-**Live Demo:** [checklist.johnstonaerial.com](https://checklist.johnstonaerial.com)
+**Use it now:** [checklist.johnstonaerial.com](https://checklist.johnstonaerial.com)
+
+📘 **New here?** See the [How-to guides](HOW-TO.md): make your own profiles (with a real timelapse example), use it with no signal, and use it outside the USA.
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="screenshots/01-checklist.png" alt="Checklist with live weather, progress bar and checked items" width="240"><br><sub><b>Live weather and checklist</b></sub></td>
+    <td align="center" width="33%"><img src="screenshots/05-ready-to-fly.png" alt="Ready to fly banner after the pre-flight sections are complete" width="240"><br><sub><b>"Ready to fly" banner</b></sub></td>
+    <td align="center" width="33%"><img src="screenshots/04-reorder.png" alt="Customize mode with drag handles and Hide buttons" width="240"><br><sub><b>Customize: drag, hide, add</b></sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="screenshots/02-settings.png" alt="Settings panel with region, progress retention and Back up and restore" width="240"><br><sub><b>Settings &amp; Back up / restore</b></sub></td>
+    <td align="center"><img src="screenshots/03-customize.png" alt="Customize panel with tab rename, hide tab and Done" width="240"><br><sub><b>Rename or hide tabs</b></sub></td>
+    <td></td>
+  </tr>
+</table>
+
+---
+
+## What's new in v3.1
+
+Version 3.1 makes the weather card much more useful on a rainy or low-cloud day:
+
+- **Cloud ceiling from the lowest nearby station** — it checks every airport weather report within 30 miles and shows the lowest ceiling (with the station, distance and age), the cautious choice. A **Lowest cloud nearby** line helps with the cloud-clearance rule
+- **Precipitation card** — combines live **radar** (RainViewer, free), **airport weather reports** and the forecast. Headlines include *Precip. nearby*, *Precip. likely*, the airport's own wording (for example *Light rain*), and *Rain possible* when only the forecast thinks so — with a note when radar doesn't see it
+- **Look-ahead lines** — *Rain likely ~4 PM*, *Best window ~8 PM – 2 AM*, *No clear window next 12 hrs* and *Storms possible*, shown only when there is something to say
+- **Humidity card** with dew point and a fog / lens-fogging warning
+- **Radar — NWS button opens on your location**
+- **Source footer** — lists where each reading came from (forecast, airport station, radar time)
+- **Weak signal friendly** — if a refresh fails, the last good reading stays on screen with a short note, and the app retries once
+- Guide only: always check your own weather sources and look at the sky before you fly
 
 ---
 
@@ -50,7 +83,7 @@ Version 3 is a major update built around making the checklist *yours*:
 
 ## Back up & restore
 
-Your settings and progress are stored in the browser on the device you're using. They don't sync by themselves, and an iPhone or iPad **Home Screen app keeps its own separate copy** from Safari. **Back up & restore** (in ⚙ Settings, and also visible while you customize) lets you move them:
+Your settings and progress are stored in the browser on the device you're using. They don't sync by themselves, and a checklist added to your Home Screen can keep its own separate copy from the browser tab (iPhones and iPads always do). It works the same on any phone, tablet or computer, in any current browser. **Back up & restore** (in ⚙ Settings, and also visible while you customize) lets you move them. It also lets you keep several setups and switch between them. See [Make your own profiles](HOW-TO.md#make-your-own-profiles).
 
 **To back up or move to another device**
 1. Open **⚙ Settings & customize** and find **Back up & restore**
@@ -100,7 +133,42 @@ Or simply download `index.html` and open it locally in any browser. The weather 
 6. The progress bar tracks your completion percentage and shows how many items need attention. When your pre-flight sections are done, a **ready to fly** banner appears; after the last section, **flight complete**
 7. Tap **Reset** (next to the progress bar) to clear all checks and flags on the current tab — it asks you to confirm first
 
-**To make it yours:** open **⚙ Settings & customize**, tap **✎ Customize list**, and hide, add, drag or rename what you need — then press **Done** in the bar at the bottom. Before you leave Settings, consider saving a backup.
+**To make it yours:** open **⚙ Settings & customize**, tap **✎ Customize list**, and hide, add, drag or rename what you need — then press **Done** in the bar at the bottom. Before you leave Settings, consider saving a backup. More in the [How-to guides](HOW-TO.md).
+
+---
+
+## FAQ
+
+**Is it really free?**
+Yes. There's no app to buy, no subscription, no ads and no account. It's an open-source web page (MIT license).
+
+**Does it replace my official checks or the regulations?**
+No. It's a memory aid. The pilot in command is responsible for knowing and following the rules where they fly. The default items and limits (for example the wind and altitude numbers) reflect US FAA guidance, so check your local rules and use **Customize** to change anything that doesn't fit your operation.
+
+**What information does it collect?**
+None about you. There are no accounts, no analytics and no tracking in the page. Your checks, settings and notes stay in your browser's storage on your device. To show weather, the page sends the coordinates of your location (or the flight site you choose) to the free weather services listed under *Built With*, and the text you type in "Change" to look up a place. It's hosted on GitHub Pages, which, like any web host, keeps its own standard server logs.
+
+**Why does it ask for my location?**
+To show weather for where you are. If you say no, tap **Change** and search for a town, ZIP code or coordinates instead.
+
+**Does it work offline?**
+The checklist itself keeps working if you lose signal after the page has loaded, and your checks keep saving. The weather needs a connection, and the page doesn't cache itself, so you need a connection to open it fresh.
+
+**How do I put it on my Home Screen like an app?**
+- **iPhone / iPad (Safari):** tap Share → **Add to Home Screen**
+- **Android (Chrome):** tap the ⋮ menu → **Install app** (or **Add to Home screen**)
+- **Computer (Chrome or Edge):** click the install icon at the right end of the address bar
+
+On an iPhone or iPad the Home Screen app keeps its own saved data, separate from Safari, so set it up once and use that one. Use **Back up & restore** to bring your settings across.
+
+**I changed phones, or cleared my browser data. Did I lose my settings?**
+Your settings live in the browser, so clearing site data erases them. Use **Back up & restore** to save a backup code or file ahead of time and restore it later.
+
+**Can I move an item to a different section?**
+Not yet. You can reorder items within their section, hide items you don't want, and add your own items to any section.
+
+**Can I use it for my club, school or company?**
+Yes. It's free to fork, and you can host your own copy and change the default items (see *Customization* below).
 
 ---
 
@@ -108,11 +176,24 @@ Or simply download `index.html` and open it locally in any browser. The weather 
 
 - **No automatic sync** — saved progress and settings live only in the browser on the device you're using (and progress is cleared when it expires or when you tap Reset). Use **Back up & restore** to move them to another device. Plan to use a single device per flight.
 - **No account or login** — by design. Keeps it simple, private, and free.
-- **Backup codes need a recent browser** — codes are compressed using a feature of current browsers (iOS/iPadOS 16.4 and newer, and recent Chrome, Edge, Firefox and Safari). On older browsers a backup still works but the code is longer.
+- **Backup codes need a recent browser** — codes are compressed using a feature of current browsers (Chrome, Edge, Firefox and Safari from roughly 2023 on, including iOS/iPadOS 16.4 and newer). On older browsers a backup still works but the code is longer.
 - **Weather defaults to your current GPS location** — to check a different flight site, tap **Change** on the weather panel and search for a town, ZIP code, or coordinates. Place search works best for towns and cities; for a specific job site, use a nearby town or enter coordinates. Cloud ceiling comes from the nearest METAR station, which can be several miles from the site (the station is shown on the panel). The **Radar — NWS** button opens the national map.
 - **Cloud ceiling depends on the METAR proxy** — if it is unreachable the Cloud Ceiling tile shows "No METAR data" and everything else still works.
 - **Altitude and speed limits** — defaults shown are US FAA limits, and cloud ceiling depends on a nearby airport's weather report, which can be missing in areas with few airports. Always verify the regulations for your country and airspace class, and use Customize to hide or replace items that don't match.
 - **Items move within their section** — you can reorder an item inside its section, but not move it to a different section.
+
+---
+
+## Feedback & bugs
+
+Suggestions are very welcome. The easiest way is to open an **[Issue](https://github.com/JohnstonAerial/uas-flight-checklist/issues)** on this repository (the **Issues** tab at the top of this page). If something looks wrong, please include:
+
+- Your device and browser (for example "Pixel 8, Chrome" or "iPhone 15, Safari")
+- Whether you opened it in the browser or from a Home Screen icon
+- What you tapped and what you expected to happen
+- A screenshot, if you can
+
+You can also reach Johnston Aerial through the links under *Credits*.
 
 ---
 
