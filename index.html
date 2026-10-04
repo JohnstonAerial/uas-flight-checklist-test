@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>UAS Test</title>
-<meta name="robots" content="noindex, nofollow">
+<title>UAS Flight Checklists</title>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<meta name="apple-mobile-web-app-title" content="UAS Test">
+<meta name="apple-mobile-web-app-title" content="UAS Checklist">
 <meta name="theme-color" content="#0f2a4a">
 <style>
   :root {
@@ -326,7 +325,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.2.2a</p>
+      <p>Free Drone Preflight Checklist · v3.2.2</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -1408,7 +1407,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync by themselves, and on some devices a Home Screen app keeps its own separate copy. To copy them to another phone, tablet or browser, use Back up & restore below.';
   const help = document.createElement('div'); help.className = 'settings-help';
-  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a>';
+  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a>';
   body.append(keep, reg, note, cust, makeXfer(), help);
   wrap.append(tg, body);
   card.before(wrap);
