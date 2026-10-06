@@ -212,9 +212,6 @@
   .rec-more[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 2px; }
   .rec-more label.rec-lbl:first-of-type { margin-top: 6px; }
   .rec-more > :last-child { margin-bottom: 12px; }
-  .rec-fmt { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; font-size: 14px; }
-  .rec-fmt > span { color: var(--text-muted); font-size: 12px; }
-  .rec-fmt label { display: flex; align-items: center; gap: 6px; }
   .rec-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
   .rec-actions button { font: inherit; font-size: 15px; border-radius: 22px; padding: 9px 20px; min-height: 40px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
   .rec-actions .rec-dl { color: var(--blue); border-color: var(--blue); }
@@ -351,7 +348,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5d</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2316,7 +2313,7 @@ const REC_KEY = 'uasRecordPrefs';
 
 function recPrefs() {
   const p = recall(REC_KEY, {}) || {};
-  return { weather: p.weather !== false, unchecked: p.unchecked !== false, fmt: p.fmt === 'txt' ? 'txt' : 'md', more: p.more === true };
+  return { weather: p.weather !== false, unchecked: p.unchecked !== false, more: p.more === true };
 }
 function recClean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
 function recNoEmoji(s) { return recClean(String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')); }
@@ -2361,27 +2358,26 @@ function recWrap(t) {                       // plain text: 2-space indent, long 
   return out.join('\n');
 }
 function buildRecord(o) {
-  const md = o.fmt === 'md';
-  const H1 = t => md ? '# ' + t : t.toUpperCase() + '\n' + '='.repeat(t.length);
-  const H2 = t => md ? '\n## ' + t : '\n' + t.toUpperCase();
-  const H3 = t => md ? '\n### ' + t : '\n' + t;
-  const B = (k, v) => md ? '- **' + k + ':** ' + v : k + ': ' + v;
+  const H1 = t => t.toUpperCase() + '\n' + '='.repeat(t.length);
+  const H2 = t => '\n' + t.toUpperCase();
+  const H3 = t => '\n' + t;
+  const B = (k, v) => k + ': ' + v;
   const L = [];
   const now = new Date();
   L.push(H1('Preflight Record'));
-  L.push(md ? '**' + now.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) + '**' : now.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }));
+  L.push(now.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }));
   L.push('');
   if (o.customer) L.push(B('Customer', o.customer));
   if (o.site) L.push(B('Site', o.site));
   const co = recCoords(); if (co) L.push(B('Coordinates', co));
-  const tab = md ? recTabName() : recNoEmoji(recTabName()); if (tab) L.push(B('Checklist', tab));
+  const tab = recNoEmoji(recTabName()); if (tab) L.push(B('Checklist', tab));
   if (o.laanc) L.push(B('Airspace authorization', o.laanc));
   if (o.flightTime) L.push(B('Flight time', o.flightTime));
   if (o.observer) L.push(B('Visual observer', o.observer));
 
   if (o.weather) {
     L.push(H2('Conditions'));
-    recWeatherLines().forEach(l => L.push(md ? '- ' + l : l));
+    recWeatherLines().forEach(l => L.push(l));
   }
 
   const panelEl = document.getElementById('panel-' + current);
@@ -2397,8 +2393,7 @@ function buildRecord(o) {
       const ck = it.classList.contains('checked'), fl = it.classList.contains('flagged');
       total++; if (ck) done++; if (fl) flagged++;
       if (!ck && !fl && !o.unchecked) return;
-      if (md) rows.push('- ' + (ck ? '[x] ' : '[ ] ') + (fl ? '⚠ NEEDS ATTENTION: ' : '') + txt);
-      else rows.push(recWrap((fl ? '[!] NEEDS ATTENTION: ' : ck ? '[x] ' : '[ ] ') + txt));
+      rows.push(recWrap((fl ? '[!] NEEDS ATTENTION: ' : ck ? '[x] ' : '[ ] ') + txt));
     });
     if (rows.length) { secLines.push(H3(name)); rows.forEach(r => secLines.push(r)); }
   });
@@ -2411,7 +2406,7 @@ function buildRecord(o) {
   const v = (m.match(/v\d+(?:\.\d+)*[a-z]?/) || [''])[0];
   L.push('');
   const foot = 'UAS Flight Checklists' + (v ? ' ' + v : '') + ' · checklist.johnstonaerial.com';
-  L.push(md ? '*' + foot + '*' : foot);
+  L.push(foot);
   return L.join('\n') + '\n';
 }
 function recFileName(o) {
@@ -2419,10 +2414,10 @@ function recFileName(o) {
   let nm = 'preflight-record-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
   const c = (o.customer || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
   if (c) nm += '-' + c;
-  return nm + (o.fmt === 'md' ? '.md' : '.txt');
+  return nm + '.txt';
 }
 let recForceDownload = false, recLastErr = '';
-async function recDeliver(text, name, fmt) {
+async function recDeliver(text, name) {
   try {
     if (typeof File === 'function' && navigator.canShare && navigator.share) {
       const f = new File([text], name, { type: 'text/plain' });
@@ -2432,7 +2427,7 @@ async function recDeliver(text, name, fmt) {
     if (e && e.name === 'AbortError') return 'cancelled';
     if (!recForceDownload) { recLastErr = (e && e.name) || 'error'; return 'refused'; }
   }
-  const blob = new Blob([text], { type: (fmt === 'md' ? 'text/markdown' : 'text/plain') + ';charset=utf-8' });
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
@@ -2450,7 +2445,7 @@ function closeRecord() {
 }
 let recOpener = null;
 function recKey(e) { if (e.key === 'Escape') closeRecord(); }
-function recOffer(text, name, fmt) {
+function recOffer(text, name) {
   const ov = document.createElement('div'); ov.className = 'rec-overlay';
   ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
     '<h2 id="rec-ot">Your record is ready</h2>' +
@@ -2460,9 +2455,9 @@ function recOffer(text, name, fmt) {
   const done = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) done(); });
   ov.querySelector('.rec-cancel').onclick = done;
-  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name, fmt); recForceDownload = false; done(); recToast('✓ Record saved to your downloads'); };
+  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recToast('✓ Record saved to your downloads'); };
   ov.querySelector('.rec-save').onclick = async () => {
-    const h = await recDeliver(text, name, fmt);
+    const h = await recDeliver(text, name);
     if (h === 'refused') { recToast('Sharing is not available right now — use Download'); return; }
     done(); if (h === 'shared') recToast('✓ Record ready');
   };
@@ -2479,14 +2474,12 @@ function openRecord(btn) {
     '<label class="rec-lbl" for="rec-site">Site</label><input type="text" id="rec-site" autocomplete="off" maxlength="160">' +
     '<label class="rec-lbl" for="rec-notes">Notes (optional)</label><textarea id="rec-notes" rows="3" maxlength="2000"></textarea>' +
     '<details class="rec-more" id="rec-more"><summary>More details</summary>' +
-    '<label class="rec-lbl" for="rec-laanc">Airspace authorization (optional)</label><input type="text" id="rec-laanc" autocomplete="off" maxlength="160" placeholder="LAANC reference, altitude, valid times">' +
-    '<label class="rec-lbl" for="rec-ft">Flight time (optional)</label><input type="text" id="rec-ft" autocomplete="off" maxlength="80" placeholder="For example 2 flights, 38 min total">' +
+    '<label class="rec-lbl" for="rec-laanc">Airspace authorization (optional)</label><input type="text" id="rec-laanc" autocomplete="off" maxlength="160" placeholder="Ref #, altitude, times">' +
+    '<label class="rec-lbl" for="rec-ft">Flight time (optional)</label><input type="text" id="rec-ft" autocomplete="off" maxlength="80" placeholder="e.g. 38 min total">' +
     '<label class="rec-lbl" for="rec-vo">Visual observer (optional)</label><input type="text" id="rec-vo" autocomplete="off" autocapitalize="words" maxlength="120">' +
     '</details>' +
     '<label class="rec-check"><input type="checkbox" id="rec-wx"> Include weather conditions</label>' +
     '<label class="rec-check"><input type="checkbox" id="rec-un"> Include items not checked</label>' +
-    '<div class="rec-fmt" role="radiogroup" aria-label="File format"><span>Format</span>' +
-    '<label><input type="radio" name="rec-fmt" value="md"> Markdown</label><label><input type="radio" name="rec-fmt" value="txt"> Plain text</label></div>' +
     '<div class="rec-actions"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-save">Save</button></div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -2495,22 +2488,20 @@ function openRecord(btn) {
   $('#rec-wx').checked = prefs.weather;
   $('#rec-un').checked = prefs.unchecked;
   $('#rec-more').open = prefs.more;
-  ov.querySelectorAll('input[name=rec-fmt]').forEach(r => { r.checked = r.value === prefs.fmt; });
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
   $('.rec-cancel').onclick = closeRecord;
   $('.rec-save').onclick = async () => {
-    const fmtEl = ov.querySelector('input[name=rec-fmt]:checked');
     const o = {
       customer: recClean($('#rec-cust').value), site: recClean($('#rec-site').value),
       notes: $('#rec-notes').value.replace(/\r\n?/g, '\n').trim(),
       laanc: recClean($('#rec-laanc').value), flightTime: recClean($('#rec-ft').value), observer: recClean($('#rec-vo').value),
-      weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked, fmt: fmtEl ? fmtEl.value : 'md'
+      weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked
     };
-    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, fmt: o.fmt, more: !!(o.laanc || o.flightTime || o.observer) });
+    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, more: !!(o.laanc || o.flightTime || o.observer) });
     const text = buildRecord(o), name = recFileName(o);
-    const how = await recDeliver(text, name, o.fmt);
+    const how = await recDeliver(text, name);
     closeRecord();
-    if (how === 'refused') { recOffer(text, name, o.fmt); return; }
+    if (how === 'refused') { recOffer(text, name); return; }
     if (how === 'downloaded') recToast('✓ Record saved to your downloads');
     else if (how === 'shared') recToast('✓ Record ready');
   };
