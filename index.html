@@ -207,6 +207,11 @@
   .rec-box textarea { resize: vertical; min-height: 70px; }
   .rec-box .rec-check { display: flex; align-items: center; gap: 10px; font-size: 14px; margin-top: 12px; }
   .rec-box .rec-check input { width: 20px; height: 20px; flex-shrink: 0; }
+  .rec-more { margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
+  .rec-more summary { cursor: pointer; font-size: 14px; color: var(--blue); padding: 10px 0; min-height: 24px; font-weight: 600; }
+  .rec-more[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+  .rec-more label.rec-lbl:first-of-type { margin-top: 6px; }
+  .rec-more > :last-child { margin-bottom: 12px; }
   .rec-fmt { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; margin-top: 14px; font-size: 14px; }
   .rec-fmt > span { color: var(--text-muted); font-size: 12px; }
   .rec-fmt label { display: flex; align-items: center; gap: 6px; }
@@ -345,7 +350,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5b</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2310,7 +2315,7 @@ const REC_KEY = 'uasRecordPrefs';
 
 function recPrefs() {
   const p = recall(REC_KEY, {}) || {};
-  return { weather: p.weather !== false, unchecked: p.unchecked !== false, fmt: p.fmt === 'txt' ? 'txt' : 'md' };
+  return { weather: p.weather !== false, unchecked: p.unchecked !== false, fmt: p.fmt === 'txt' ? 'txt' : 'md', more: p.more === true };
 }
 function recClean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
 function recNoEmoji(s) { return recClean(String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')); }
@@ -2359,6 +2364,9 @@ function buildRecord(o) {
   if (o.site) L.push(B('Site', o.site));
   const co = recCoords(); if (co) L.push(B('Coordinates', co));
   const tab = recTabName(); if (tab) L.push(B('Checklist', tab));
+  if (o.laanc) L.push(B('Airspace authorization', o.laanc));
+  if (o.flightTime) L.push(B('Flight time', o.flightTime));
+  if (o.observer) L.push(B('Visual observer', o.observer));
 
   if (o.weather) {
     L.push(H2('Conditions'));
@@ -2437,6 +2445,11 @@ function openRecord(btn) {
     '<label class="rec-lbl" for="rec-cust">Customer (optional)</label><input type="text" id="rec-cust" autocomplete="off" autocapitalize="words" maxlength="120">' +
     '<label class="rec-lbl" for="rec-site">Site</label><input type="text" id="rec-site" autocomplete="off" maxlength="160">' +
     '<label class="rec-lbl" for="rec-notes">Notes (optional)</label><textarea id="rec-notes" rows="3" maxlength="2000"></textarea>' +
+    '<details class="rec-more" id="rec-more"><summary>More details</summary>' +
+    '<label class="rec-lbl" for="rec-laanc">Airspace authorization (optional)</label><input type="text" id="rec-laanc" autocomplete="off" maxlength="160" placeholder="LAANC reference, altitude, valid times">' +
+    '<label class="rec-lbl" for="rec-ft">Flight time (optional)</label><input type="text" id="rec-ft" autocomplete="off" maxlength="80" placeholder="For example 2 flights, 38 min total">' +
+    '<label class="rec-lbl" for="rec-vo">Visual observer (optional)</label><input type="text" id="rec-vo" autocomplete="off" autocapitalize="words" maxlength="120">' +
+    '</details>' +
     '<label class="rec-check"><input type="checkbox" id="rec-wx"> Include weather conditions</label>' +
     '<label class="rec-check"><input type="checkbox" id="rec-un"> Include items not checked</label>' +
     '<div class="rec-fmt" role="radiogroup" aria-label="File format"><span>Format</span>' +
@@ -2448,6 +2461,7 @@ function openRecord(btn) {
   $('#rec-site').value = recSiteDefault();
   $('#rec-wx').checked = prefs.weather;
   $('#rec-un').checked = prefs.unchecked;
+  $('#rec-more').open = prefs.more;
   ov.querySelectorAll('input[name=rec-fmt]').forEach(r => { r.checked = r.value === prefs.fmt; });
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
   $('.rec-cancel').onclick = closeRecord;
@@ -2456,9 +2470,10 @@ function openRecord(btn) {
     const o = {
       customer: recClean($('#rec-cust').value), site: recClean($('#rec-site').value),
       notes: $('#rec-notes').value.replace(/\r\n?/g, '\n').trim(),
+      laanc: recClean($('#rec-laanc').value), flightTime: recClean($('#rec-ft').value), observer: recClean($('#rec-vo').value),
       weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked, fmt: fmtEl ? fmtEl.value : 'md'
     };
-    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, fmt: o.fmt });
+    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, fmt: o.fmt, more: !!(o.laanc || o.flightTime || o.observer) });
     const text = buildRecord(o), name = recFileName(o);
     const how = await recDeliver(text, name, o.fmt);
     closeRecord();
