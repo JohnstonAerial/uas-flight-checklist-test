@@ -342,6 +342,7 @@
   .keep-row select, .region-sel, .xfer-box { font-size: 16px; }
   .wx-night { font-size: 12px; font-weight: 600; color: var(--amber); text-align: center; margin-top: 6px; }
 
+  .print-fields { display: none; }
   /* ── Print: plain checklist you can tick with a pencil ── */
   @media print {
     @page { margin: 14mm 12mm; }
@@ -357,6 +358,11 @@
     .edit-bar, .toast, .rec-overlay, .rec-btn, .pc-btns, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
     .content { max-width: none; padding: 0; margin: 0; }
     .panel { padding: 0; }
+    .print-fields { display: block; margin: 0 0 4px; }
+    .pf-row { display: flex; gap: 22px; margin: 12px 0 0; }
+    .pf-f { display: flex; flex: 1; align-items: flex-end; gap: 6px; font-size: 10pt; font-weight: 600; color: #000; }
+    .pf-f.pf-short { flex: 0 0 38%; }
+    .pf-f span { flex: 1; border-bottom: 1px solid #000; height: 1.2em; }
     .section { margin-bottom: 10px; break-inside: auto; }
     .section.collapsed .section-card { display: block !important; }
     .section-header { color: #000 !important; font-size: 10.5pt; padding: 8px 0 3px; border-bottom: 1.5px solid #000; break-after: avoid; }
@@ -377,7 +383,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5i</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -388,6 +394,12 @@
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="header-bar" style="width:0%"></div>
   </div>
+</div>
+
+<div class="print-fields" aria-hidden="true">
+  <div class="pf-row"><div class="pf-f pf-short">Date<span></span></div><div class="pf-f">Time<span></span></div></div>
+  <div class="pf-row"><div class="pf-f">Site<span></span></div></div>
+  <div class="pf-row"><div class="pf-f">Pilot<span></span></div><div class="pf-f">Visual observer<span></span></div></div>
 </div>
 
 
@@ -2462,10 +2474,10 @@ async function recDeliver(text, name) {
   setTimeout(() => URL.revokeObjectURL(url), 4000);
   return 'downloaded';
 }
-function recToast(msg) {
+function recToast(msg, ms) {
   const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => { t.classList.add('gone'); setTimeout(() => t.remove(), 500); }, 3500);
+  setTimeout(() => { t.classList.add('gone'); setTimeout(() => t.remove(), 500); }, ms || 3500);
 }
 function closeRecord() {
   const ov = document.querySelector('.rec-overlay');
@@ -2546,7 +2558,12 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const pb = document.createElement('button');
   pb.type = 'button'; pb.className = 'rec-btn print-btn'; pb.textContent = 'Print checklist';
   pb.setAttribute('aria-label', 'Print this checklist');
-  pb.onclick = () => { try { window.print(); } catch (e) {} };
+  pb.onclick = () => {
+    const ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const app = navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+    if (ios && app) { recToast('Printing isn\'t available in the Home Screen app. Open this page in Safari, then tap Share \u2192 Print.', 7000); return; }
+    try { window.print(); } catch (e) {}
+  };
   col.prepend(pb);
 });
 </script>
