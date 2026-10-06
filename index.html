@@ -217,6 +217,7 @@
   .rec-fmt label { display: flex; align-items: center; gap: 6px; }
   .rec-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
   .rec-actions button { font: inherit; font-size: 15px; border-radius: 22px; padding: 9px 20px; min-height: 40px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
+  .rec-actions .rec-dl { color: var(--blue); border-color: var(--blue); }
   .rec-actions .rec-save { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
   .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
@@ -350,7 +351,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5c</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2349,6 +2350,16 @@ function recTabName() {
   const t = document.querySelector('.tab.active');
   return t ? recClean(t.textContent) : '';
 }
+function recWrap(t) {                       // plain text: 2-space indent, long lines wrap under the text
+  const first = '  ', next = '      ', max = 78;
+  const words = t.split(' '); const out = []; let line = first;
+  words.forEach(w => {
+    if (line.trim() && (line + ' ' + w).length > max) { out.push(line); line = next + w; }
+    else line += (line.trim() ? ' ' : '') + w;
+  });
+  out.push(line);
+  return out.join('\n');
+}
 function buildRecord(o) {
   const md = o.fmt === 'md';
   const H1 = t => md ? '# ' + t : t.toUpperCase() + '\n' + '='.repeat(t.length);
@@ -2363,7 +2374,7 @@ function buildRecord(o) {
   if (o.customer) L.push(B('Customer', o.customer));
   if (o.site) L.push(B('Site', o.site));
   const co = recCoords(); if (co) L.push(B('Coordinates', co));
-  const tab = recTabName(); if (tab) L.push(B('Checklist', tab));
+  const tab = md ? recTabName() : recNoEmoji(recTabName()); if (tab) L.push(B('Checklist', tab));
   if (o.laanc) L.push(B('Airspace authorization', o.laanc));
   if (o.flightTime) L.push(B('Flight time', o.flightTime));
   if (o.observer) L.push(B('Visual observer', o.observer));
@@ -2386,7 +2397,8 @@ function buildRecord(o) {
       const ck = it.classList.contains('checked'), fl = it.classList.contains('flagged');
       total++; if (ck) done++; if (fl) flagged++;
       if (!ck && !fl && !o.unchecked) return;
-      rows.push('- ' + (ck ? '[x] ' : '[ ] ') + (fl ? '⚠ NEEDS ATTENTION: ' : '') + txt);
+      if (md) rows.push('- ' + (ck ? '[x] ' : '[ ] ') + (fl ? '⚠ NEEDS ATTENTION: ' : '') + txt);
+      else rows.push(recWrap((fl ? '[!] NEEDS ATTENTION: ' : ck ? '[x] ' : '[ ] ') + txt));
     });
     if (rows.length) { secLines.push(H3(name)); rows.forEach(r => secLines.push(r)); }
   });
@@ -2409,13 +2421,17 @@ function recFileName(o) {
   if (c) nm += '-' + c;
   return nm + (o.fmt === 'md' ? '.md' : '.txt');
 }
+let recForceDownload = false, recLastErr = '';
 async function recDeliver(text, name, fmt) {
   try {
     if (typeof File === 'function' && navigator.canShare && navigator.share) {
       const f = new File([text], name, { type: 'text/plain' });
       if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: 'Preflight record' }); return 'shared'; }
     }
-  } catch (e) { if (e && e.name === 'AbortError') return 'cancelled'; }
+  } catch (e) {
+    if (e && e.name === 'AbortError') return 'cancelled';
+    if (!recForceDownload) { recLastErr = (e && e.name) || 'error'; return 'refused'; }
+  }
   const blob = new Blob([text], { type: (fmt === 'md' ? 'text/markdown' : 'text/plain') + ';charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
@@ -2434,6 +2450,23 @@ function closeRecord() {
 }
 let recOpener = null;
 function recKey(e) { if (e.key === 'Escape') closeRecord(); }
+function recOffer(text, name, fmt) {
+  const ov = document.createElement('div'); ov.className = 'rec-overlay';
+  ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
+    '<h2 id="rec-ot">Your record is ready</h2>' +
+    '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
+    '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-dl">Download</button><button type="button" class="rec-save">Share…</button></div></div>';
+  document.body.appendChild(ov);
+  const done = () => ov.remove();
+  ov.addEventListener('click', e => { if (e.target === ov) done(); });
+  ov.querySelector('.rec-cancel').onclick = done;
+  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name, fmt); recForceDownload = false; done(); recToast('✓ Record saved to your downloads'); };
+  ov.querySelector('.rec-save').onclick = async () => {
+    const h = await recDeliver(text, name, fmt);
+    if (h === 'refused') { recToast('Sharing is not available right now — use Download'); return; }
+    done(); if (h === 'shared') recToast('✓ Record ready');
+  };
+}
 function openRecord(btn) {
   closeRecord();
   recOpener = btn || null;
@@ -2477,6 +2510,7 @@ function openRecord(btn) {
     const text = buildRecord(o), name = recFileName(o);
     const how = await recDeliver(text, name, o.fmt);
     closeRecord();
+    if (how === 'refused') { recOffer(text, name, o.fmt); return; }
     if (how === 'downloaded') recToast('✓ Record saved to your downloads');
     else if (how === 'shared') recToast('✓ Record ready');
   };
