@@ -79,6 +79,14 @@ Still worth doing: the checklist's own tip to screenshot your mission brief. The
 
 ---
 
+## Print it and use a pencil
+
+You can print the checklist and take it to the site. Open the tab you want, then tap **Print checklist** in the app. In Safari you can also tap **Share**, then **Print**. Check items off with a pencil during preflight and again after the flight. Print each tab you need, since only the open tab prints.
+
+The app also works offline once it has loaded (see above), so paper is a choice, not a requirement. You can also save a record afterward and print that.
+
+---
+
 ## Use it outside the USA
 
 The first time you open the app it asks **Where do you fly?** Choose **Outside the USA**. You can change this at any time from **Checklist for** under **Settings & customize**.
