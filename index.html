@@ -340,6 +340,34 @@
   .reset-inline, .sec-all, .cust-btn { min-height: 32px; }
   .keep-row select, .region-sel, .xfer-box { font-size: 16px; }
   .wx-night { font-size: 12px; font-weight: 600; color: var(--amber); text-align: center; margin-top: 6px; }
+
+  /* ── Print: plain checklist you can tick with a pencil ── */
+  @media print {
+    @page { margin: 14mm 12mm; }
+    :root { --text:#000; --text-muted:#000; --text-light:#000; --card:#fff; --section-bg:#fff; --border:#999; --bg:#fff; --amber-light:#fff; }
+    html, body { background: #fff !important; color: #000 !important; min-height: 0; }
+    .header { position: static; background: none !important; color: #000 !important; box-shadow: none; padding: 0 0 6px; border-bottom: 2px solid #000; margin-bottom: 8px; }
+    .header h1 { font-size: 16pt; }
+    .header p { font-size: 9pt; opacity: 1; color: #000; }
+    .tabs { display: block; overflow: visible; }
+    .tab:not(.active) { display: none !important; }
+    .tab.active { display: block; padding: 6px 0 0; font-size: 13pt; text-align: left; color: #000 !important; border: 0; }
+    .progress-bar-wrap, #wx-panel, #region-card, .settings, .cust-row, .progress-card, .complete-banner, .flag-hint, .saved-note,
+    .edit-bar, .toast, .rec-overlay, .rec-btn, .pc-btns, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
+    .content { max-width: none; padding: 0; margin: 0; }
+    .panel { padding: 0; }
+    .section { margin-bottom: 10px; break-inside: auto; }
+    .section.collapsed .section-card { display: block !important; }
+    .section-header { color: #000 !important; font-size: 10.5pt; padding: 8px 0 3px; border-bottom: 1.5px solid #000; break-after: avoid; }
+    .section-card { box-shadow: none; border-radius: 0; background: none; overflow: visible; }
+    .item { background: none !important; padding: 5px 2px; gap: 10px; border-bottom: 0.5px solid #999; break-inside: avoid; }
+    .item .item-text, .item.checked .item-text { color: #000 !important; text-decoration: none !important; font-size: 10.5pt; line-height: 1.3; padding-top: 0; }
+    .check-circle, .item.checked .check-circle, .item.flagged .check-circle { width: 14px; height: 14px; border-radius: 2px; border: 1.5px solid #000 !important; background: #fff !important; margin-top: 1px; }
+    .item.checked .check-circle { background: #000 !important; }
+    .item.flagged .check-circle::after { color: #000; font-size: 11px; }
+    .check-icon { width: 10px; height: 10px; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
 </style>
 </head>
 <body>
@@ -348,7 +376,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5f</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -1370,7 +1398,7 @@ async function xferSave(btn) {
   const file = new File([json], name, { type: 'application/json' });
   try {
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'UAS checklist backup' });
+      await navigator.share({ files: [file] });
       xferMsg(btn, '✓ Backup ready. Save it or send it to your other device.'); return;
     }
   } catch (e) { if (e && e.name === 'AbortError') return; }
@@ -2421,7 +2449,7 @@ async function recDeliver(text, name) {
   try {
     if (typeof File === 'function' && navigator.canShare && navigator.share) {
       const f = new File([text], name, { type: 'text/plain' });
-      if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: 'Preflight record' }); return 'shared'; }
+      if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return 'shared'; }
     }
   } catch (e) {
     if (e && e.name === 'AbortError') return 'cancelled';
