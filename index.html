@@ -213,6 +213,8 @@
   .rec-box textarea { resize: vertical; min-height: 70px; }
   .rec-box .rec-check { display: flex; align-items: center; gap: 10px; font-size: 14px; margin-top: 12px; }
   .rec-box .rec-check input { width: 20px; height: 20px; flex-shrink: 0; }
+  .rec-box .rec-hint { font-size: 12px; color: var(--text-muted); line-height: 1.35; margin: 4px 0 0 30px; }
+  .rec-box .rec-check.rec-off { opacity: 0.5; }
   .rec-more { margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
   .rec-more summary { cursor: pointer; font-size: 14px; color: var(--blue); padding: 10px 0; min-height: 24px; font-weight: 600; }
   .rec-more[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 2px; }
@@ -388,7 +390,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1a</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2359,13 +2361,12 @@ const REC_KEY = 'uasRecordPrefs';
 
 function recPrefs() {
   const p = recall(REC_KEY, {}) || {};
-  return { weather: p.weather !== false, unchecked: p.unchecked !== false, more: p.more === true };
+  return { weather: p.weather !== false, unchecked: p.unchecked !== false, coords: p.coords === true, more: p.more === true };
 }
 function recClean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
 function recNoEmoji(s) { return recClean(String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')); }
 function recSiteDefault() {
-  const el = document.getElementById('wx-loc-name');
-  return el ? recClean(el.textContent) : '';
+  return (typeof site !== 'undefined' && site && site.name) ? recClean(site.name) : '';
 }
 function recCoords() {
   const c = site ? site : lastCoords;
@@ -2415,7 +2416,7 @@ function buildRecord(o) {
   L.push('');
   if (o.customer) L.push(B('Customer', o.customer));
   if (o.site) L.push(B('Site', o.site));
-  const co = recCoords(); if (co) L.push(B('Coordinates', co));
+  const co = o.coords ? recCoords() : ''; if (co) L.push(B('Coordinates', co));
   const tab = recNoEmoji(recTabName()); if (tab) L.push(B('Checklist', tab));
   if (o.laanc) L.push(B('Airspace authorization', o.laanc));
   if (o.flightTime) L.push(B('Flight time', o.flightTime));
@@ -2517,7 +2518,7 @@ function openRecord(btn) {
     '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-title">' +
     '<h2 id="rec-title">Save preflight record</h2>' +
     '<label class="rec-lbl" for="rec-cust">Customer (optional)</label><input type="text" id="rec-cust" autocomplete="off" autocapitalize="words" maxlength="120">' +
-    '<label class="rec-lbl" for="rec-site">Site</label><input type="text" id="rec-site" autocomplete="off" maxlength="160">' +
+    '<label class="rec-lbl" for="rec-site">Site</label><input type="text" id="rec-site" autocomplete="off" maxlength="160" placeholder="Address or place name">' +
     '<label class="rec-lbl" for="rec-notes">Notes (optional)</label><textarea id="rec-notes" rows="3" maxlength="2000"></textarea>' +
     '<details class="rec-more" id="rec-more"><summary>More details</summary>' +
     '<label class="rec-lbl" for="rec-laanc">Airspace authorization (optional)</label><input type="text" id="rec-laanc" autocomplete="off" maxlength="160" placeholder="Ref #, altitude, times">' +
@@ -2526,6 +2527,8 @@ function openRecord(btn) {
     '</details>' +
     '<label class="rec-check"><input type="checkbox" id="rec-wx"> Include weather conditions</label>' +
     '<label class="rec-check"><input type="checkbox" id="rec-un"> Include items not checked</label>' +
+    '<label class="rec-check" id="rec-gps-row"><input type="checkbox" id="rec-gps"> Include GPS coordinates</label>' +
+    '<div class="rec-hint" id="rec-gps-hint"></div>' +
     '<div class="rec-actions"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-save">Save</button></div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -2534,6 +2537,13 @@ function openRecord(btn) {
   $('#rec-wx').checked = prefs.weather;
   $('#rec-un').checked = prefs.unchecked;
   $('#rec-more').open = prefs.more;
+  const gpsOk = !!recCoords();
+  $('#rec-gps').checked = gpsOk && prefs.coords;
+  $('#rec-gps').disabled = !gpsOk;
+  $('#rec-gps-row').classList.toggle('rec-off', !gpsOk);
+  $('#rec-gps-hint').textContent = gpsOk
+    ? 'Adds the latitude and longitude the weather is using: your phone\'s location, or the flight site you chose. Accurate to about 35 feet (11 m).'
+    : 'Location not available.';
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
   $('.rec-cancel').onclick = closeRecord;
   $('.rec-save').onclick = async () => {
@@ -2541,9 +2551,9 @@ function openRecord(btn) {
       customer: recClean($('#rec-cust').value), site: recClean($('#rec-site').value),
       notes: $('#rec-notes').value.replace(/\r\n?/g, '\n').trim(),
       laanc: recClean($('#rec-laanc').value), flightTime: recClean($('#rec-ft').value), observer: recClean($('#rec-vo').value),
-      weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked
+      weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked, coords: gpsOk && $('#rec-gps').checked
     };
-    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, more: !!(o.laanc || o.flightTime || o.observer) });
+    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, coords: gpsOk ? o.coords : prefs.coords, more: !!(o.laanc || o.flightTime || o.observer) });
     const text = buildRecord(o), name = recFileName(o);
     const how = await recDeliver(text, name);
     closeRecord();
