@@ -391,7 +391,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1e</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2381,7 +2381,7 @@ function recWeatherLines() {
   if (!body) return out;
   body.querySelectorAll('.wx-item').forEach(it => {
     const q = (sel) => { const e = it.querySelector(sel); return e ? recNoEmoji(e.textContent) : ''; };
-    const label = q('.wx-label'), val = q('.wx-value');
+    const label = q('.wx-label'), val = q('.wx-value').replace(/\s*[\u2190-\u2199]\s*/g, ' ').trim();   // no wind arrow in the record; the "From NE" text says it
     const subs = [...it.querySelectorAll('.wx-sub')].map(e => {
       let t = recNoEmoji(e.textContent);
       const ts = e.getAttribute('data-rec-age');              // record shows a clock time, not "21 min ago"
@@ -2586,6 +2586,7 @@ function openRecord(btn) {
     const how = await recDeliver(text, name);
     closeRecord();
     if (how === 'refused') { recOffer(text, name); return; }
+    if (how === 'downloaded' || how === 'shared') { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } }
     if (how === 'downloaded') recToast('✓ Record saved to your downloads');
     else if (how === 'shared') recToast('✓ Record ready');
   };
