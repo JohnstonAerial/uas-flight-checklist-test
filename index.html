@@ -215,6 +215,7 @@
   .rec-box .rec-check input { width: 20px; height: 20px; flex-shrink: 0; }
   .rec-box .rec-hint { font-size: 12px; color: var(--text-muted); line-height: 1.35; margin: 4px 0 0 30px; }
   .rec-box .rec-check.rec-off { opacity: 0.5; }
+  .rec-box .rec-copy { display: block; background: none; border: 0; padding: 12px 0 0; margin: 0; color: var(--blue); font-family: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
   .rec-more { margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
   .rec-more summary { cursor: pointer; font-size: 14px; color: var(--blue); padding: 10px 0; min-height: 24px; font-weight: 600; }
   .rec-more[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 2px; }
@@ -390,7 +391,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1b</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2509,6 +2510,17 @@ function recOffer(text, name) {
     done(); if (h === 'shared') recToast('✓ Record ready');
   };
 }
+async function recCopy(text) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { await navigator.clipboard.writeText(text); return true; }
+  } catch (e) {}
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+    document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy'); ta.remove(); return !!ok;
+  } catch (e) { return false; }
+}
 function openRecord(btn) {
   closeRecord();
   recOpener = btn || null;
@@ -2529,6 +2541,7 @@ function openRecord(btn) {
     '<label class="rec-check"><input type="checkbox" id="rec-un"> Include items not checked</label>' +
     '<label class="rec-check" id="rec-gps-row"><input type="checkbox" id="rec-gps"> Include GPS coordinates</label>' +
     '<div class="rec-hint" id="rec-gps-hint"></div>' +
+    '<button type="button" class="rec-copy" id="rec-copy">Copy as text instead</button>' +
     '<div class="rec-actions"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-save">Save</button></div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -2546,7 +2559,7 @@ function openRecord(btn) {
     : 'Location not available.';
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
   $('.rec-cancel').onclick = closeRecord;
-  $('.rec-save').onclick = async () => {
+  const collect = () => {
     const o = {
       customer: recClean($('#rec-cust').value), site: recClean($('#rec-site').value),
       notes: $('#rec-notes').value.replace(/\r\n?/g, '\n').trim(),
@@ -2554,6 +2567,15 @@ function openRecord(btn) {
       weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked, coords: gpsOk && $('#rec-gps').checked
     };
     store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, coords: gpsOk ? o.coords : prefs.coords, more: !!(o.laanc || o.flightTime || o.observer) });
+    return o;
+  };
+  $('#rec-copy').onclick = async () => {
+    const ok = await recCopy(buildRecord(collect()));
+    if (ok) { closeRecord(); recToast('\u2713 Copied to your clipboard', 5000); }
+    else recToast('Couldn\'t copy. Use Save instead.', 5000);
+  };
+  $('.rec-save').onclick = async () => {
+    const o = collect();
     const text = buildRecord(o), name = recFileName(o);
     const how = await recDeliver(text, name);
     closeRecord();
