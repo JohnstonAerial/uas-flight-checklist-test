@@ -391,7 +391,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.5.1d</p>
     </div>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
@@ -2206,7 +2206,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-label">Cloud Ceiling</div>
             <div class="wx-value ${ceilClass}">${ceilTxt}</div>
             <div class="wx-sub">${ceilNote}</div>
-            ${metarData2 ? `<div class="wx-sub">${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}${metarData2.count > 1 ? ' · lowest of ' + metarData2.count + ' stations' : ''}</div>` : ''}
+            ${metarData2 ? `<div class="wx-sub"${metarData2.ageMin != null ? ' data-rec-age="' + (Date.now() - metarData2.ageMin * 60000) + '"' : ''}>${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}${metarData2.count > 1 ? ' · lowest of ' + metarData2.count + ' stations' : ''}</div>` : ''}
             ${lowCloudTxt() ? `<div class="wx-sub">${lowCloudTxt()}</div>` : ''}
             ${maxAltTxt() ? `<div class="wx-sub"><strong>${maxAltTxt()}</strong></div>` : ''}
           </div>
@@ -2382,11 +2382,17 @@ function recWeatherLines() {
   body.querySelectorAll('.wx-item').forEach(it => {
     const q = (sel) => { const e = it.querySelector(sel); return e ? recNoEmoji(e.textContent) : ''; };
     const label = q('.wx-label'), val = q('.wx-value');
-    const subs = [...it.querySelectorAll('.wx-sub')].map(e => recNoEmoji(e.textContent)).filter(Boolean);
+    const subs = [...it.querySelectorAll('.wx-sub')].map(e => {
+      let t = recNoEmoji(e.textContent);
+      const ts = e.getAttribute('data-rec-age');              // record shows a clock time, not "21 min ago"
+      if (ts) t = t.replace(/ · (just now|\d+ min ago|\d+ hrs? ago)/, ' · observed ' + new Date(+ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      return t.replace(/ \((just now|\d+ min ago|\d+ hrs? ago)\)/, '');
+    }).filter(Boolean);
     if (label) out.push(label + ': ' + (val || '—') + (subs.length ? ' (' + subs.join('; ') + ')' : ''));
   });
   const sun = body.querySelector('.wx-sun'); if (sun) out.push(recNoEmoji(sun.textContent).replace(/\s*·\s*/g, ' · '));
-  const upd = body.querySelector('.wx-updated'); if (upd) out.push(recNoEmoji(upd.textContent));
+  const upd = body.querySelector('.wx-updated');
+  if (upd) { const u = upd.cloneNode(true); const ag = u.querySelector('#wx-age'); if (ag) ag.remove(); out.push(recNoEmoji(u.textContent).replace(/^\s*Updated /, 'Weather as of ')); }
   const st = body.querySelector('.wx-status'); if (st) out.push('Note: ' + recNoEmoji(st.textContent));
   if (!body.querySelector('.wx-item')) return ['Weather was not available when this record was saved.'].concat(st ? out.slice(-1) : []);
   return out;
@@ -2571,7 +2577,7 @@ function openRecord(btn) {
   };
   $('#rec-copy').onclick = async () => {
     const ok = await recCopy(buildRecord(collect()));
-    if (ok) { closeRecord(); recToast('\u2713 Copied to your clipboard', 5000); }
+    if (ok) { closeRecord(); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } recToast('\u2713 Copied to your clipboard', 5000); }
     else recToast('Couldn\'t copy. Use Save instead.', 5000);
   };
   $('.rec-save').onclick = async () => {
