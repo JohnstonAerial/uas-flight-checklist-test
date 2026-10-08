@@ -81,7 +81,7 @@ Still worth doing: the checklist's own tip to screenshot your mission brief. The
 
 ## Print it and use a pencil
 
-You can print the checklist and take it to the site. Open the tab you want, then tap **Print checklist** in the app. In Safari you can also tap **Share**, then **Print**. Check items off with a pencil during preflight and again after the flight. Print each tab you need, since only the open tab prints.
+You can print the checklist and take it to the site. Open the tab you want, then tap **Print checklist** in Safari. In the Home Screen app, open the page in Safari first, since the Home Screen app can't print. Check items off with a pencil during preflight and again after the flight. Print each tab you need, since only the open tab prints.
 
 The app also works offline once it has loaded (see above), so paper is a choice, not a requirement. You can also save a record afterward and print that.
 
@@ -94,7 +94,7 @@ The first time you open the app it asks **Where do you fly?** Choose **Outside t
 **What changes**
 
 - **Units:** wind and distances show in km/h and km, temperatures in °C. The **mph · °F / km/h · °C** button next to the weather title switches units without changing your region.
-- **Checklist wording:** the US-only items for TFRs and LAANC are hidden. The NOTAM and airspace items are reworded, so "Check airspace — use your country's drone airspace map or app" replaces the one about B4UFLY. The wind item shows km/h first.
+- **Checklist wording:** the items marked "(US)" are hidden: the TFR check, the LAANC item and the TFR recheck on site. The NOTAM item is reworded to point you to your country's aviation authority or NOTAM service.
 - **Ceiling warnings:** low-cloud notes say "check your local cloud and visibility rules" instead of quoting US rules.
 - **Night notice:** after sunset or before sunrise it says to check your local rules for night flying.
 - **Place search:** you can search by town, postcode or ZIP code, or enter coordinates.
