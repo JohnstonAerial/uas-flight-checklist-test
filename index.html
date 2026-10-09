@@ -242,8 +242,8 @@
   .rec-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
   .rec-actions button { font: inherit; font-size: 14.5px; border-radius: 22px; padding: 9px 13px; min-height: 40px; cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--text-muted); }
   .rec-actions { flex-wrap: wrap; gap: 8px; }
-  .rec-actions .rec-dl, .rec-actions .rec-pdf { color: var(--blue); border-color: var(--blue); }
-  .rec-actions .rec-save { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+  .rec-actions .rec-dl, .rec-actions .rec-alt { color: var(--blue); border-color: var(--blue); }
+  .rec-actions .rec-primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
   .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
   .settings-help a { color: var(--link); display: inline-block; padding: 6px 0; }
@@ -416,7 +416,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.5a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.5b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2710,7 +2710,7 @@ const REC_KEY = 'uasRecordPrefs';
 
 function recPrefs() {
   const p = recall(REC_KEY, {}) || {};
-  return { weather: p.weather !== false, unchecked: p.unchecked !== false, coords: p.coords === true, more: p.more === true };
+  return { weather: p.weather !== false, unchecked: p.unchecked !== false, coords: p.coords === true, more: p.more === true, fmt: p.fmt === 'text' ? 'text' : 'pdf' };
 }
 function recClean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
 function recNoEmoji(s) { return recClean(String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')); }
@@ -3035,7 +3035,7 @@ function recOffer(text, name) {
   ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
     '<h2 id="rec-ot">Your record is ready</h2>' +
     '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
-    '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-dl">Download</button><button type="button" class="rec-save">Share…</button></div></div>';
+    '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-dl">Download</button><button type="button" class="rec-save rec-primary">Share…</button></div></div>';
   document.body.appendChild(ov);
   const done = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) done(); });
@@ -3096,6 +3096,14 @@ function openRecord(btn) {
     : 'Location not available.';
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
   $('.rec-cancel').onclick = closeRecord;
+  let curFmt = prefs.fmt;
+  const showFmt = () => {                      // the last-used format is the filled button on the right
+    const pb = $('.rec-pdf'), tb = $('.rec-save'), pdfFirst = curFmt === 'pdf';
+    const prim = pdfFirst ? pb : tb, alt = pdfFirst ? tb : pb;
+    prim.classList.add('rec-primary'); prim.classList.remove('rec-alt'); alt.classList.add('rec-alt'); alt.classList.remove('rec-primary');
+    prim.parentNode.appendChild(prim);
+  };
+  showFmt();
   const collect = () => {
     const o = {
       customer: recClean($('#rec-cust').value), site: recClean($('#rec-site').value),
@@ -3103,7 +3111,7 @@ function openRecord(btn) {
       laanc: recClean($('#rec-laanc').value), flightTime: recClean($('#rec-ft').value), observer: recClean($('#rec-vo').value),
       weather: $('#rec-wx').checked, unchecked: $('#rec-un').checked, coords: gpsOk && $('#rec-gps').checked
     };
-    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, coords: gpsOk ? o.coords : prefs.coords, more: !!(o.laanc || o.flightTime || o.observer) });
+    store(REC_KEY, { weather: o.weather, unchecked: o.unchecked, coords: gpsOk ? o.coords : prefs.coords, more: !!(o.laanc || o.flightTime || o.observer), fmt: curFmt });
     return o;
   };
   $('#rec-copy').onclick = async () => {
@@ -3119,9 +3127,9 @@ function openRecord(btn) {
     if (how === 'downloaded') recToast('✓ Record saved to your downloads');
     else if (how === 'shared') recToast('✓ Record ready');
   };
-  $('.rec-save').onclick = () => { const o = collect(); return finishSave(buildRecord(o), recFileName(o)); };
+  $('.rec-save').onclick = () => { curFmt = 'text'; const o = collect(); return finishSave(buildRecord(o), recFileName(o)); };
   $('.rec-pdf').onclick = () => {
-    const o = collect(); o.time = true;
+    curFmt = 'pdf'; const o = collect(); o.time = true;
     let pdf; try { pdf = buildRecordPdf(o); } catch (e) { recToast('Couldn\'t make the PDF. Use Save text instead.', 5000); return; }
     return finishSave(pdf, recPdfName('preflight-record', o));
   };
