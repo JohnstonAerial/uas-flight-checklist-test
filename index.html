@@ -233,7 +233,7 @@
   .rec-box .rec-check input { width: 20px; height: 20px; flex-shrink: 0; }
   .rec-box .rec-hint { font-size: 12px; color: var(--text-muted); line-height: 1.35; margin: 4px 0 0 30px; }
   .rec-box .rec-check.rec-off { opacity: 0.5; }
-  .rec-box .rec-copy { display: block; background: none; border: 0; padding: 12px 0 0; margin: 0; color: var(--blue); font-family: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
+  .rec-box .rec-copy { display: block; background: none; border: 0; padding: 0; margin: 16px auto 0; color: var(--blue); font-family: inherit; font-size: 14px; text-decoration: underline; cursor: pointer; }
   .rec-more { margin-top: 12px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; }
   .rec-more summary { cursor: pointer; font-size: 14px; color: var(--blue); padding: 10px 0; min-height: 24px; font-weight: 600; }
   .rec-more[open] summary { border-bottom: 1px solid var(--border); margin-bottom: 2px; }
@@ -421,7 +421,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.6a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1819,7 +1819,11 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and these settings are saved on this device only. They don\'t sync by themselves, and on some devices a Home Screen app keeps its own separate copy. To copy them to another phone, tablet or browser, use Back up & restore below.';
   const help = document.createElement('div'); help.className = 'settings-help';
-  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><br><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Buy me a coffee</a>';
+  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><br><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Buy me a coffee</a><br><a class="fb-link" href="#">✉ Send feedback</a>';
+  const fbl = help.querySelector('.fb-link');
+  const fbVer = (((document.querySelector('.header p') || {}).textContent || '').match(/v\d+(?:\.\d+)*[a-z]?/) || [''])[0];
+  fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
+    '&body=' + encodeURIComponent('What works, what is missing, or what is confusing:\n\n\n\n---\nApp version: ' + fbVer + '\nDevice and browser: ' + navigator.userAgent);
   body.append(keep, reg, note, cust, makeXfer(), help);
   wrap.append(tg, body);
   card.before(wrap);
@@ -3083,8 +3087,8 @@ function openRecord(btn) {
     '<label class="rec-check"><input type="checkbox" id="rec-un"> Include items not checked</label>' +
     '<label class="rec-check" id="rec-gps-row"><input type="checkbox" id="rec-gps"> Include GPS coordinates</label>' +
     '<div class="rec-hint" id="rec-gps-hint"></div>' +
-    '<button type="button" class="rec-copy" id="rec-copy">Copy as text instead</button>' +
     '<div class="rec-actions rec-actions-2"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-pdf">Save as PDF</button><button type="button" class="rec-save">Save text</button></div>' +
+    '<button type="button" class="rec-copy" id="rec-copy">Copy as text instead</button>' +
     '</div>';
   document.body.appendChild(ov);
   const $ = (id) => ov.querySelector(id);
