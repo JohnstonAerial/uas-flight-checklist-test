@@ -288,6 +288,11 @@
   .body-set .keep-row select { font-size: 15px; flex: 1 1 52%; min-width: 0; }
   .body-set .cust-row::before { content: '📝 Checklist items'; }
   .body-set .cust-row .cust-btn { font-size: 14px; }
+  .region-hint { flex: 1 1 100%; font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: -2px; }
+  .panel.editing .body-set .cust-row { flex-direction: column; align-items: stretch; gap: 6px; text-align: left; }
+  .panel.editing .body-set .cust-row::before { font-weight: 600; font-size: 14px; color: var(--text); }
+  .panel.editing .body-set .cust-row .tab-edit { justify-content: flex-start; }
+  .panel.editing .body-set .cust-row .cust-help { margin-top: 0; }
   .body-set .wl-block { max-width: none; margin: 0; padding: 8px 16px; border-top: 0; text-align: left; }
   .body-set .wl-row { flex-wrap: nowrap; justify-content: space-between; font-size: 14px; color: var(--text); margin: 0 0 4px; }
   .body-set .wl-row > span:first-child { white-space: nowrap; }
@@ -319,6 +324,12 @@
   .item.drop-before { box-shadow: inset 0 3px 0 var(--blue-mid); }
   .item.drop-end { box-shadow: inset 0 -3px 0 var(--blue-mid); }
   .cust-help { display: none; margin-top: 6px; line-height: 1.4; }
+  .pc-btns { margin-bottom: 2px; }
+  .panel.editing .progress-card, .panel.editing .flag-hint, .panel.editing .saved-note { display: none; }
+  .edit-note { display: none; margin: 0 0 12px; padding: 12px 14px; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); font-size: 14px; line-height: 1.45; color: var(--text); }
+  .panel.editing .edit-note { display: block; }
+  .edit-note .en-line { margin-bottom: 4px; }
+  .edit-note .en-foot { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); }
   .panel.editing .cust-help { display: block; }
   .section-header { display: flex; align-items: center; gap: 8px; cursor: pointer; -webkit-user-select: none; user-select: none; }
   .sec-meta { margin-left: auto; display: flex; align-items: center; gap: 8px; text-transform: none; letter-spacing: 0; font-weight: 600; }
@@ -440,7 +451,7 @@
     .tab-ico svg { display: inline; width: 1em; height: 1em; vertical-align: -0.12em; }
     .tab-lbl { display: inline; }
     .tab.active { display: block; padding: 6px 0 0; font-size: 13pt; text-align: left; color: #000 !important; border: 0; }
-    .progress-bar-wrap, #wx-panel, #region-card, .settings, .cust-row, .progress-card, .complete-banner, .flag-hint, .saved-note, .coffee-note, .foot-links,
+    .progress-bar-wrap, #wx-panel, #region-card, .settings, .cust-row, .edit-note, .progress-card, .complete-banner, .flag-hint, .saved-note, .coffee-note, .foot-links,
     .edit-bar, .toast, .rec-overlay, .rec-btn, .pc-btns, .pc-mini, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
     .content { max-width: none; padding: 0; margin: 0; }
     .panel { padding: 0; }
@@ -469,7 +480,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.8g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.9b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1493,8 +1504,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const row = document.createElement('div');
   row.className = 'cust-row';
   row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize</button>' +
-    '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
-    '<div class="cust-tip">💡 Drag the <b>≡</b> handle to move an item up or down within its section. To customize another tab, just tap it at the top — Settings stays open. Press <b>Done</b> when you\'re finished.</div>' +
+    '<div class="cust-help">' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
     '<div class="tab-icons"><span class="ti-label">Tab icon</span><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
@@ -1645,7 +1655,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
 document.querySelectorAll('.panel').forEach(panelEl => {
   const row = document.createElement('div');
   row.className = 'keep-row region-row';
-  row.innerHTML = '<span>🌍 Checklist for</span><select class="region-sel" aria-label="Where you fly" onchange="applyRegion(this.value, true)"><option value="us">USA</option><option value="intl">Outside USA</option></select>';
+  row.innerHTML = '<span>🌍 Where you fly</span><select class="region-sel" aria-label="Where you fly" onchange="applyRegion(this.value, true)"><option value="us">USA</option><option value="intl">Outside USA</option></select><div class="region-hint">Sets checklist items, weather units and US-only airspace links.</div>';
   row.querySelector('select').value = region || 'us';
   panelEl.querySelector('.keep-row').after(row);
 });
@@ -1890,13 +1900,19 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
   const col = document.createElement('div'); col.className = 'pc-btns';
-  card.appendChild(col);
+  card.prepend(col);
   const mini = document.createElement('div'); mini.className = 'pc-mini'; mini.appendChild(reset); if (all) mini.appendChild(all);
   card.appendChild(mini);
   const tip = panelEl.querySelector('.flag-hint');
   const sn = document.createElement('div'); sn.className = 'saved-note';
   sn.innerHTML = '💾 Saved on this device only · clears after <span class="saved-hours"></span>';
   tip.after(sn);
+  const en = document.createElement('div'); en.className = 'edit-note';
+  en.innerHTML = '<div class="en-line"><b>Hide:</b> tap Hide on items you don\'t need.</div>' +
+    '<div class="en-line"><b>Add:</b> use "Add your own item" at the bottom of any section.</div>' +
+    '<div class="en-line"><b>Move:</b> drag <b>≡</b> to reorder within a section.</div>' +
+    '<div class="en-foot">Tap another tab to customize it too. Press <b>Done</b> when finished. Saved on this device only.</div>';
+  sn.after(en);
   const bar = document.createElement('div'); bar.className = 'edit-bar';
   bar.innerHTML = '<span>✎ Editing your list</span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
   panelEl.prepend(bar);
