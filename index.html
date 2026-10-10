@@ -201,6 +201,11 @@
   .settings.open .tg-set .chev, .settings.open-bak .tg-bak .chev { transform: rotate(180deg); }
   .settings.open .tg-set, .settings.open-bak .tg-bak { border-color: var(--blue); }
   .settings.open .tg-set, .settings.open-bak .tg-bak { color: var(--text); font-weight: 600; }
+  .set-up { position: absolute; right: 6px; bottom: 4px; width: 32px; height: 28px; margin: 0; padding: 0; font-family: inherit; font-size: 16px; line-height: 1; color: var(--text-light); background: none; border: 0; cursor: pointer; border-radius: 8px; }
+  .settings-body { position: relative; }
+  .ac-block .fn-hint { padding-right: 44px; }
+  .set-up:hover, .set-up:focus-visible { color: var(--text); }
+  .panel.editing .set-up { display: none; }
   .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 0; margin-top: 8px; }
   .settings.open .body-set, .settings.open-bak .body-bak, .panel.editing .body-set { display: block; }
   .panel.editing .set-heads { display: none; }
@@ -498,7 +503,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.12b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.12d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2005,6 +2010,15 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="fn-row"><span>🪪 Registration #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="e.g. FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
     '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. Saved on this device only.</div>';
   bodySet.append(note, reg, cust, keep, wl, fnb, acb); bodyBak.append(makeXfer());
+  [bodySet, bodyBak].forEach(bd => {           // a small arrow at the bottom closes the section and goes back up to the buttons
+    const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4';
+    up.setAttribute('aria-label', 'Close this section');
+    up.onclick = () => {
+      wrap.classList.remove('open', 'open-bak'); tgSet.setAttribute('aria-expanded', 'false'); tgBak.setAttribute('aria-expanded', 'false');
+      try { const r = heads.getBoundingClientRect(); if (r.top < 110 || r.bottom > window.innerHeight) heads.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+    };
+    bd.appendChild(up);
+  });
   wrap.append(heads, bodySet, bodyBak);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
