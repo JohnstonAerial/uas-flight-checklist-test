@@ -1844,22 +1844,18 @@ async function xferCopy(btn) {
   xferMsg(btn, 'Couldn\'t copy automatically. Touch and hold the code in the box, then choose Copy.', true);
 }
 async function xferShare(btn) {
+  // Share the backup CODE as text. Called straight from the tap with no waiting before navigator.share,
+  // because Safari drops the tap's permission if anything slow happens first. (Phones never show this button.)
   const snap = xferSnapshot(btn.closest('.xfer').querySelector('.xfer-prog').checked);
-  const name = 'uas-checklist-backup-' + new Date().toISOString().slice(0, 10) + '.json';
-  const file = new File([JSON.stringify(snap)], name, { type: 'application/json' });
+  const key = JSON.stringify(snap.data);
+  const code = xferPre && xferPre.key === key ? xferPre.code : 'UAS0.' + b64enc(new TextEncoder().encode(JSON.stringify(snap)));
   try {
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'UAS Flight Checklist backup' });
-      xferMsg(btn, '✓ Shared. To restore it, tap Restore from file… and choose the file.'); return;
-    }
-  } catch (e) { if (e && e.name === 'AbortError') return; }
-  try {
-    const key = JSON.stringify(snap.data);
-    const code = xferPre && xferPre.key === key ? xferPre.code : await xferEncode(snap);
     await navigator.share({ title: 'UAS Flight Checklist backup', text: code });
     xferMsg(btn, '✓ Shared. To restore it, paste the code into Back up & restore and tap Restore from code.'); return;
-  } catch (e) { if (e && e.name === 'AbortError') return; }
-  xferMsg(btn, 'Sharing isn\'t available here. Use Copy code or Save file.', true);
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    xferMsg(btn, 'Sharing isn\'t available here' + (e && e.name ? ' (' + e.name + ')' : '') + '. Use Copy code or Save file.', true);
+  }
 }
 async function xferSave(btn) {
   const json = JSON.stringify(xferSnapshot(btn.closest('.xfer').querySelector('.xfer-prog').checked));
