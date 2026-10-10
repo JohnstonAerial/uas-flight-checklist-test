@@ -480,7 +480,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.9b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.9c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1510,7 +1510,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="tab-icons"><span class="ti-label">Tab icon</span><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
-    '<div class="tab-note">Renaming changes the tab\'s name and icon only. Use Hide and Add to change what\'s in it.</div>' +
+    '<div class="tab-note">Renaming changes the tab\'s name and icon only.</div>' +
     '<div class="tab-hidden-list"></div>' +
     '<div class="cust-actions"><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
   panelEl.querySelector('.keep-row').after(row);
@@ -1905,13 +1905,13 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   card.appendChild(mini);
   const tip = panelEl.querySelector('.flag-hint');
   const sn = document.createElement('div'); sn.className = 'saved-note';
-  sn.innerHTML = '💾 Saved on this device only · clears after <span class="saved-hours"></span>';
+  sn.innerHTML = '💾 Saved on this device and browser only · clears after <span class="saved-hours"></span>';
   tip.after(sn);
   const en = document.createElement('div'); en.className = 'edit-note';
   en.innerHTML = '<div class="en-line"><b>Hide:</b> tap Hide on items you don\'t need.</div>' +
     '<div class="en-line"><b>Add:</b> use "Add your own item" at the bottom of any section.</div>' +
     '<div class="en-line"><b>Move:</b> drag <b>≡</b> to reorder within a section.</div>' +
-    '<div class="en-foot">Tap another tab to customize it too. Press <b>Done</b> when finished. Saved on this device only.</div>';
+    '<div class="en-foot">Tap another tab to customize it too. Press <b>Done</b> when finished. Saved on this device and browser only.</div>';
   sn.after(en);
   const bar = document.createElement('div'); bar.className = 'edit-bar';
   bar.innerHTML = '<span>✎ Editing your list</span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
