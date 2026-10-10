@@ -288,6 +288,12 @@
   .body-set .keep-row select { font-size: 15px; flex: 1 1 52%; min-width: 0; }
   .body-set .cust-row::before { content: '📝 Checklist items'; }
   .body-set .cust-row .cust-btn { font-size: 14px; }
+  .fn-block { padding: 8px 16px 10px; border-top: 1px solid var(--border); text-align: left; }
+  .fn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--text); }
+  .fn-row > span { flex: 1 1 auto; }
+  .fn-row input { flex: 1 1 9em; min-width: 0; font-family: ui-monospace, Menlo, monospace; font-size: 16px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; }
+  .fn-row input::placeholder { color: var(--text-light); opacity: 0.7; }
+  .fn-hint { font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: 6px; overflow-wrap: anywhere; }
   .region-hint { flex: 1 1 100%; font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: -2px; }
   .panel.editing .body-set .cust-row { flex-direction: column; align-items: stretch; gap: 6px; text-align: left; }
   .panel.editing .body-set .cust-row::before { font-weight: 600; font-size: 14px; color: var(--text); }
@@ -480,7 +486,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.9c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.9d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1746,7 +1752,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', XFER_PROGRESS];
+const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasFileName', XFER_PROGRESS];
 function makeXfer() {
   const d = document.createElement('div');
   d.className = 'xfer';
@@ -1864,6 +1870,22 @@ async function xferFileChosen(inp) {
   xferApply(inp, obj);
 }
 
+// ── Record file name: what saved flight records start with (saved on this device; default flight-record) ──
+function fnClean(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40); }
+function fnRaw() { let v = ''; try { v = localStorage.getItem('uasFileName') || ''; } catch (e) {} return v; }
+function fnPrefix() { return fnClean(fnRaw()) || 'flight-record'; }
+function fnSync() {
+  const act = document.activeElement, raw = fnRaw(), d = new Date(), p = n => String(n).padStart(2, '0');
+  const ex = '-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + '-smith-roofing.pdf';
+  document.querySelectorAll('.fn-in').forEach(i => { if (i !== act) i.value = raw; });
+  document.querySelectorAll('.fn-ex').forEach(e => { e.innerHTML = ''; const b = document.createElement('b'); b.textContent = fnPrefix(); e.append('Saved as: ', b, ex); });
+}
+function fnSave(inp) {
+  const v = inp.value.trim();
+  try { if (v) localStorage.setItem('uasFileName', v); else localStorage.removeItem('uasFileName'); } catch (e) {}
+  fnSync();
+}
+
 // ── Layout: collapsed Settings panel, progress + Collapse all next to the list, sticky Editing bar ──
 document.querySelectorAll('.panel').forEach(panelEl => {
   const card = panelEl.querySelector('.progress-card');
@@ -1895,7 +1917,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const wl = document.createElement('div'); wl.className = 'wl-block';
   wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
     '<div class="wl-hint">sustained / gusts · amber at about two-thirds, red at the limit.</div>';
-  bodySet.append(note, reg, cust, keep, wl); bodyBak.append(makeXfer());
+  const fnb = document.createElement('div'); fnb.className = 'fn-block';
+  fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
+    '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
+  bodySet.append(note, reg, cust, keep, wl, fnb); bodyBak.append(makeXfer());
   wrap.append(heads, bodySet, bodyBak);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
@@ -2287,7 +2312,7 @@ function wlSave() {
   if (lastDraw) { lastDraw(); }
 }
 document.querySelectorAll('.wl-w, .wl-g').forEach(i => i.addEventListener('input', wlSave));
-wlSync();
+wlSync(); fnSync();
 
 let site = recall('wxSite', null);       // {name, lat, lon}, or null = use my current location
 let recentSites = recall('wxRecent', []);
@@ -2881,7 +2906,7 @@ function buildRecord(o) {
   const B = (k, v) => k + ': ' + v;
   const L = [];
   const now = new Date();
-  L.push(H1('Preflight Record'));
+  L.push(H1('Flight Record'));
   L.push(now.toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }));
   L.push('');
   if (o.customer) L.push(B('Customer', o.customer));
@@ -2928,7 +2953,7 @@ function buildRecord(o) {
 }
 function recFileName(o) {
   const d = new Date(), p = n => String(n).padStart(2, '0');
-  let nm = 'preflight-record-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
+  let nm = fnPrefix() + '-' + d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes());
   const c = (o.customer || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 30);
   if (c) nm += '-' + c;
   return nm + '.txt';
@@ -3079,8 +3104,8 @@ function recCollect(panelEl, includeAll) {  // the items on a tab, in order, as 
 }
 function recPdfFoot() { const v = recVersion(); return 'UAS Flight Checklists' + (v ? ' ' + v : '') + ' · checklist.johnstonaerial.com'; }
 function buildRecordPdf(o) {
-  const d = new PdfDoc(recPdfFoot(), 'Preflight Record');
-  d.h1('Preflight Record');
+  const d = new PdfDoc(recPdfFoot(), 'Flight Record');
+  d.h1('Flight Record');
   d.para(new Date().toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }), 10.5, { gray: 0.3 });
   d.gap(6);
   const co = o.coords ? recCoords() : '', tab = recNoEmoji(recTabName());
@@ -3246,7 +3271,7 @@ function openRecord(btn) {
   $('.rec-pdf').onclick = () => {
     curFmt = 'pdf'; const o = collect(); o.time = true;
     let pdf; try { pdf = buildRecordPdf(o); } catch (e) { recToast('Couldn\'t make the PDF. Use Save text instead.', 5000); return; }
-    return finishSave(pdf, recPdfName('preflight-record', o));
+    return finishSave(pdf, recPdfName(fnPrefix(), o));
   };
   document.addEventListener('keydown', recKey);
   setTimeout(() => { const f = $('#rec-cust'); if (f) f.focus(); }, 50);
@@ -3254,7 +3279,7 @@ function openRecord(btn) {
 document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'rec-btn'; b.className = 'rec-btn rec-record'; b.innerHTML = '<span class="ic" aria-hidden="true">📋</span>Save flight record';
-  b.setAttribute('aria-label', 'Save a preflight record of this checklist');
+  b.setAttribute('aria-label', 'Save a flight record of this checklist');
   b.onclick = () => openRecord(b);
   col.prepend(b);
   const pb = document.createElement('button');
