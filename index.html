@@ -214,14 +214,12 @@
   .progress-info .progress-track { flex: 0 0 100%; margin-top: 0; }
   .pc-btns { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 6px; flex: 1 1 100%; container-type: inline-size; }
   @container (max-width: 305px) { .pc-btns > .rec-btn.rec-record { flex-direction: row; gap: 8px; min-height: 40px; padding: 6px 8px; } .pc-btns .rec-btn.rec-record small { display: none; } }
-  .pc-btns > .rec-btn { flex: 1 1 110px; }
-  .pc-pair { flex: 2 1 190px; min-width: 0; }
+  .pc-btns > .rec-btn { flex: 5 1 120px; }
+  .pc-pair { flex: 6 1 190px; min-width: 0; }
   .pc-cap { font-size: 10px; letter-spacing: .5px; color: var(--text-muted); text-align: center; margin: 0 0 3px; font-weight: 600; }
   .pc-join { display: flex; border: 1px solid var(--blue); border-radius: 20px; overflow: hidden; }
   .pc-btns .pc-join .rec-btn { flex: 1 1 0; width: auto; border: 0; border-radius: 0; flex-direction: row; gap: 6px; min-height: 40px; padding: 6px 4px; }
   .pc-btns .pc-join .rec-btn + .rec-btn { border-left: 1px solid var(--blue); }
-  .pc-btns > .rec-btn.rec-record { background: var(--blue); color: #fff; }
-  .pc-btns > .rec-btn.rec-record:active { background: var(--blue); filter: brightness(1.15); }
   .pc-btns .rec-btn.rec-record small { font-size: 10px; font-weight: 400; opacity: .85; }
   .pc-btns .reset-inline, .pc-btns .sec-all { width: 100%; text-align: center; border-radius: 20px; padding: 6px 12px; font-size: 12px; margin: 0; color: var(--text-muted); background: transparent; border: 1px solid var(--border); font-family: inherit; cursor: pointer; }
   .saved-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 0 16px 8px; }
@@ -471,7 +469,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.8e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.8g</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -646,7 +644,7 @@
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Let site contact know you're finished — if you notified them</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Put batteries on charger when home — don't leave discharged</div></div>
-      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save record)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save flight record)</div></div>
     </div>
   </div>
 </div>
@@ -773,7 +771,7 @@
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Let site contact know you're finished — if you notified them</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Put batteries on charger when home — don't leave discharged</div></div>
-      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save record)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save flight record)</div></div>
     </div>
   </div>
 
@@ -882,7 +880,7 @@
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Let site contact know you're finished — if you notified them</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Pack drone properly in case — confirm all parts undamaged and stowed securely</div></div>
       <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Put batteries on charger when home — don't leave discharged</div></div>
-      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save record)</div></div>
+      <div class="item" onclick="toggle(this)"><div class="check-circle"><svg class="check-icon" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Log the flight — site, flight time and any issues (tap Save flight record)</div></div>
     </div>
   </div>
 
@@ -928,7 +926,8 @@ const RENAMED = {
   "Loss of signal action — RTH": "Loss of signal action — set to RTH (not Hover or Land)",
   "Monitor battery — begin return by 30%, land by 20%": "Monitor battery — start back early enough to land with a reserve, allowing for distance and wind",
   "Safe landing — props stopped before approaching drone": "Safe landing — props stopped before approaching the drone",
-  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save record)",
+  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save flight record)",
+  "Log the flight — site, flight time and any issues (tap Save record)": "Log the flight — site, flight time and any issues (tap Save flight record)",
   "Check weather — wind under 23 mph (37 km/h), no rain, good visibility": "Check the forecast — wind and gusts within your drone's limits, no rain, good visibility",
   "All batteries fully charged": "All drone batteries fully charged, spares included",
   "Remote ID — if your drone requires an external module, confirm it is charged and attached": "Remote ID — if your drone needs an external module, confirm it's charged and packed",
@@ -954,7 +953,8 @@ const RENAMED = {
   "Loss of signal action — RTH": "Loss of signal action — set to RTH (not Hover or Land)",
   "Monitor battery — begin return by 30%, land by 20%": "Monitor battery — start back early enough to land with a reserve, allowing for distance and wind",
   "Safe landing — props stopped before approaching drone": "Safe landing — props stopped before approaching the drone",
-  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save record)",
+  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save flight record)",
+  "Log the flight — site, flight time and any issues (tap Save record)": "Log the flight — site, flight time and any issues (tap Save flight record)",
   "Define mapping area — confirm boundaries in DJI Pilot / mission planner": "Define mapping area — confirm boundaries in your mission planner",
   "Check weather — winds under 15mph ideal, no rain, good visibility": "Check the forecast — wind and gusts within your drone's limits, no rain, good visibility",
   "Check Air Aware for airspace restrictions": "Check airspace — use an airspace app or your country's official drone map to confirm class and restrictions",
@@ -993,7 +993,8 @@ const RENAMED = {
   "Loss of signal action — RTH": "Loss of signal action — set to RTH (not Hover or Land)",
   "Monitor battery — begin return by 30%, land by 20%": "Monitor battery — start back early enough to land with a reserve, allowing for distance and wind",
   "Safe landing — props stopped before approaching drone": "Safe landing — props stopped before approaching the drone",
-  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save record)",
+  "Log flight time in your records": "Log the flight — site, flight time and any issues (tap Save flight record)",
+  "Log the flight — site, flight time and any issues (tap Save record)": "Log the flight — site, flight time and any issues (tap Save flight record)",
   "Check weather forecast — wind speed, gusts, cloud cover, precipitation": "Check the forecast — wind and gusts within your drone's limits, no rain, good visibility",
   "All drone batteries fully charged": "All drone batteries fully charged, spares included",
   "Controller fully charged": "Controller and phone/tablet fully charged",
@@ -3163,7 +3164,7 @@ function openRecord(btn) {
   const ov = document.createElement('div'); ov.className = 'rec-overlay';
   ov.innerHTML =
     '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-title">' +
-    '<h2 id="rec-title">Save preflight record</h2>' +
+    '<h2 id="rec-title">Save flight record</h2>' +
     '<label class="rec-lbl" for="rec-cust">Customer (optional)</label><input type="text" id="rec-cust" autocomplete="off" autocapitalize="words" maxlength="120">' +
     '<label class="rec-lbl" for="rec-site">Site</label><input type="text" id="rec-site" autocomplete="off" maxlength="160" placeholder="Address or place name">' +
     '<label class="rec-lbl" for="rec-notes">Notes (optional)</label><textarea id="rec-notes" rows="3" maxlength="2000"></textarea>' +
@@ -3236,7 +3237,7 @@ function openRecord(btn) {
 }
 document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const b = document.createElement('button');
-  b.type = 'button'; b.className = 'rec-btn'; b.className = 'rec-btn rec-record'; b.innerHTML = '<span class="ic" aria-hidden="true">📋</span>Save record<small>log this flight</small>';
+  b.type = 'button'; b.className = 'rec-btn'; b.className = 'rec-btn rec-record'; b.innerHTML = '<span class="ic" aria-hidden="true">📋</span>Save flight record';
   b.setAttribute('aria-label', 'Save a preflight record of this checklist');
   b.onclick = () => openRecord(b);
   col.prepend(b);
@@ -3265,7 +3266,7 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const pw = document.createElement('div'); pw.className = 'pc-pair';
   pw.innerHTML = '<div class="pc-cap">CHECKLIST</div><div class="pc-join"></div>';
   pw.querySelector('.pc-join').append(pb, fb);
-  col.append(b, pw);
+  col.append(pw, b);
 });
 </script>
 
