@@ -197,7 +197,7 @@
   .settings { margin-bottom: 12px; }
   .set-heads { display: flex; gap: 8px; }
   .settings-toggle { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: normal; line-height: 1.2; min-height: 44px; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 8px 10px; box-shadow: var(--shadow); cursor: pointer; }
-  .settings-toggle .chev { font-size: 10px; margin-left: 2px; transition: transform 0.2s; }
+  .settings-toggle .chev { font-size: 13px; margin-left: 2px; transition: transform 0.2s; }
   .settings.open .tg-set .chev, .settings.open-bak .tg-bak .chev { transform: rotate(180deg); }
   .settings.open .tg-set, .settings.open-bak .tg-bak { border-color: var(--blue); }
   .settings.open .tg-set, .settings.open-bak .tg-bak { color: var(--text); font-weight: 600; }
@@ -454,7 +454,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1474,7 +1474,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   }
   const row = document.createElement('div');
   row.className = 'cust-row';
-  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize list</button>' +
+  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize</button>' +
     '<div class="cust-help">Tap <b>Hide</b> on items that don\'t apply where you fly (for example, rules or services your country doesn\'t have), or add your own at the bottom of any section. Saved on this device only. ' +
     '<div class="cust-tip">💡 Drag the <b>≡</b> handle to move an item up or down within its section. To customize another tab, just tap it at the top — Settings stays open. Press <b>Done</b> when you\'re finished.</div>' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
