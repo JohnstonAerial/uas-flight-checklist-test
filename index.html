@@ -208,9 +208,9 @@
   .progress-card { flex-wrap: wrap; padding: 12px 14px; gap: 10px; }
   .progress-info { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 10px; row-gap: 8px; }
   .progress-info .progress-label { margin-top: 0; flex: 1 1 0; min-width: 7.5em; }
-  .pc-mini { display: flex; gap: 6px; flex: 0 1 auto; align-self: center; margin-left: auto; justify-content: flex-end; }
-  @media (max-width: 520px) { .pc-mini { flex: 1 1 auto; } .pc-mini .reset-inline, .pc-mini .sec-all { flex: 1 1 auto; } }
-  .pc-mini .reset-inline, .pc-mini .sec-all { width: auto; margin: 0; padding: 5px 12px; font-size: 12px; min-height: 30px; white-space: nowrap; text-align: center; border-radius: 20px; color: var(--text-muted); background: transparent; border: 1px solid var(--border); font-family: inherit; cursor: pointer; }
+  .pc-mini { display: flex; justify-content: space-between; align-items: center; flex: 1 1 100%; border-top: 1px solid var(--border); padding-top: 6px; margin-top: 2px; }
+  .pc-mini .reset-inline::before { content: '\21BA\00a0'; } .pc-mini .sec-all::before { content: '\21D5\00a0'; }
+  .pc-mini .reset-inline, .pc-mini .sec-all { width: auto; margin: 0; padding: 4px 2px; font-size: 13px; min-height: 36px; white-space: nowrap; text-align: center; border-radius: 0; color: var(--text-muted); background: transparent; border: 0; font-family: inherit; cursor: pointer; }
   .progress-info .progress-track { flex: 0 0 100%; margin-top: 0; }
   .pc-btns { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 6px; flex: 1 1 100%; container-type: inline-size; }
   @container (max-width: 305px) { .pc-btns > .rec-btn.rec-record { flex-direction: row; gap: 8px; min-height: 40px; padding: 6px 8px; } .pc-btns .rec-btn.rec-record small { display: none; } }
@@ -471,7 +471,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.8d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.8e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1891,7 +1891,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const col = document.createElement('div'); col.className = 'pc-btns';
   card.appendChild(col);
   const mini = document.createElement('div'); mini.className = 'pc-mini'; mini.appendChild(reset); if (all) mini.appendChild(all);
-  card.querySelector('.progress-label').after(mini);
+  card.appendChild(mini);
   const tip = panelEl.querySelector('.flag-hint');
   const sn = document.createElement('div'); sn.className = 'saved-note';
   sn.innerHTML = '💾 Saved on this device only · clears after <span class="saved-hours"></span>';
