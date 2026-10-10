@@ -1849,8 +1849,17 @@ async function xferShare(btn) {
   const snap = xferSnapshot(btn.closest('.xfer').querySelector('.xfer-prog').checked);
   const key = JSON.stringify(snap.data);
   const code = xferPre && xferPre.key === key ? xferPre.code : 'UAS0.' + b64enc(new TextEncoder().encode(JSON.stringify(snap)));
+  // Chrome and Edge attach the backup as a file; Safari on a Mac can't, so it shares the code as text.
+  // No title is sent: some share sheets show title and text as two separate items.
+  const name = 'uas-checklist-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  const file = new File([JSON.stringify(snap)], name, { type: 'application/json' });
+  let fileOk = false; try { fileOk = !!(window.showSaveFilePicker && navigator.canShare && navigator.canShare({ files: [file] })); } catch (e) {}
   try {
-    await navigator.share({ title: 'UAS Flight Checklist backup', text: code });
+    if (fileOk) {
+      await navigator.share({ files: [file] });
+      xferMsg(btn, '✓ Shared. To restore it, tap Restore from file… and choose the file.'); return;
+    }
+    await navigator.share({ text: code });
     xferMsg(btn, '✓ Shared. To restore it, paste the code into Back up & restore and tap Restore from code.'); return;
   } catch (e) {
     if (e && e.name === 'AbortError') return;
