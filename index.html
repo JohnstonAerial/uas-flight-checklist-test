@@ -498,7 +498,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.12a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.12b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3264,6 +3264,21 @@ function recPdfName(prefix, o) {
   if (c) nm += '-' + c;
   return nm + '.pdf';
 }
+// ── Draft of the Save record box: kept (on this device, 12 hours) so a stray tap outside the box or a closed Share sheet never loses what was typed ──
+const REC_DRAFT_KEY = 'uasRecordDraft', REC_DRAFT_IDS = ['cust', 'site', 'notes', 'laanc', 'ft', 'vo'];
+function recDraftGet() {
+  try {
+    const d = JSON.parse(localStorage.getItem(REC_DRAFT_KEY) || 'null');
+    if (d && d.at && Date.now() - d.at < 12 * 3600000 && d.v && typeof d.v === 'object') return d.v;
+  } catch (e) {}
+  return null;
+}
+function recDraftSave(ov) {
+  const v = {}; let any = false;
+  REC_DRAFT_IDS.forEach(k => { const el = ov.querySelector('#rec-' + k); if (el && el.value.trim()) { v[k] = el.value; any = true; } });
+  try { if (any) localStorage.setItem(REC_DRAFT_KEY, JSON.stringify({ at: Date.now(), v: v })); else localStorage.removeItem(REC_DRAFT_KEY); } catch (e) {}
+}
+function recDraftClear() { try { localStorage.removeItem(REC_DRAFT_KEY); } catch (e) {} }
 let recForceDownload = false, recLastErr = '';
 async function recDeliver(text, name) {
   const isPdf = /\.pdf$/i.test(name), mime = isPdf ? 'application/pdf' : 'text/plain';
@@ -3304,11 +3319,12 @@ function recOffer(text, name) {
   const done = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) done(); });
   ov.querySelector('.rec-cancel').onclick = done;
-  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recToast('✓ Record saved to your downloads'); };
+  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recDraftClear(); recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' saved to your downloads'); };
   ov.querySelector('.rec-save').onclick = async () => {
     const h = await recDeliver(text, name);
     if (h === 'refused') { recToast('Sharing is not available right now — use Download'); return; }
-    done(); if (h === 'shared') recToast('✓ Record ready');
+    if (h === 'cancelled') return;
+    done(); recDraftClear(); if (h === 'shared') recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' shared');
   };
 }
 async function recCopy(text) {
@@ -3348,9 +3364,12 @@ function openRecord(btn) {
   document.body.appendChild(ov);
   const $ = (id) => ov.querySelector(id);
   $('#rec-site').value = recSiteDefault();
+  const draft = recDraftGet();
+  if (draft) REC_DRAFT_IDS.forEach(k => { if (typeof draft[k] === 'string') $('#rec-' + k).value = draft[k]; });
+  ov.addEventListener('input', () => recDraftSave(ov));
   $('#rec-wx').checked = prefs.weather;
   $('#rec-un').checked = prefs.unchecked;
-  $('#rec-more').open = prefs.more;
+  $('#rec-more').open = prefs.more || !!(draft && (draft.laanc || draft.ft || draft.vo));
   const gpsOk = !!recCoords();
   $('#rec-gps').checked = gpsOk && prefs.coords;
   $('#rec-gps').disabled = !gpsOk;
@@ -3359,7 +3378,7 @@ function openRecord(btn) {
     ? 'Adds the latitude and longitude the weather is using: your phone\'s location, or the flight site you chose. Accurate to about 35 feet (11 m).'
     : 'Location not available.';
   ov.addEventListener('click', (e) => { if (e.target === ov) closeRecord(); });
-  $('.rec-cancel').onclick = closeRecord;
+  $('.rec-cancel').onclick = () => { recDraftClear(); closeRecord(); };
   let curFmt = prefs.fmt;
   const showFmt = () => {                      // the last-used format is the filled button on the right
     const pb = $('.rec-pdf'), tb = $('.rec-save'), pdfFirst = curFmt === 'pdf';
@@ -3380,16 +3399,19 @@ function openRecord(btn) {
   };
   $('#rec-copy').onclick = async () => {
     const ok = await recCopy(buildRecord(collect()));
-    if (ok) { closeRecord(); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } recToast('\u2713 Copied to your clipboard', 5000); }
+    if (ok) { recDraftClear(); closeRecord(); try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } recToast('\u2713 Copied to your clipboard', 5000); }
     else recToast('Couldn\'t copy. Use Save instead.', 5000);
   };
   const finishSave = async (data, name) => {
     const how = await recDeliver(data, name);
+    if (how === 'cancelled') return;                 // Share sheet closed without choosing: the box stays open with everything typed
     closeRecord();
     if (how === 'refused') { recOffer(data, name); return; }
+    recDraftClear();
+    const what = /\.pdf$/i.test(name) ? 'PDF' : 'Record';
     if (how === 'downloaded' || how === 'shared') { try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); } }
-    if (how === 'downloaded') recToast('✓ Record saved to your downloads');
-    else if (how === 'shared') recToast('✓ Record ready');
+    if (how === 'downloaded') recToast('✓ ' + what + ' saved to your downloads');
+    else if (how === 'shared') recToast('✓ ' + what + ' shared');
   };
   $('.rec-save').onclick = () => { curFmt = 'text'; const o = collect(); return finishSave(buildRecord(o), recFileName(o)); };
   $('.rec-pdf').onclick = () => {
@@ -3425,7 +3447,7 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
     const tabSlug = ((t ? t.textContent : 'checklist').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24)) || 'checklist';
     const how = await recDeliver(pdf, recPdfName('flight-checklist-' + tabSlug, null));
     if (how === 'refused') { recOffer(pdf, recPdfName('flight-checklist-' + tabSlug, null)); return; }
-    if (how === 'downloaded') recToast('✓ PDF saved to your downloads'); else if (how === 'shared') recToast('✓ PDF ready');
+    if (how === 'downloaded') recToast('✓ PDF saved to your downloads'); else if (how === 'shared') recToast('✓ PDF shared');
   };
   b.after(fb);
   const pw = document.createElement('div'); pw.className = 'pc-pair';
