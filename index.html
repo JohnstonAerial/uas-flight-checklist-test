@@ -196,8 +196,10 @@
   .cust-actions { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
   .settings { margin-bottom: 12px; }
   .set-heads { display: flex; gap: 8px; }
-  .settings-toggle { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: none; border-radius: 14px; padding: 10px 10px; box-shadow: var(--shadow); cursor: pointer; }
-  .settings-toggle .chev { display: none; }
+  .settings-toggle { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: normal; line-height: 1.2; min-height: 44px; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 8px 10px; box-shadow: var(--shadow); cursor: pointer; }
+  .settings-toggle .chev { font-size: 10px; margin-left: 2px; transition: transform 0.2s; }
+  .settings.open .tg-set .chev, .settings.open-bak .tg-bak .chev { transform: rotate(180deg); }
+  .settings.open .tg-set, .settings.open-bak .tg-bak { border-color: var(--blue); }
   .settings.open .tg-set, .settings.open-bak .tg-bak { color: var(--text); font-weight: 600; }
   .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 0; margin-top: 8px; }
   .settings.open .body-set, .settings.open-bak .body-bak, .panel.editing .body-set { display: block; }
@@ -251,7 +253,17 @@
   .rec-actions .rec-dl, .rec-actions .rec-alt { color: var(--blue); border-color: var(--blue); }
   .rec-actions .rec-primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
-  .body-bak .xfer { margin: 0 auto; padding: 0 12px 6px; border-top: 0; }
+  .body-bak { padding: 0; }
+  .body-bak .xfer { max-width: none; margin: 0; padding: 0; border-top: 0; text-align: left; font-size: 14px; color: var(--text); }
+  .body-bak .xfer-sub { font-size: 11px; color: var(--text-light); padding: 12px 16px 10px; border-bottom: 1px solid var(--border); margin: 0; }
+  .bk-h { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 12px 16px 6px; }
+  .body-bak .xfer-incl { display: flex; flex-direction: row-reverse; justify-content: space-between; padding: 6px 16px 8px; margin: 0; }
+  .body-bak .xfer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; padding: 4px 16px 14px; }
+  .body-bak .xfer-btns .cust-btn { font-size: 14px; padding: 8px 6px; min-height: 40px; }
+  .body-bak .xfer-btns.rs { padding-top: 10px; }
+  .bk-div { border-top: 1px solid var(--border); }
+  .body-bak .xfer-box { margin: 0 16px; width: calc(100% - 32px); font-size: 16px; }
+  .body-bak .xfer-msg { padding: 0 16px 10px; margin: 0; min-height: 0; }
   .wl-block { max-width: 600px; margin: 4px auto 6px; padding: 10px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-light); }
   .wl-row { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
   .wl-row input { width: 58px; font-family: inherit; font-size: 16px; text-align: center; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 4px; }
@@ -266,9 +278,9 @@
   .body-set .wl-row > span:first-child { white-space: nowrap; }
   .wl-ctl { display: flex; align-items: center; gap: 6px; }
   .wl-hint { font-size: 11px; }
-  .body-set .settings-note { max-width: none; margin: 0; padding: 10px 16px 8px; text-align: left; border-top: 1px solid var(--border); }
-  .settings-help { display: flex; justify-content: center; flex-wrap: nowrap; gap: 16px; font-size: 14px; margin: 10px 0 6px; padding: 0; }
-  .settings-help a { padding: 8px 0; white-space: nowrap; }
+  .body-set .settings-note { max-width: none; margin: 0; padding: 12px 16px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
+  .settings-help a { padding: 6px 0; }
   @media (max-width: 340px) { .wl-row { gap: 5px; } .wl-row input { width: 48px; } }
   .settings-help a { color: var(--link); display: inline-block; }
   .coffee-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 16px 16px 28px; }
@@ -440,7 +452,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1709,10 +1721,10 @@ function makeXfer() {
   const d = document.createElement('div');
   d.className = 'xfer';
   d.innerHTML = '<div class="xfer-sub">Save your settings and progress, or move them to another device or browser.</div>' +
-    '<label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
+    '<div class="bk-h">Back up</div><label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
     '<div class="xfer-btns"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button><button type="button" class="cust-btn" onclick="xferSave(this)">Save file</button></div>' +
-    '<textarea class="xfer-box" rows="2" placeholder="On the other device, paste the code here" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>' +
-    '<div class="xfer-btns"><button type="button" class="cust-btn primary" onclick="xferRestore(this)">Restore from code</button><button type="button" class="cust-btn" onclick="xferFile(this)">Restore from file…</button>' +
+    '<div class="bk-div"></div><div class="bk-h">Restore</div><textarea class="xfer-box" rows="2" placeholder="On the other device, paste the code here" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>' +
+    '<div class="xfer-btns rs"><button type="button" class="cust-btn primary" onclick="xferRestore(this)">Restore from code</button><button type="button" class="cust-btn" onclick="xferFile(this)">Restore from file…</button>' +
     '<input type="file" class="xfer-file" accept=".json,application/json,text/plain" hidden onchange="xferFileChosen(this)"></div>' +
     '<div class="xfer-msg" role="status"></div>';
   return d;
@@ -1845,7 +1857,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and settings are saved on this device only and don\'t sync. Each browser, and each Home Screen app, keeps its own copy. To move them to another device or browser, use Back up & restore.';
   const help = document.createElement('div'); help.className = 'settings-help';
-  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help</a><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Coffee</a><a class="fb-link" href="#">✉ Feedback</a>';
+  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><br><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Buy me a coffee</a><br><a class="fb-link" href="#">✉ Send feedback</a>';
   const fbl = help.querySelector('.fb-link');
   const fbVer = (((document.querySelector('.header p') || {}).textContent || '').match(/v\d+(?:\.\d+)*[a-z]?/) || [''])[0];
   fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
@@ -1853,7 +1865,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const wl = document.createElement('div'); wl.className = 'wl-block';
   wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
     '<div class="wl-hint">sustained / gusts · amber at about two-thirds, red at the limit.</div>';
-  bodySet.append(reg, cust, keep, wl, note); bodyBak.append(makeXfer());
+  bodySet.append(note, reg, cust, keep, wl); bodyBak.append(makeXfer());
   wrap.append(heads, bodySet, bodyBak, help);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
