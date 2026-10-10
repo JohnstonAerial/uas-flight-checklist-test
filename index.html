@@ -196,11 +196,10 @@
   .cust-actions { display: flex; justify-content: center; gap: 16px; margin-top: 12px; }
   .settings { margin-bottom: 12px; }
   .set-heads { display: flex; gap: 8px; }
-  .settings-toggle { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: none; border-radius: 14px; padding: 11px 14px; box-shadow: var(--shadow); cursor: pointer; }
-  .settings-toggle .chev { font-size: 11px; transition: transform 0.2s; }
-  .settings.open .tg-set, .settings.open-bak .tg-bak { color: var(--text); }
-  .settings.open .tg-set .chev, .settings.open-bak .tg-bak .chev { transform: rotate(180deg); }
-  .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 4px 6px; margin-top: 8px; }
+  .settings-toggle { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 6px; white-space: nowrap; font-family: inherit; font-size: 13px; color: var(--text-muted); background: var(--card); border: none; border-radius: 14px; padding: 10px 10px; box-shadow: var(--shadow); cursor: pointer; }
+  .settings-toggle .chev { display: none; }
+  .settings.open .tg-set, .settings.open-bak .tg-bak { color: var(--text); font-weight: 600; }
+  .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 0; margin-top: 8px; }
   .settings.open .body-set, .settings.open-bak .body-bak, .panel.editing .body-set { display: block; }
   .panel.editing .set-heads { display: none; }
   .settings-note { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; text-align: center; font-size: 11px; color: var(--text-light); line-height: 1.4; }
@@ -258,9 +257,20 @@
   .wl-row input { width: 58px; font-family: inherit; font-size: 16px; text-align: center; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 4px; }
   .wl-row input::placeholder { color: var(--text-light); opacity: 0.7; }
   .wl-hint { line-height: 1.4; }
+  .body-set .keep-row, .body-set .region-row, .body-set .cust-row { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 10px; text-align: left; max-width: none; margin: 0; padding: 8px 16px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text); }
+  .body-set .keep-row select { font-size: 15px; max-width: 55%; }
+  .body-set .cust-row::before { content: '📝 Checklist items'; }
+  .body-set .cust-row .cust-btn { font-size: 14px; }
+  .body-set .wl-block { max-width: none; margin: 0; padding: 8px 16px; border-top: 0; text-align: left; }
+  .body-set .wl-row { flex-wrap: nowrap; justify-content: space-between; font-size: 14px; color: var(--text); margin: 0 0 4px; }
+  .body-set .wl-row > span:first-child { white-space: nowrap; }
+  .wl-ctl { display: flex; align-items: center; gap: 6px; }
+  .wl-hint { font-size: 11px; }
+  .body-set .settings-note { max-width: none; margin: 0; padding: 10px 16px 8px; text-align: left; border-top: 1px solid var(--border); }
+  .settings-help { display: flex; justify-content: center; flex-wrap: nowrap; gap: 16px; font-size: 14px; margin: 10px 0 6px; padding: 0; }
+  .settings-help a { padding: 8px 0; white-space: nowrap; }
   @media (max-width: 340px) { .wl-row { gap: 5px; } .wl-row input { width: 48px; } }
-  .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
-  .settings-help a { color: var(--link); display: inline-block; padding: 6px 0; }
+  .settings-help a { color: var(--link); display: inline-block; }
   .coffee-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 16px 16px 28px; }
   .coffee-note a { color: var(--link); }
   .xfer-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 2px; }
@@ -430,7 +440,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.7e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1835,15 +1845,15 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and settings are saved on this device only and don\'t sync. Each browser, and each Home Screen app, keeps its own copy. To move them to another device or browser, use Back up & restore.';
   const help = document.createElement('div'); help.className = 'settings-help';
-  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><br><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Buy me a coffee</a><br><a class="fb-link" href="#">✉ Send feedback</a>';
+  help.innerHTML = '<a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help</a><a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">☕ Coffee</a><a class="fb-link" href="#">✉ Feedback</a>';
   const fbl = help.querySelector('.fb-link');
   const fbVer = (((document.querySelector('.header p') || {}).textContent || '').match(/v\d+(?:\.\d+)*[a-z]?/) || [''])[0];
   fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
     '&body=' + encodeURIComponent('What works, what is missing, or what is confusing:\n\n\n\n---\nApp version: ' + fbVer + '\nDevice and browser: ' + navigator.userAgent);
   const wl = document.createElement('div'); wl.className = 'wl-block';
-  wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></div>' +
+  wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
     '<div class="wl-hint">sustained / gusts · amber at about two-thirds, red at the limit.</div>';
-  bodySet.append(note, keep, reg, cust, wl); bodyBak.append(makeXfer());
+  bodySet.append(reg, cust, keep, wl, note); bodyBak.append(makeXfer());
   wrap.append(heads, bodySet, bodyBak, help);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
