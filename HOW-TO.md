@@ -1,22 +1,65 @@
 # How to use the UAS Flight Checklist
 
-Short guides for four things people ask about: saving different setups ("profiles"), using the app with no signal, using it outside the USA, and checking TFRs and NOTAMs (USA only).
+Short guides for seven things people ask about: backing up and restoring your setup, saving different setups ("profiles"), using the app with no signal, saving a record of your preflight, printing the checklist, using it outside the USA, and checking TFRs and NOTAMs (USA only).
 
+- [Back up and restore your setup](#back-up-and-restore-your-setup)
 - [Make your own profiles](#make-your-own-profiles)
 - [Use it with no signal](#use-it-with-no-signal)
+- [Save a flight record](#save-a-flight-record)
+- [Print it and use a pencil](#print-it-and-use-a-pencil)
 - [Use it outside the USA](#use-it-outside-the-usa)
 - [Check TFRs and NOTAMs before you fly (USA only)](#check-tfrs-and-notams-before-you-fly-usa)
 
 ---
 
+## Back up and restore your setup
+
+Your checklist setup is stored on your device. If you get a new phone, clear your browser data, or want the same setup on a tablet, you'd have to rebuild it. A backup saves it so you can bring it back, or copy it to another device, in a minute.
+
+**What a backup includes**
+
+- Your tab names and icons, which tabs and items are hidden, the items you added, and the order you set
+- Your units, your region (USA or another country) and your saved places
+- Optionally, your current progress (the boxes you've ticked), which only restores if it hasn't expired (see Good to know)
+
+It does not include saved flight records. Those are separate files that you keep yourself.
+
+**To back up**
+
+1. Tap **💾 Back up & restore** under the page header.
+2. Leave **Include current progress** ticked if you're moving to another device today and want your ticks to come with you. Untick it to save only your setup, which is best for a backup you'll keep.
+3. Tap **Save file**. On an iPhone or iPad the Share sheet opens, so you can choose **Save to Files** or send it to yourself. On a computer the file goes to your Downloads folder.
+
+Or tap **Copy code**. The code is the same backup as text, handy for sending yourself a message.
+
+**To restore**
+
+- **From a file:** tap **Restore from file…** and choose your backup. The page reloads with that setup.
+- **From a code:** paste it into the box, then tap **Restore from code**.
+
+**Move your setup to another device**
+
+Back up on the first device, send the file or code to the second (AirDrop, email, a cloud folder or a message to yourself), then restore it there.
+
+**Good to know**
+
+- **Progress expires, even in a backup.** Your ticks are kept for the time set under **Clear saved progress after** (12 hours unless you changed it), counted from the last time you ticked something. If you restore a backup after that time has passed, the app restores your setup, leaves the old ticks out and tells you the progress has expired. So a backup with progress works for moving to another device today, not for storing for later.
+- **Restoring replaces everything on that device:** tabs, hidden and added items, units and saved places. If you want to keep what you have, save a backup of it first.
+- **Each place keeps its own copy.** Safari and the Home Screen icon on the same iPhone store their settings separately. You can back up from one and restore into the other. That's an easy way to move to the Home Screen app.
+- **You can restore on the same device too.** It's a quick way to undo a round of changes you regret, if you saved a backup first.
+- **Reset and Restore original list are different.** **Reset** on the main screen clears only your ticks and flags on that tab. **Restore original list**, in the customize panel, undoes your customizing on that tab: hidden items come back, items you added are removed and the tab name and icon are reset.
+- **Your files are yours.** They're plain text files that stay on your device or wherever you put them. Nothing is sent to the website.
+
+---
+
 ## Make your own profiles
 
-The app keeps one setup at a time on your device: your tab names, which items are shown, items you added, your units and your saved places. A **backup file** is a snapshot of that setup. Keep one backup file per kind of job, and you can switch between them in a few taps.
+The app keeps one setup at a time on your device: your tab names and icons, which items are shown, items you added, your units and your saved places. A **backup file** is a snapshot of that setup. Keep one backup file per kind of job, and you can switch between them in a few taps.
 
 **Example: a "Timelapse" setup**
 
-1. Open **Settings & customize** and tap **✎ Customize list**.
-2. Rename a tab (for example, **Timelapse**) in the **Tab name** box.
+1. Tap **⚙ Settings**, then **✎ Customize**.
+2. Rename a tab (for example, **Timelapse**) in the **Tab name** box. You can also change its icon under **Tab icon**: pick one, type your own emoji, or choose **No icon**.
 3. Tap **Hide** on items you don't need, and add your own at the bottom of any section. Use **Hide this tab** on tabs you don't want to see. Tap **✓ Done**.
 4. In **💾 Back up & restore**, untick **Include current progress**, then tap **Save file**.
 5. Rename the file so you can tell it apart, for example `uas-checklist-backup-TIMELAPSE.json`.
@@ -47,15 +90,13 @@ I did the same thing for my other kinds of work: one backup file each for Genera
 
 **Make yours:** start from whatever tab is closest to your work. Hide what you never use, add the checks you keep forgetting, and write them in your own words and for your own gear. The best items come from the mistakes you've already made once.
 
-**To switch to it later:** open **Settings & customize**, tap **Restore from file…**, and choose the file. The page reloads with that setup.
+**To switch to it later:** tap **💾 Back up & restore**, then **Restore from file…**, and choose the file. The page reloads with that setup.
 
 **Good to know**
 
 - **Restoring replaces everything on that device:** tabs, hidden and added items, units and saved places. If you want to keep your normal setup, save a backup of it first, before you start experimenting.
 - **Untick "Include current progress"** when you save a profile. Otherwise it also saves which boxes you had ticked.
-- **Copy code** gives you the same snapshot as text. Paste it into **Restore from code** on another phone, tablet or browser to move your setup across.
-- **Where files go:** the file is saved to your phone's Files app, or your computer's downloads folder. Put your profile files somewhere you'll find them, such as a cloud folder.
-- **Different devices keep their own settings.** A Home Screen icon on an iPhone has its own storage, separate from Safari, so restore the profile in the one you actually use.
+- **Where files go and moving between devices:** see [Back up and restore your setup](#back-up-and-restore-your-setup). Put your profile files somewhere you'll find them, such as a cloud folder.
 - **Your files are yours.** They're plain text files that stay on your device or wherever you put them. Nothing is sent to the website.
 
 ---
@@ -79,17 +120,36 @@ Still worth doing: the checklist's own tip to screenshot your mission brief. The
 
 ---
 
+## Save a flight record
+
+Want a copy of what you checked, plus the details of the flight? Tap **Save flight record**, on the right of the buttons at the top of the checklist (under **Print | PDF** on a narrow screen).
+
+1. Tap **Save flight record**.
+2. Fill in what you want to keep: the customer, the site (type an address or place name, or leave it blank) and any notes. **More details** has boxes for airspace authorization (for example a LAANC reference, altitude and times), flight time and visual observer. Everything is optional.
+3. Choose whether to include the weather conditions, the items you didn't check, and your GPS coordinates (off unless you tick it).
+4. Tap **Save PDF** or **Save text**. The one you used last is the filled button at the left of the row, and the app remembers it. PDF is the filled button until you choose text. On an iPhone or iPad the Share sheet opens, so you can choose **Save to Files**, AirDrop, Mail or Messages. On a computer the file goes to your Downloads folder.
+
+You get one file, named like `flight-record-2026-10-06-1415-smith-roofing.pdf` (or `.txt` for text), that opens on any device. The PDF has real check boxes and page numbers. Items you flagged are listed as NEEDS ATTENTION. Items you hid are left out and items you added are included. The record is made on your device and isn't sent anywhere. To put your own name at the front of the file, such as `johnston-aerial`, type it in **Record file name starts with** at the bottom of **⚙ Settings**. The date, time and customer are still added.
+
+Prefer to paste it into a note or email? Tap **Copy as text instead**. The record is copied to your clipboard and no file is made. That doesn't change which button is filled.
+
+If the Share sheet doesn't open, the app shows a box with **Share…** and **Download** buttons instead.
+
+---
+
 ## Print it and use a pencil
 
-You can print the checklist and take it to the site. Open the tab you want, then tap **Print checklist** in Safari. In the Home Screen app, open the page in Safari first, since the Home Screen app can't print. Check items off with a pencil during preflight and again after the flight. Print each tab you need, since only the open tab prints.
+You can print the checklist and take it to the site. Open the tab you want, then tap **Print** in Safari. In the Home Screen app, open the page in Safari first, since the Home Screen app can't print. Check items off with a pencil during preflight and again after the flight. Print each tab you need, since only the open tab prints.
 
-The app also works offline once it has loaded (see above), so paper is a choice, not a requirement. You can also save a record afterward and print that.
+No printer, or using the Home Screen app? Tap **PDF** instead. It makes the same sheet as a PDF file, with your checked and flagged items marked and lines for date, time, site, pilot and visual observer, that you can save to Files, email or print later. It works in the Home Screen app too, and like printing it covers only the open tab.
+
+The app also works offline once it has loaded (see above), so paper is a choice, not a requirement. You can also save a flight record afterward and print that.
 
 ---
 
 ## Use it outside the USA
 
-The first time you open the app it asks **Where do you fly?** Choose **Outside the USA**. You can change this at any time from **Checklist for** under **Settings & customize**.
+The first time you open the app it asks **Where do you fly?** Choose **Outside USA**. You can change this at any time from **Where you fly** under **⚙ Settings**.
 
 **What changes**
 
@@ -97,7 +157,7 @@ The first time you open the app it asks **Where do you fly?** Choose **Outside t
 - **Checklist wording:** the items marked "(US)" are hidden: the TFR check, the LAANC item and the TFR recheck on site. The NOTAM item is reworded to point you to your country's aviation authority or NOTAM service.
 - **Ceiling warnings:** low-cloud notes say "check your local cloud and visibility rules" instead of quoting US rules.
 - **Night notice:** after sunset or before sunrise it says to check your local rules for night flying.
-- **Place search:** you can search by town, postcode or ZIP code, or enter coordinates.
+- **Place search:** you can search by town, postal code (ZIP code in the USA), or enter coordinates.
 
 **What works worldwide**
 
@@ -127,7 +187,7 @@ The **⚠️ TFRs** button opens the FAA's list for the whole country, so most o
 
 **Use a bigger view.** Both FAA sites (TFRs and NOTAMs) are built for a computer screen. If a link opens inside the app, open it in your browser instead. On iPhone, tap the compass icon. On Android, look for **Open in browser** (or **Open in Chrome**) in the menu. Then turn your phone sideways, since landscape gives the list and the map much more room.
 
-**Easier on a phone: the B4UFLY app.** The FAA's TFR list is built for a desktop screen. The FAA's free **B4UFLY** app puts airspace advisories, including TFRs, on a map around you, which is much easier to read at the launch site. Treat it as a quick look, and still confirm against the FAA's current TFR and NOTAM pages, because an app can lag behind or miss a notice.
+**Easier on a phone: an FAA-approved airspace app.** The FAA's TFR list is built for a desktop screen. The FAA's B4UFLY service is delivered through FAA-approved apps from private companies, and these show airspace advisories, including TFRs, on a map around you. That's much easier to read at the launch site. Treat the map as a quick look, and still confirm against the FAA's current TFR and NOTAM pages, because an app can lag behind or miss a notice.
 
 ### Reading NOTAMs
 
