@@ -507,7 +507,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.13a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.13b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3030,6 +3030,9 @@ function recWeatherLines() {
     if (label) out.push(label + ': ' + (val || '—') + (subs.length ? ' (' + subs.join('; ') + ')' : ''));
   });
   const sun = body.querySelector('.wx-sun'); if (sun) out.push(recNoEmoji(sun.textContent).replace(/\s*·\s*/g, ' · '));
+  // Night notice: if the card is showing "Sun is down" at the moment of saving, the record carries the same line
+  if (typeof nightUpdate === 'function' && nightUpdate) { try { nightUpdate(); } catch (e) {} }
+  const nt = body.querySelector('#wx-night'); if (nt && !nt.hidden && nt.textContent.trim()) out.push(recNoEmoji(nt.textContent));
   const upd = body.querySelector('.wx-updated');
   if (upd) { const u = upd.cloneNode(true); const ag = u.querySelector('#wx-age'); if (ag) ag.remove(); out.push(recNoEmoji(u.textContent).replace(/^\s*Updated /, 'Weather as of ')); }
   const st = body.querySelector('.wx-status'); if (st) out.push('Note: ' + recNoEmoji(st.textContent));
