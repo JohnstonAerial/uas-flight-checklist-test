@@ -247,6 +247,21 @@
   .rec-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.5); display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 5vh 12px 24px; -webkit-overflow-scrolling: touch; }
   .rec-box { width: 100%; max-width: 420px; background: var(--card); color: var(--text); border-radius: 16px; padding: 18px 18px 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
   .rec-box h2 { font-size: 17px; margin: 0 0 12px; }
+  .rec-overlay.sheet { align-items: flex-end; padding: 0; }
+  .rec-overlay.sheet .rec-box { max-width: 520px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -8px 30px rgba(0,0,0,0.35); }
+  .pdfs-cards { display: flex; gap: 10px; }
+  .pdfs-card { flex: 1 1 0; min-width: 0; font: inherit; color: var(--text); background: transparent; border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer; }
+  .pdfs-card[aria-checked="true"] { border: 2px solid var(--blue); padding: 9px 5px; }
+  .pdfs-card b { display: block; font-size: 15px; }
+  .pdfs-card small { display: block; font-size: 11.5px; color: var(--text-muted); margin: 3px 0 8px; line-height: 1.3; }
+  .pdfs-pv { display: flex; justify-content: center; gap: 3px; }
+  .pdfs-pv i { display: block; width: 22px; height: 32px; border: 1px solid var(--text-muted); border-radius: 2px; background: repeating-linear-gradient(transparent 0 3px, var(--text-muted) 3px 4px); opacity: .75; }
+  .pdfs-pv i.one { width: 34px; background: repeating-linear-gradient(transparent 0 5px, var(--text-muted) 5px 6px); }
+  .pdfs-paper { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 0; font-size: 13px; color: var(--text-muted); }
+  .pdfs-seg { display: flex; border: 1px solid var(--blue); border-radius: 16px; overflow: hidden; }
+  .pdfs-seg button { font: inherit; font-size: 13px; font-weight: 600; padding: 6px 14px; min-height: 32px; border: 0; background: transparent; color: var(--blue); cursor: pointer; }
+  .pdfs-seg button[aria-checked="true"] { background: var(--blue); color: #fff; }
+  .pdfs-note { font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 8px 0 0; }
   .rec-box label.rec-lbl { display: block; font-size: 12px; color: var(--text-muted); margin: 10px 0 4px; }
   .rec-box input[type=text], .rec-box textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--text); background: var(--section-bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; }
   .rec-box textarea { resize: vertical; min-height: 70px; }
@@ -514,7 +529,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.2b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.3a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1804,7 +1819,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', XFER_PROGRESS];
+const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -3264,15 +3279,25 @@ function pdfCharW(code, bold) {
   if (code === 0x93 || code === 0x94) return bold ? 500 : 333;
   return 556;
 }
-function PdfDoc(footer, title) {
+function PdfDoc(footer, title, opts) {
+  opts = opts || {};
   this.footer = footer; this.title = title || 'Document';
-  this.W = 612; this.H = 792; this.mx = 46; this.top = 50; this.bot = 52;
+  this.W = opts.paper === 'a4' ? 595 : 612; this.H = opts.paper === 'a4' ? 842 : 792;
+  this.compact = !!opts.compact;                       // compact = two columns, smaller type (checklist PDFs only)
+  this.mx = this.compact ? 40 : 46; this.top = this.compact ? 44 : 50; this.bot = this.compact ? 46 : 52;
+  this.colOn = false; this.colIdx = 0; this.colW = (this.W - this.mx * 2 - 20) / 2; this.colTop = this.top;
   this.pages = []; this.newPage();
 }
 PdfDoc.prototype = {
-  newPage() { this.pages.push([]); this.y = this.top; },
+  newPage() { this.pages.push([]); this.y = this.top; this.colIdx = 0; this.colTop = this.top; },
+  startCols() { if (!this.compact) return; this.colOn = true; this.colIdx = 0; this.y += 4; this.colTop = this.y; },
+  colX() { return this.colOn ? this.mx + this.colIdx * (this.colW + 20) : this.mx; },
+  colWidth() { return this.colOn ? this.colW : this.W - this.mx * 2; },
   raw(s) { this.pages[this.pages.length - 1].push(s); },
-  ensure(h) { if (this.y + h > this.H - this.bot) this.newPage(); },
+  ensure(h) {
+    if (this.y + h <= this.H - this.bot) return;
+    if (this.colOn && this.colIdx === 0) { this.colIdx = 1; this.y = this.colTop; } else this.newPage();
+  },
   gap(h) { this.y += h; },
   width(s, size, bold) { let w = 0; for (let i = 0; i < s.length; i++) w += pdfCharW(s.charCodeAt(i), bold); return w * size / 1000; },
   wrap(s, size, bold, maxW) {                // greedy word wrap; honours line breaks; very long words are split
@@ -3313,7 +3338,16 @@ PdfDoc.prototype = {
   },
   h1(s) { this.ensure(40); this.text(pdfEnc(s), this.mx, this.y + 18, 20, true); this.y += 26; },
   h2(s) { this.ensure(34); this.y += 10; this.text(pdfEnc(s.toUpperCase()), this.mx, this.y + 10, 10.5, true); this.y += 15; this.rule(this.y, 1.2, 0); this.y += 6; },
-  sub(s, keepWith) { this.ensure(26 + (keepWith || 0)); this.y += 8; this.text(pdfEnc(s.toUpperCase()), this.mx, this.y + 10, 10, true); this.y += 14; this.rule(this.y, 0.8, 0.35); this.y += 3; },
+  sub(s, keepWith) {
+    if (this.compact) {                                // compact section heading, drawn in the current column
+      const x = this.colX(), cw = this.colWidth();
+      const hl = this.wrap(s.toUpperCase(), 9.5, true, cw);           // long headings wrap inside the column
+      this.ensure(10 + hl.length * 11.5 + (keepWith || 0)); this.y += 6;
+      hl.forEach(l => { this.text(l, x, this.y + 9, 9.5, true); this.y += 11.5; });
+      this.y += 0.5; this.rule(this.y, 0.8, 0.35, x, x + cw); this.y += 2;
+      return;
+    }
+    this.ensure(26 + (keepWith || 0)); this.y += 8; this.text(pdfEnc(s.toUpperCase()), this.mx, this.y + 10, 10, true); this.y += 14; this.rule(this.y, 0.8, 0.35); this.y += 3; },
   kv(k, v) {
     const lw = 128, lines = this.wrap(v, 10.5, false, this.W - this.mx * 2 - lw);
     this.ensure(lines.length * 14);
@@ -3321,6 +3355,14 @@ PdfDoc.prototype = {
     lines.forEach(l => { this.text(l, this.mx + lw, this.y + 10, 10.5, false); this.y += 14; });
   },
   item(st, s) {
+    if (this.compact) {                                // compact row: 9 pt text, tight spacing, current column
+      const F = 9, LEAD = 11.3, PAD = 3.4, ind = 19, cw = this.colWidth(), lines = this.wrap(s, F, false, cw - ind), h = lines.length * LEAD + PAD + 1;
+      this.ensure(h); const x = this.colX();
+      this.box(x + 1, this.y + PAD / 2 + 1.5, st);
+      lines.forEach((l, i) => this.text(l, x + ind, this.y + PAD / 2 + 9 + i * LEAD, F, false));
+      this.y += h; this.rule(this.y - 0.5, 0.4, 0.75, x, x + cw);
+      return;
+    }
     const ind = 20, lines = this.wrap(s, 10.5, false, this.W - this.mx * 2 - ind), h = lines.length * 13.6 + 8;
     this.ensure(h);
     this.box(this.mx + 1, this.y + 4.5, st);
@@ -3340,6 +3382,7 @@ PdfDoc.prototype = {
   },
   finish() {
     const n = this.pages.length, objs = [], pageIds = [];
+    PdfDoc.lastPages = n;
     for (let i = 0; i < n; i++) pageIds.push(5 + i * 2);
     objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
     objs[2] = '<< /Type /Pages /Kids [' + pageIds.map(i => i + ' 0 R').join(' ') + '] /Count ' + n + ' >>';
@@ -3388,7 +3431,7 @@ function recCollect(panelEl, includeAll) {  // the items on a tab, in order, as 
 }
 function recPdfFoot() { const v = recVersion(); return 'UAS Flight Checklists' + (v ? ' ' + v : '') + ' · checklist.johnstonaerial.com'; }
 function buildRecordPdf(o) {
-  const d = new PdfDoc(recPdfFoot(), 'Flight Record');
+  const d = new PdfDoc(recPdfFoot(), 'Flight Record', { paper: pdfPaper() });
   d.h1('Flight Record');
   d.para(new Date().toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }), 10.5, { gray: 0.3 });
   d.gap(6);
@@ -3402,8 +3445,20 @@ function buildRecordPdf(o) {
   if (o.notes) { d.h2('Notes'); d.para(o.notes, 10.5); }
   return d.finish();
 }
-function buildChecklistPdf(panelEl, tabName) {
-  const d = new PdfDoc(recPdfFoot(), 'UAS Flight Checklist');
+const PDF_LAYOUT_KEY = 'uasPdfLayout', PDF_PAPER_KEY = 'uasPdfPaper';
+function pdfLayout() { let v = null; try { v = localStorage.getItem(PDF_LAYOUT_KEY); } catch (e) {} return v === 'large' ? 'large' : 'compact'; }
+function pdfPaper() {                                  // remembered choice; first time, Letter for North America and A4 elsewhere
+  let v = null; try { v = localStorage.getItem(PDF_PAPER_KEY); } catch (e) {}
+  if (v === 'a4' || v === 'letter') return v;
+  const l = String((navigator.languages && navigator.languages[0]) || navigator.language || '');
+  const m = l.match(/[-_]([A-Za-z]{2})\b/), rg = m ? m[1].toUpperCase() : '';
+  if (rg) return /^(US|CA|MX|PR|PH|CL|CO|VE|GT|CR|PA|DO|SV|HN|NI|BZ)$/.test(rg) ? 'letter' : 'a4';
+  return /^en/i.test(l) ? 'letter' : 'a4';
+}
+function pdfPrefSave(layout, paper) { try { localStorage.setItem(PDF_LAYOUT_KEY, layout); localStorage.setItem(PDF_PAPER_KEY, paper); } catch (e) {} }
+function buildChecklistPdf(panelEl, tabName, layout, paper) {
+  layout = layout || pdfLayout(); paper = paper || pdfPaper();
+  const d = new PdfDoc(recPdfFoot(), 'UAS Flight Checklist', { paper: paper, compact: layout === 'compact' });
   d.h1('UAS Flight Checklists');
   const v = recVersion();
   d.para('Free Drone Preflight Checklist' + (v ? ' · ' + v : ''), 9.5, { gray: 0.3 });
@@ -3414,6 +3469,7 @@ function buildChecklistPdf(panelEl, tabName) {
   d.fieldLine([['Pilot', 0.5, acGet('uasPilot')], ['Visual observer', 0.5]]);
   d.fieldLine([['Drone', 0.5, acGet('uasDrone')], ['Registration', 0.5, acGet('uasRegNo')]]);
   const c = recCollect(panelEl, true);
+  d.startCols();
   c.secs.forEach(s => { d.sub(s.name, 30); s.rows.forEach(r => d.item(r.st, r.txt)); });
   return d.finish();
 }
@@ -3470,6 +3526,40 @@ function closeRecord() {
 }
 let recOpener = null;
 function recKey(e) { if (e.key === 'Escape') closeRecord(); }
+function pdfSheet(opener, go, panelEl, tabName) {   // bottom sheet: pick the PDF layout and paper, then save
+  closeRecord(); recOpener = opener || null;
+  let layout = pdfLayout(), paper = pdfPaper();
+  const ov = document.createElement('div'); ov.className = 'rec-overlay sheet';
+  ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="pdfs-t">' +
+    '<h2 id="pdfs-t">Save checklist as PDF</h2>' +
+    '<div class="pdfs-cards" role="radiogroup" aria-label="PDF layout">' +
+    '<button type="button" class="pdfs-card" role="radio" data-l="compact"><b>Compact</b><small></small><span class="pdfs-pv"><i></i><i></i></span></button>' +
+    '<button type="button" class="pdfs-card" role="radio" data-l="large"><b>Large print</b><small></small><span class="pdfs-pv"><i class="one"></i></span></button></div>' +
+    '<div class="pdfs-paper"><span>Paper</span><div class="pdfs-seg" role="radiogroup" aria-label="Paper size"><button type="button" role="radio" data-p="letter">Letter</button><button type="button" role="radio" data-p="a4">A4</button></div></div>' +
+    '<div class="pdfs-note">Your choice is remembered for next time.</div>' +
+    '<div class="rec-actions rec-actions-2"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-save rec-primary">Save PDF</button></div></div>';
+  document.body.appendChild(ov);
+  document.addEventListener('keydown', recKey);
+  const pages = (l) => { try { buildChecklistPdf(panelEl, tabName, l, paper); return PdfDoc.lastPages; } catch (e) { return 0; } };
+  const draw = () => {
+    ov.querySelectorAll('.pdfs-card').forEach(c => {
+      const l = c.dataset.l, n = pages(l);
+      c.setAttribute('aria-checked', String(l === layout));
+      c.querySelector('small').textContent = (l === 'compact' ? '2 columns' : '1 column, bigger text') + (n ? ' · ' + n + (n === 1 ? ' page' : ' pages') : '');
+    });
+    ov.querySelectorAll('.pdfs-seg button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.p === paper)));
+  };
+  draw();
+  ov.addEventListener('click', e => {
+    if (e.target === ov) { closeRecord(); return; }
+    const c = e.target.closest('.pdfs-card'), b = e.target.closest('.pdfs-seg button');
+    if (c) { layout = c.dataset.l; draw(); } else if (b) { paper = b.dataset.p; draw(); }
+  });
+  ov.querySelector('.rec-cancel').onclick = () => closeRecord();
+  const save = ov.querySelector('.rec-save');
+  save.onclick = () => { pdfPrefSave(layout, paper); closeRecord(); go(layout, paper); };
+  try { save.focus(); } catch (e) {}
+}
 function recOffer(text, name) {
   const ov = document.createElement('div'); ov.className = 'rec-overlay';
   ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
@@ -3602,13 +3692,15 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const fb = document.createElement('button');
   fb.type = 'button'; fb.className = 'rec-btn pdf-btn'; fb.innerHTML = '<span class="ic" aria-hidden="true">📄</span>PDF';
   fb.setAttribute('aria-label', 'Save this checklist as a PDF to print or share');
-  fb.onclick = async () => {
+  fb.onclick = () => {
     const panelEl = col.closest('.panel'), t = document.querySelector('.tab[data-pid="' + panelEl.id.replace('panel-', '') + '"] .tab-lbl');
-    let pdf; try { pdf = buildChecklistPdf(panelEl, t ? recClean(t.textContent) : ''); } catch (e) { recToast('Couldn\'t make the PDF.', 5000); return; }
+    pdfSheet(fb, async (layout, paper) => {
+    let pdf; try { pdf = buildChecklistPdf(panelEl, t ? recClean(t.textContent) : '', layout, paper); } catch (e) { recToast('Couldn\'t make the PDF.', 5000); return; }
     const tabSlug = ((t ? t.textContent : 'checklist').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24)) || 'checklist';
     const how = await recDeliver(pdf, recPdfName('flight-checklist-' + tabSlug, null));
     if (how === 'refused') { recOffer(pdf, recPdfName('flight-checklist-' + tabSlug, null)); return; }
     if (how === 'downloaded') recToast('✓ PDF saved to your downloads'); else if (how === 'shared') recToast('✓ PDF shared');
+    }, panelEl, t ? recClean(t.textContent) : '');
   };
   b.after(fb);
   const pw = document.createElement('div'); pw.className = 'pc-pair';
