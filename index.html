@@ -514,7 +514,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.2a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.2b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3046,6 +3046,18 @@ function refreshIfStale() {
 
 updateUnitsButton();
 setInterval(refreshAge, 60000);
+// If the same site is open in another window and its tab or item settings change there, this window would still hold the old copy and
+// overwrite the new one the next time it saved. So when those settings change elsewhere, reload this window to pick them up
+// (straight away if the window is in the background, otherwise the next time you come back to it). Progress and drafts are already saved.
+let settingsStale = false;
+function settingsReloadIfStale() { if (settingsStale && document.visibilityState === 'visible') { settingsStale = false; location.reload(); } }
+window.addEventListener('storage', (e) => {
+  if (e.key !== TABS_KEY && e.key !== CUSTOM_KEY) return;
+  settingsStale = true;
+  if (document.visibilityState !== 'visible') location.reload();
+});
+document.addEventListener('visibilitychange', settingsReloadIfStale);
+window.addEventListener('focus', settingsReloadIfStale);
 document.addEventListener('visibilitychange', refreshIfStale);
 window.addEventListener('pageshow', (e) => { if (e.persisted) refreshIfStale(); });
 window.addEventListener('offline', showOffline);
