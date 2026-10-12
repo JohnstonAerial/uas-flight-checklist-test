@@ -446,6 +446,8 @@
   .wx-link { display: inline-block; margin-top: 4px; font-size: 11px; color: var(--link); text-decoration: none; }
   .wx-disclaimer a { color: inherit; }
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
+  .wx-golden { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 3px; }
+  .wx-golden .wx-link { margin-top: 2px; }
   .wx-sun { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; }
   .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 10px; }
   .wx-tfr { display: block; width: 100%; padding: 9px; background: #c0392b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
@@ -507,7 +509,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.7.13b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2416,6 +2418,27 @@ const isMetric = () => units === 'metric';
 const fmtSpeed = (mph) => isMetric() ? Math.round(mph * 1.609344) + ' km/h' : Math.round(mph) + ' mph';
 const fmtSpeedNum = (mph) => isMetric() ? Math.round(mph * 1.609344) : Math.round(mph);
 const speedUnit = () => isMetric() ? 'km/h' : 'mph';
+// Golden hour: sun between 4 degrees below and 6 degrees above the horizon (computed from date + place, no network)
+function sunElev(tMs, lat, lon) {
+  const d = tMs / 86400000 + 2440587.5 - 2451545.0, r = Math.PI / 180;
+  const g = (357.529 + 0.98560028 * d) * r, q = 280.459 + 0.98564736 * d;
+  const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * r, e = (23.439 - 0.00000036 * d) * r;
+  const ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e) * Math.sin(L));
+  const th = (280.16 + 360.9856235 * d + lon) * r, H = th - ra, la = lat * r;
+  return Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(H)) / r;
+}
+function goldenHours(dayISO, lat, lon, offSec) {
+  // dayISO like 2026-10-10 in the site's own date; scan that local day minute by minute
+  const y = +dayISO.slice(0, 4), m = +dayISO.slice(5, 7) - 1, dd = +dayISO.slice(8, 10);
+  const t0 = Date.UTC(y, m, dd) - offSec * 1000, spans = []; let start = null;
+  for (let i = 0; i <= 1440; i++) {
+    const t = t0 + i * 60000, el = sunElev(t, lat, lon), inG = el >= -4 && el <= 6;
+    if (inG && start === null) start = i;
+    if (!inG && start !== null) { spans.push([start, i]); start = null; }
+  }
+  if (start !== null) spans.push([start, 1440]);
+  return spans.filter(a => a[1] - a[0] >= 10);
+}
 const fmtTemp = (f) => isMetric() ? Math.round((f - 32) * 5 / 9) + '°C' : Math.round(f) + '°F';
 const fmtVis = (m) => m == null ? '—' : isMetric() ? (m / 1000).toFixed(1) + ' km' : (m / 1609.34).toFixed(1) + ' mi';
 const fmtPrecip = (mm) => isMetric() ? (mm < 10 ? mm.toFixed(1) : Math.round(mm)) + '\u00a0mm' : (mm / 25.4).toFixed(2) + '\u00a0in';
@@ -2712,6 +2735,12 @@ async function renderWeather(lat, lon, attempt = 1) {
         ? '🌙 Sun is down — check your local rules for night flying'
         : '🌙 Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 mi';
       const fmtT = (iso) => iso ? new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '—';
+      let goldenLine = '';
+      try {
+        const gs = wx.sunrise ? goldenHours(String(wx.sunrise).slice(0, 10), lat, lon, siteOff || 0) : [];
+        const hm = (mins) => fmtT(String(wx.sunrise).slice(0, 10) + 'T' + String(Math.floor(mins / 60) % 24).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
+        if (gs.length) goldenLine = '<div class="wx-golden">✨ Golden hour ' + gs.map(a => hm(a[0]) + ' – ' + hm(a[1])).join(' · ') + '</div><div class="wx-golden"><a class="wx-link" href="https://afterglow.johnstonaerial.com" target="_blank" rel="noopener">Will the sky color up? AfterGlow sky forecast ›</a></div>';
+      } catch (e) {}
 
       // Ceiling from METAR (kept in feet; converted for display)
       let ceilFt = null, stationId = '', m = null;
@@ -2872,6 +2901,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           </div>
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}${siteTag}</div>
+        ${goldenLine}
         <div class="wx-night" id="wx-night" hidden></div>
         <div class="wx-updated" id="wx-updated">Updated ${now} · ${srcText}<span id="wx-age"></span></div>
         <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
@@ -3030,6 +3060,7 @@ function recWeatherLines() {
     if (label) out.push(label + ': ' + (val || '—') + (subs.length ? ' (' + subs.join('; ') + ')' : ''));
   });
   const sun = body.querySelector('.wx-sun'); if (sun) out.push(recNoEmoji(sun.textContent).replace(/\s*·\s*/g, ' · '));
+  const gold = body.querySelector('.wx-golden'); if (gold && /Golden hour/.test(gold.textContent)) out.push(recNoEmoji(gold.textContent).replace(/\s*·\s*/g, ' · '));
   // Night notice: if the card is showing "Sun is down" at the moment of saving, the record carries the same line
   if (typeof nightUpdate === 'function' && nightUpdate) { try { nightUpdate(); } catch (e) {} }
   const nt = body.querySelector('#wx-night'); if (nt && !nt.hidden && nt.textContent.trim()) out.push(recNoEmoji(nt.textContent));
