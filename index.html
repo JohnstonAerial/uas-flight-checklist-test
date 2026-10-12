@@ -247,22 +247,14 @@
   .rec-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.5); display: flex; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 5vh 12px 24px; -webkit-overflow-scrolling: touch; }
   .rec-box { width: 100%; max-width: 420px; background: var(--card); color: var(--text); border-radius: 16px; padding: 18px 18px 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.35); }
   .rec-box h2 { font-size: 17px; margin: 0 0 12px; }
-  .rec-overlay.sheet { align-items: flex-end; padding: 0; }
-  .rec-overlay.sheet .rec-box { max-width: 520px; border-radius: 18px 18px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -8px 30px rgba(0,0,0,0.35); }
-  .pdfs-cards { display: flex; gap: 10px; }
-  .pdfs-card { flex: 1 1 0; min-width: 0; font: inherit; color: var(--text); background: transparent; border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer; }
-  .pdfs-card[aria-checked="true"] { border: 2px solid var(--blue); padding: 9px 5px; }
-  .pdfs-card b { display: block; font-size: 15px; }
-  .pdfs-card small { display: block; font-size: 11.5px; color: var(--text-muted); margin: 3px 0 8px; line-height: 1.3; }
-  .pdfs-pv { display: flex; justify-content: center; gap: 3px; }
-  .pdfs-pv i { display: block; width: 22px; height: 32px; border: 1px solid var(--text-muted); border-radius: 2px; background: repeating-linear-gradient(transparent 0 3px, var(--text-muted) 3px 4px); opacity: .75; }
-  .pdfs-pv i.one { width: 34px; background: repeating-linear-gradient(transparent 0 5px, var(--text-muted) 5px 6px); }
-  .pdfs-paper { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 0; font-size: 13px; color: var(--text-muted); }
-  .pdfs-seg { display: flex; border: 1px solid var(--blue); border-radius: 16px; overflow: hidden; }
-  .pdfs-seg button { font: inherit; font-size: 13px; font-weight: 600; padding: 6px 14px; min-height: 32px; border: 0; background: transparent; color: var(--blue); cursor: pointer; }
-  .pdfs-seg button[aria-checked="true"] { background: var(--blue); color: #fff; }
-  .rec-pdfnote { font-size: 12px; color: var(--text-muted); line-height: 1.35; margin: 12px 0 -6px; text-align: center; }
-  .pdfs-note { font-size: 11.5px; color: var(--text-muted); text-align: center; margin: 8px 0 0; }
+  .rec-pdfnote { font-size: 12.5px; color: var(--text-muted); line-height: 1.35; margin: 14px 0 -4px; text-align: center; }
+  .rec-pdfnote button { font: inherit; color: var(--blue); background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline; }
+  .pdfset { padding: 8px 16px 12px; border-top: 1px solid var(--border); text-align: left; }
+  .pdfset .pd-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--text); margin: 6px 0; }
+  .pdfset .pd-seg { display: flex; border: 1px solid var(--blue); border-radius: 16px; overflow: hidden; flex-shrink: 0; }
+  .pdfset .pd-seg button { font: inherit; font-size: 13px; font-weight: 600; padding: 6px 12px; min-height: 34px; border: 0; background: transparent; color: var(--blue); cursor: pointer; }
+  .pdfset .pd-seg button[aria-checked="true"] { background: var(--blue); color: #fff; }
+  .pdfset .pd-hint { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-top: 4px; }
   .rec-box label.rec-lbl { display: block; font-size: 12px; color: var(--text-muted); margin: 10px 0 4px; }
   .rec-box input[type=text], .rec-box textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--text); background: var(--section-bg); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; }
   .rec-box textarea { resize: vertical; min-height: 70px; }
@@ -530,7 +522,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.3b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.3d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2065,7 +2057,16 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="fn-row"><span>🚁 Drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>🪪 Reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="e.g. FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
     '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. Saved on this device only.</div>';
-  bodySet.append(note, reg, cust, keep, wl, fnb, acb); bodyBak.append(makeXfer());
+  const pdb = document.createElement('div'); pdb.className = 'pdfset';
+  pdb.innerHTML = '<div class="pd-row"><span>📄 PDF layout</span><div class="pd-seg" role="radiogroup" aria-label="PDF layout"><button type="button" role="radio" data-k="layout" data-v="compact">Compact</button><button type="button" role="radio" data-k="layout" data-v="large">Large print</button></div></div>' +
+    '<div class="pd-row"><span>📏 PDF paper</span><div class="pd-seg" role="radiogroup" aria-label="PDF paper size"><button type="button" role="radio" data-k="paper" data-v="letter">Letter</button><button type="button" role="radio" data-k="paper" data-v="a4">A4</button></div></div>' +
+    '<div class="pd-hint">Compact: 2 columns, fewer pages. Used for the checklist PDF and saved flight records.</div>';
+  pdb.addEventListener('click', e => {
+    const bt = e.target.closest('button[data-k]'); if (!bt) return;
+    pdfPrefSave(bt.dataset.k === 'layout' ? bt.dataset.v : pdfLayout(), bt.dataset.k === 'paper' ? bt.dataset.v : pdfPaper());
+    pdfSetSync();
+  });
+  bodySet.append(note, reg, cust, keep, wl, fnb, acb, pdb); bodyBak.append(makeXfer());
   [bodySet, bodyBak].forEach(bd => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4';
     up.setAttribute('aria-label', 'Close this section');
@@ -2100,6 +2101,13 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   panelEl.appendChild(coffee);
   panelEl.appendChild(help);
 });
+function pdfSetSync() {                                // show the saved PDF choices in every tab's Settings
+  if (typeof pdfLayout !== 'function') return;          // the PDF code loads after this block
+  const L = pdfLayout(), P = pdfPaper();
+  document.querySelectorAll('.pdfset button[data-k]').forEach(b => b.setAttribute('aria-checked', String(b.dataset.k === 'layout' ? b.dataset.v === L : b.dataset.v === P)));
+}
+window.addEventListener('load', pdfSetSync); window.addEventListener('focus', pdfSetSync);
+document.querySelectorAll('.tg-set').forEach(t => t.addEventListener('click', pdfSetSync));
 setKeepHours(keepHours());
 (function moveVersionDown() {      // live site only: the test copy keeps its version in the header
   const hp = document.querySelector('.header p'), v = appVer();
@@ -3459,6 +3467,7 @@ function pdfPaper() {                                  // remembered choice; fir
   if (rg) return /^(US|CA|MX|PR|PH|CL|CO|VE|GT|CR|PA|DO|SV|HN|NI|BZ)$/.test(rg) ? 'letter' : 'a4';
   return /^en/i.test(l) ? 'letter' : 'a4';
 }
+function pdfPrefText() { return (pdfLayout() === 'compact' ? 'Compact' : 'Large print') + ', ' + (pdfPaper() === 'a4' ? 'A4' : 'Letter'); }
 function pdfPrefSave(layout, paper) { try { localStorage.setItem(PDF_LAYOUT_KEY, layout); localStorage.setItem(PDF_PAPER_KEY, paper); } catch (e) {} }
 function buildChecklistPdf(panelEl, tabName, layout, paper) {
   layout = layout || pdfLayout(); paper = paper || pdfPaper();
@@ -3530,40 +3539,6 @@ function closeRecord() {
 }
 let recOpener = null;
 function recKey(e) { if (e.key === 'Escape') closeRecord(); }
-function pdfSheet(opener, go, panelEl, tabName) {   // bottom sheet: pick the PDF layout and paper, then save
-  closeRecord(); recOpener = opener || null;
-  let layout = pdfLayout(), paper = pdfPaper();
-  const ov = document.createElement('div'); ov.className = 'rec-overlay sheet';
-  ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="pdfs-t">' +
-    '<h2 id="pdfs-t">Save checklist as PDF</h2>' +
-    '<div class="pdfs-cards" role="radiogroup" aria-label="PDF layout">' +
-    '<button type="button" class="pdfs-card" role="radio" data-l="compact"><b>Compact</b><small></small><span class="pdfs-pv"><i></i><i></i></span></button>' +
-    '<button type="button" class="pdfs-card" role="radio" data-l="large"><b>Large print</b><small></small><span class="pdfs-pv"><i class="one"></i></span></button></div>' +
-    '<div class="pdfs-paper"><span>Paper</span><div class="pdfs-seg" role="radiogroup" aria-label="Paper size"><button type="button" role="radio" data-p="letter">Letter</button><button type="button" role="radio" data-p="a4">A4</button></div></div>' +
-    '<div class="pdfs-note">Your choice is remembered for next time.</div>' +
-    '<div class="rec-actions rec-actions-2"><button type="button" class="rec-cancel">Cancel</button><button type="button" class="rec-save rec-primary">Save PDF</button></div></div>';
-  document.body.appendChild(ov);
-  document.addEventListener('keydown', recKey);
-  const pages = (l) => { try { buildChecklistPdf(panelEl, tabName, l, paper); return PdfDoc.lastPages; } catch (e) { return 0; } };
-  const draw = () => {
-    ov.querySelectorAll('.pdfs-card').forEach(c => {
-      const l = c.dataset.l, n = pages(l);
-      c.setAttribute('aria-checked', String(l === layout));
-      c.querySelector('small').textContent = (l === 'compact' ? '2 columns' : '1 column, bigger text') + (n ? ' · ' + n + (n === 1 ? ' page' : ' pages') : '');
-    });
-    ov.querySelectorAll('.pdfs-seg button').forEach(b => b.setAttribute('aria-checked', String(b.dataset.p === paper)));
-  };
-  draw();
-  ov.addEventListener('click', e => {
-    if (e.target === ov) { closeRecord(); return; }
-    const c = e.target.closest('.pdfs-card'), b = e.target.closest('.pdfs-seg button');
-    if (c) { layout = c.dataset.l; draw(); } else if (b) { paper = b.dataset.p; draw(); }
-  });
-  ov.querySelector('.rec-cancel').onclick = () => closeRecord();
-  const save = ov.querySelector('.rec-save');
-  save.onclick = () => { pdfPrefSave(layout, paper); closeRecord(); go(layout, paper); };
-  try { save.focus(); } catch (e) {}
-}
 function recOffer(text, name) {
   const ov = document.createElement('div'); ov.className = 'rec-overlay';
   ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
@@ -3619,7 +3594,13 @@ function openRecord(btn) {
     '</div>';
   document.body.appendChild(ov);
   const $ = (id) => ov.querySelector(id);
-  $('#rec-pdfnote').textContent = 'PDF: ' + (pdfLayout() === 'compact' ? 'Compact' : 'Large print') + ', ' + (pdfPaper() === 'a4' ? 'A4' : 'Letter') + '. To change it, tap PDF on the checklist.';
+  $('#rec-pdfnote').innerHTML = 'PDF: ' + (pdfLayout() === 'compact' ? 'Compact' : 'Large print') + ' · ' + (pdfPaper() === 'a4' ? 'A4' : 'Letter') + ' <button type="button" id="rec-pdfgo">(change in Settings)</button>';
+  $('#rec-pdfgo').onclick = () => {                    // typed text is already kept as a draft; close the dialog and open Settings at the PDF block
+    recOpener = null; closeRecord();
+    const pn = document.querySelector('.panel.active'); if (!pn) return;
+    const wrap = pn.querySelector('.settings'); if (wrap && !wrap.classList.contains('open')) { const tg = pn.querySelector('.tg-set'); if (tg) tg.click(); }
+    setTimeout(() => { const pb = pn.querySelector('.pdfset'); if (pb) { try { pb.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { pb.scrollIntoView(); } } }, 60);
+  };
   $('#rec-site').value = recSiteDefault();
   const draft = recDraftGet();
   if (draft) REC_DRAFT_IDS.forEach(k => { if (typeof draft[k] === 'string') $('#rec-' + k).value = draft[k]; });
@@ -3698,15 +3679,13 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const fb = document.createElement('button');
   fb.type = 'button'; fb.className = 'rec-btn pdf-btn'; fb.innerHTML = '<span class="ic" aria-hidden="true">📄</span>PDF';
   fb.setAttribute('aria-label', 'Save this checklist as a PDF to print or share');
-  fb.onclick = () => {
+  fb.onclick = async () => {
     const panelEl = col.closest('.panel'), t = document.querySelector('.tab[data-pid="' + panelEl.id.replace('panel-', '') + '"] .tab-lbl');
-    pdfSheet(fb, async (layout, paper) => {
-    let pdf; try { pdf = buildChecklistPdf(panelEl, t ? recClean(t.textContent) : '', layout, paper); } catch (e) { recToast('Couldn\'t make the PDF.', 5000); return; }
+    let pdf; try { pdf = buildChecklistPdf(panelEl, t ? recClean(t.textContent) : ''); } catch (e) { recToast('Couldn\'t make the PDF.', 5000); return; }
     const tabSlug = ((t ? t.textContent : 'checklist').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 24)) || 'checklist';
     const how = await recDeliver(pdf, recPdfName('flight-checklist-' + tabSlug, null));
     if (how === 'refused') { recOffer(pdf, recPdfName('flight-checklist-' + tabSlug, null)); return; }
-    if (how === 'downloaded') recToast('✓ PDF saved to your downloads'); else if (how === 'shared') recToast('✓ PDF shared');
-    }, panelEl, t ? recClean(t.textContent) : '');
+    if (how === 'downloaded') recToast('✓ PDF saved to your downloads · ' + pdfPrefText() + '. Change in Settings.', 4500); else if (how === 'shared') recToast('✓ PDF shared · ' + pdfPrefText() + '. Change in Settings.', 4500);
   };
   b.after(fb);
   const pw = document.createElement('div'); pw.className = 'pc-pair';
