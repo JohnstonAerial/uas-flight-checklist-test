@@ -522,7 +522,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.3d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.4a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2419,12 +2419,23 @@ async function fetchMetar(lat, lon) {
     if (!pool.length) pool = [all[0]];
     const fresh = pool.filter(x => x.age === null || x.age <= METAR_MAX_AGE_MIN);
     if (fresh.length) pool = fresh;
-    // Most conservative reading: lowest ceiling, then lowest cloud layer, then closest
-    pool.sort((a, b) => ((a.ceil ?? Infinity) - (b.ceil ?? Infinity)) || ((a.low ? a.low.base : Infinity) - (b.low ? b.low.base : Infinity)) || (a.d - b.d));
+    // Main reading: the nearest fresh station (pool is already nearest first). Lower ceilings at farther stations are listed as a note.
     const best = pool[0];
-    // Lowest cloud layer of any cover across all stations in range (for the 500 ft below clouds rule)
-    let lowCloud = null;
-    for (const x of pool) if (x.low && (!lowCloud || x.low.base < lowCloud.base)) lowCloud = { ...x.low, station: x.st.icaoId || '?' };
+    const lower = pool.slice(1).filter(x => x.ceil != null && (best.ceil == null || x.ceil < best.ceil)).sort((a, b) => a.ceil - b.ceil).slice(0, 2)
+      .map(x => ({ station: x.st.icaoId || '?', dist: x.d, ft: x.ceil }));
+    // Lowest cloud layer of any cover at the main station (for the 500 ft below clouds rule)
+    const lowCloud = best.low ? { ...best.low, station: best.st.icaoId || '?' } : null;
+    // Observed visibility: the nearest recent report that carries one; farther stations under 3 mi become a note
+    const visOf = (st) => { const v = st.visib; if (v == null || v === '') return null; const n = parseFloat(v); return isFinite(n) ? { mi: n, plus: typeof v === 'string' && /\+/.test(v) } : null; };
+    let vis = null; const lowVis = [];
+    for (const x of pool) {
+      if (x.age !== null && x.age > WIND_OBS_MAX_AGE_MIN) continue;
+      const v = visOf(x.st); if (!v) continue;
+      if (!vis) vis = { mi: v.mi, plus: v.plus, station: x.st.icaoId || '?', dist: x.d, ageMin: x.age };
+      else if (v.mi < 3) lowVis.push({ station: x.st.icaoId || '?', dist: x.d, mi: v.mi });
+    }
+    if (vis && vis.mi < 3) lowVis.length = 0;
+    lowVis.sort((a, b) => a.mi - b.mi); lowVis.length = Math.min(lowVis.length, 2);
     // Nearest station that is reporting rain, drizzle, snow or storms right now
     let precipReport = null;
     for (const x of pool) {
@@ -2444,7 +2455,7 @@ async function fetchMetar(lat, lon) {
         variable: w.wdir === 'VRB'
       };
     }
-    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, precipReport, wind };
+    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, lower, vis, lowVis, precipReport, wind };
   } catch (e) {
     console.warn('METAR fetch failed:', e.message);
     throw e;   // the caller tells "service failed" apart from "no station nearby"
@@ -2858,7 +2869,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       }
       let ceilClass = metarData2 ? ceilingColor(ceilFt) : 'wx-good';
 
-      // Lowest cloud layer of any cover at any nearby station, when it is lower than what is shown above
+      // Lowest cloud layer of any cover at the nearest station, when it is lower than the ceiling shown
       const lc = metarData2 && metarData2.lowCloud;
       const lowCloudTxt = () => lc && (ceilFt === null ? lc.station !== stationId : lc.base < ceilFt && lc.station !== stationId)
         ? '☁️ Lowest cloud nearby: ' + lc.cover + ' ' + fmtAlt(lc.base) + ' (' + lc.station + ')' : '';
@@ -2871,17 +2882,25 @@ async function renderWeather(lat, lon, attempt = 1) {
         return lim > 0 && lim < 400 ? '✈️ Max legal altitude about ' + fmtAlt(lim) + ' AGL (500 ft below clouds)' : '';
       };
 
-      if (lc && lc.base < 1000 && ceilClass === 'wx-good') ceilClass = 'wx-warn';   // a low layer nearby is worth a caution colour
+      if (lc && lc.base < 1000 && ceilClass === 'wx-good') ceilClass = 'wx-warn';   // a low layer over the nearest station is worth a caution colour
 
       // Humidity and dew point: a small gap between temperature and dew point means fog, mist or lens fogging
       const dewOk = wx.dewPoint != null && wx.humidity != null && wx.main.temp != null;
       const dewSpreadF = dewOk ? wx.main.temp - wx.dewPoint : null;
       // Amber for fog risk; red only when fog is likely AND visibility is already under 3 statute miles (US minimum)
-      const dewClassNow = () => { const visLow = region !== 'intl' && typeof wx.visibility === 'number' && wx.visibility < 4828; return !dewOk ? '' : (dewSpreadF <= 2 && visLow) ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good'; };
+      const dewClassNow = () => { const visLow = region !== 'intl' && typeof visM === 'number' && visM < 4828; return !dewOk ? '' : (dewSpreadF <= 2 && visLow) ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good'; };
       const dewNote = !dewOk ? 'No data' : dewSpreadF <= 2 ? 'Fog likely' : dewSpreadF <= 4 ? 'Fog or lens fogging possible' : 'Low fog risk';
       const dewSub = () => !dewOk ? '' : 'Dew point ' + fmtTemp(wx.dewPoint) + ' · ' + dewNote + (dewClassNow() === 'wx-alert' ? ', visibility under 3 mi' : '');
+      // Visibility: the nearest recent airport report when there is one, otherwise the weather model
+      const ov = metarData2 && metarData2.vis;
+      const visM = ov ? ov.mi * 1609.34 : wx.visibility;
+      const fmtVisObs = (v) => isMetric() ? (v.mi * 1.609344 >= 16 ? '16+ km' : (+(v.mi * 1.609344).toFixed(1)) + ' km') : (v.plus || v.mi >= 10 ? '10+ mi' : (+v.mi.toFixed(2)) + ' mi');
+      const visTxt = () => ov ? fmtVisObs(ov) : fmtVis(wx.visibility);
+      const visSrc = () => ov ? ' · ' + ov.station : (wx.visibility != null ? ' · forecast model' : '');
+      const visNote = () => metarData2 && metarData2.lowVis && metarData2.lowVis.length ? '☁️ Lower nearby: ' + metarData2.lowVis.map(v => v.station + ' ' + fmtVisObs({ mi: v.mi, plus: false }) + ' (' + fmtDist(v.dist) + ')').join(' · ') : '';
+      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby: ' + metarData2.lower.map(l => l.station + ' ' + fmtAlt(l.ft) + ' (' + fmtDist(l.dist) + ')').join(' · ') : '';
       // US only: visibility under 3 statute miles (14 CFR 107.51) is shown in red with a short note
-      const visBelowMin = () => region !== 'intl' && typeof wx.visibility === 'number' && wx.visibility < 4828;
+      const visBelowMin = () => region !== 'intl' && typeof visM === 'number' && visM < 4828;
 
       // Precipitation: current conditions + next 6 hours
       const WX_CODES = { 51:'Light drizzle', 53:'Drizzle', 55:'Heavy drizzle', 56:'Freezing drizzle', 57:'Freezing drizzle',
@@ -2982,14 +3001,16 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-label">Cloud Ceiling</div>
             <div class="wx-value ${ceilClass}">${ceilTxt}</div>
             <div class="wx-sub">${ceilNote}</div>
-            ${metarData2 ? `<div class="wx-sub"${metarData2.ageMin != null ? ' data-rec-age="' + (Date.now() - metarData2.ageMin * 60000) + '"' : ''}>${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}${metarData2.count > 1 ? ' · lowest of ' + metarData2.count + ' stations' : ''}</div>` : ''}
+            ${metarData2 ? `<div class="wx-sub"${metarData2.ageMin != null ? ' data-rec-age="' + (Date.now() - metarData2.ageMin * 60000) + '"' : ''}>${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}</div>` : ''}
+            ${lowerTxt() ? `<div class="wx-sub">${lowerTxt()}</div>` : ''}
             ${lowCloudTxt() ? `<div class="wx-sub">${lowCloudTxt()}</div>` : ''}
             ${maxAltTxt() ? `<div class="wx-sub"><strong>${maxAltTxt()}</strong></div>` : ''}
           </div>
           <div class="wx-item">
             <div class="wx-label">Temperature</div>
             <div class="wx-value">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
-            <div class="wx-sub">${visBelowMin() ? `<span class="wx-alert"><strong>Visibility ${fmtVis(wx.visibility)}</strong> · ⛔ Below 3 mi minimum</span>` : 'Visibility ' + fmtVis(wx.visibility)}</div>
+            <div class="wx-sub">${visBelowMin() ? `<span class="wx-alert"><strong>Visibility ${visTxt()}${visSrc()}</strong> · ⛔ Below 3 mi minimum</span>` : 'Visibility ' + visTxt() + visSrc()}</div>
+            ${visNote() ? `<div class="wx-sub">${visNote()}</div>` : ''}
           </div>
           <div class="wx-item">
             <div class="wx-label">KP Index</div>
