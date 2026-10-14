@@ -200,7 +200,7 @@
   .panel.editing .section.all-hidden { display: block; }
   .add-row { display: none; gap: 8px; padding: 8px 4px 0; flex-wrap: wrap; }
   .add-row input.add-url { flex: 1 1 100%; order: 3; font-size: 14px; }
-  .add-row input.bad { border-color: var(--red, #c0392b); }
+  .add-row input.bad, .add-row input.add-url.bad { border-color: var(--red, #c0392b); }
   .item.has-link { flex-wrap: wrap; }
   .item-link { flex: 0 0 calc(100% - 36px); box-sizing: border-box; margin: -6px 0 0 36px; font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; word-break: break-all; -webkit-user-select: none; user-select: none; }
   .item-link:active { opacity: .6; }
@@ -548,7 +548,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.7a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.7b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1615,23 +1615,36 @@ function itemX(e, btn) {
   }
   custSave(); refreshCust(panelEl); saveProgress();
 }
-function addCustomItem(e, form) {
-  e.preventDefault();
-  const input = form.querySelector('input'), urlIn = form.querySelector('.add-url'), text = input.value.trim();
-  if (!text) return;
+function addCustomItem(e, form, quiet) {
+  if (e) e.preventDefault();
+  const input = form.querySelector('input'), urlIn = form.querySelector('.add-url');
+  const text = input.value.trim();
   const rawUrl = urlIn ? urlIn.value.trim() : '', lk = rawUrl ? cleanLink(rawUrl) : '';
-  if (rawUrl && !lk) { urlIn.classList.add('bad'); urlIn.focus(); urlIn.setAttribute('placeholder', 'Not a valid link. Try https://... or app://...'); return; }
+  if (!text) { if (!quiet) { input.classList.add('bad'); input.setAttribute('placeholder', 'Enter the checklist item first'); input.focus(); } return false; }
+  if (rawUrl && !lk) { if (quiet) return false; urlIn.classList.add('bad'); urlIn.focus(); urlIn.setAttribute('placeholder', 'Not a valid link. Try https://... or app://...'); return false; }
   const secEl = form.closest('.section'), panelEl = form.closest('.panel');
   const rec = { sec: sectionTitleOf(secEl), text }; if (lk) rec.url = lk;
   custFor(panelEl.id).added.push(rec);
   secEl.querySelector('.section-card').appendChild(makeItem(text, lk));
-  input.value = ''; if (urlIn) { urlIn.value = ''; urlIn.classList.remove('bad'); }
+  input.value = ''; input.classList.remove('bad'); input.setAttribute('placeholder', ADD_PH);
+  if (urlIn) { urlIn.value = ''; urlIn.classList.remove('bad'); urlIn.setAttribute('placeholder', URL_PH); }
   custSave(); refreshCust(panelEl); saveProgress();
+  return true;
+}
+const ADD_PH = '* Checklist item, e.g. Check airspace', URL_PH = 'Link or app address (optional)';
+function flushAddRows(panelEl) {            // Done: save a complete add box, then clear any leftover draft
+  panelEl.querySelectorAll('.add-row').forEach(f => {
+    addCustomItem(null, f, true);
+    f.querySelectorAll('input').forEach(i => { i.value = ''; i.classList.remove('bad'); });
+    const a = f.querySelector('input'), u = f.querySelector('.add-url');
+    a.setAttribute('placeholder', ADD_PH); if (u) u.setAttribute('placeholder', URL_PH);
+  });
 }
 function toggleEdit(btn) {
   const panelEl = btn.closest('.panel');
   const on = panelEl.classList.toggle('editing');
   if (!on) {
+    flushAddRows(panelEl);
     const st = panelEl.querySelector('.settings');
     if (st) { st.classList.remove('open'); st.classList.remove('open-bak'); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1672,8 +1685,9 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     const form = document.createElement('form');
     form.className = 'add-row';
     form.setAttribute('onsubmit', 'addCustomItem(event, this)');
-    form.innerHTML = '<input type="text" maxlength="140" placeholder="Add your own item" enterkeyhint="done" autocomplete="off"><button type="submit">Add</button><input type="text" class="add-url" maxlength="300" inputmode="url" placeholder="Link or app address (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">';
+    form.innerHTML = '<input type="text" maxlength="140" placeholder="* Checklist item, e.g. Check airspace" enterkeyhint="done" autocomplete="off"><button type="submit">Add</button><input type="text" class="add-url" maxlength="300" inputmode="url" placeholder="Link or app address (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">';
     form.querySelector('.add-url').addEventListener('input', e => e.target.classList.remove('bad'));
+    form.querySelector('input').addEventListener('input', e => e.target.classList.remove('bad'));
     sec.appendChild(form);
   });
   if (c) {
@@ -2212,7 +2226,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   tip.after(sn);
   const en = document.createElement('div'); en.className = 'edit-note';
   en.innerHTML = '<div class="en-line"><b>Hide:</b> tap Hide on items you don\'t need.</div>' +
-    '<div class="en-line"><b>Add:</b> use "Add your own item" at the bottom of any section.</div>' +
+    '<div class="en-line"><b>Add:</b> type a checklist item in the box at the bottom of any section (add a link or app address if you like), then tap Add.</div>' +
     '<div class="en-line"><b>Move:</b> drag <b>≡</b> to reorder within a section.</div>' +
     '<div class="en-foot">Tap another tab to customize it too. Press <b>Done</b> when finished. Saved on this device and browser only.</div>';
   sn.after(en);
