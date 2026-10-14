@@ -538,7 +538,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.5a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.5b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2395,6 +2395,23 @@ function decodePrecip(wx) {
   return null;
 }
 
+// ── Obscuring weather from airport reports (fog, mist, haze, smoke, dust) ──
+function decodeObsc(wx) {
+  if (!wx) return null;
+  const NAMES = { FG: 'fog', BR: 'mist', HZ: 'haze', FU: 'smoke', DU: 'dust', SA: 'sand', VA: 'volcanic ash', PY: 'spray' };
+  const MOD = { FZ: 'freezing ', BC: 'patchy ', MI: 'shallow ', PR: 'partial ' };
+  let best = null;
+  for (const g of String(wx).split(/\s+/)) {
+    const vic = g.startsWith('VC');
+    const m = g.replace(/^[-+]|^VC/, '').match(/^(FZ|BC|MI|PR)?(FG|BR|HZ|FU|DU|SA|VA|PY)$/);
+    if (!m) continue;
+    const fog = (m[2] === 'FG' && m[1] !== 'MI') || m[2] === 'VA';     // real fog and volcanic ash colour the card; mist, haze, smoke and dust are a plain note
+    const text = (m[1] ? MOD[m[1]] : '') + NAMES[m[2]];
+    if (!best || (fog && !best.fog)) best = { text, fog, vic };
+  }
+  return best;
+}
+
 // ── Radar at your location: RainViewer (free, worldwide, no key) ──
 const RADAR_ZOOM = 7;          // about 1 km per pixel
 const RADAR_NEAR_PX = 5;       // "nearby" = within about 5 pixels (roughly 3 miles)
@@ -2532,6 +2549,13 @@ async function fetchMetar(lat, lon) {
       const t = decodePrecip(x.st.wxString);
       if (t && (!precipReport || x.d < precipReport.dist)) precipReport = { station: x.st.icaoId || '?', dist: x.d, text: t };
     }
+    // Nearest recent station reporting fog, mist, haze, smoke or dust right now
+    let obsc = null;
+    for (const x of pool) {
+      if (x.age !== null && x.age > WIND_OBS_MAX_AGE_MIN) continue;
+      const o = decodeObsc(x.st.wxString);
+      if (o && (!obsc || x.d < obsc.dist)) obsc = { station: x.st.icaoId || '?', dist: x.d, text: o.text, fog: o.fog, vic: o.vic };
+    }
     // Observed wind: the nearest recent report that carries a wind (knots in the feed)
     let wind = null;
     const wsrc = all.find(x => x.d <= METAR_RADIUS_MI && x.age !== null && x.age <= WIND_OBS_MAX_AGE_MIN && typeof x.st.wspd === 'number' && isFinite(x.st.wspd));
@@ -2549,7 +2573,7 @@ async function fetchMetar(lat, lon) {
     let obs = null;
     const tsrc = all.find(x => x.d <= METAR_RADIUS_MI && x.age !== null && x.age <= WIND_OBS_MAX_AGE_MIN && typeof x.st.temp === 'number' && isFinite(x.st.temp) && typeof x.st.dewp === 'number' && isFinite(x.st.dewp));
     if (tsrc) obs = { station: tsrc.st.icaoId || '?', dist: tsrc.d, ageMin: tsrc.age, tempC: tsrc.st.temp, dewC: Math.min(tsrc.st.dewp, tsrc.st.temp) };
-    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, lower, vis, lowVis, precipReport, wind, obs };
+    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, lower, vis, lowVis, precipReport, wind, obs, obsc };
   } catch (e) {
     console.warn('METAR fetch failed:', e.message);
     throw e;   // the caller tells "service failed" apart from "no station nearby"
@@ -3008,6 +3032,9 @@ async function renderWeather(lat, lon, attempt = 1) {
       // Amber for fog risk; red only when fog is likely AND visibility is already under 3 statute miles (US minimum)
       const dewClassNow = () => { const visLow = region !== 'intl' && typeof visM === 'number' && visM < 4828; return !dewOk ? '' : (dewSpreadF <= 2 && visLow) ? 'wx-alert' : dewSpreadF <= 4 ? 'wx-warn' : 'wx-good'; };
       const dewNote = !dewOk ? 'No data' : dewSpreadF <= 2 ? 'Fog likely' : dewSpreadF <= 4 ? 'Fog or lens fogging possible' : 'Low fog risk';
+      const obscR = metarData2 && metarData2.obsc;
+      const obscTxt = () => obscR ? '<span class="' + (obscR.fog ? 'wx-warn' : '') + '"><strong>' + obscR.text.charAt(0).toUpperCase() + obscR.text.slice(1) + ' reported' + (obscR.vic ? ' nearby' : '') + '</strong></span> · ' + obscR.station + ' (' + fmtDist(obscR.dist) + ')' : '';
+      const humCls = () => { const c = dewClassNow(); return obscR && obscR.fog && (c === 'wx-good' || c === '') ? 'wx-warn' : c; };
       const dewSub = () => !dewOk ? '' : 'Dew point ' + fmtTemp(wx.dewPoint) + ' · ' + dewNote + (dewClassNow() === 'wx-alert' ? ', visibility under 3 mi' : '') + (obsT ? ' · ' + obsT.station : '');
       // Visibility: the nearest recent airport report when there is one, otherwise the weather model
       const ov = metarData2 && metarData2.vis;
@@ -3143,8 +3170,9 @@ async function renderWeather(lat, lon, attempt = 1) {
           </div>
           <div class="wx-item">
             <div class="wx-label">Humidity</div>
-            <div class="wx-value ${dewClassNow()}">${dewOk ? Math.round(wx.humidity) + '%' : '—'}</div>
+            <div class="wx-value ${humCls()}">${dewOk ? Math.round(wx.humidity) + '%' : '—'}</div>
             <div class="wx-sub">${dewSub()}</div>
+            ${obscTxt() ? `<div class="wx-sub">${obscTxt()}</div>` : ''}
           </div>
         </div>
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}${siteTag}</div>
