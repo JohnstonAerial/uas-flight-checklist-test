@@ -538,7 +538,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.6a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.6b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3739,11 +3739,16 @@ function recDraftSave(ov) {
   try { if (any) localStorage.setItem(REC_DRAFT_KEY, JSON.stringify({ at: Date.now(), v: v })); else localStorage.removeItem(REC_DRAFT_KEY); } catch (e) {}
 }
 function recDraftClear() { try { localStorage.removeItem(REC_DRAFT_KEY); } catch (e) {} }
-let recForceDownload = false, recLastErr = '';
+let recForceDownload = false, recForceShare = false, recLastErr = '';
+// A computer with a mouse and no touchscreen: its share sheet has no Print or Save to Files, so a PDF offers Download first
+function recDesktop() {
+  try { return navigator.maxTouchPoints === 0 && window.matchMedia('(pointer: fine)').matches && !window.matchMedia('(any-pointer: coarse)').matches; } catch (e) { return false; }
+}
 async function recDeliver(text, name) {
   const isPdf = /\.pdf$/i.test(name), mime = isPdf ? 'application/pdf' : 'text/plain';
+  if (isPdf && recDesktop() && !recForceDownload && !recForceShare) { recLastErr = 'desktop'; return 'refused'; }   // desktop: let the person choose Download or Share
   try {
-    if (typeof File === 'function' && navigator.canShare && navigator.share) {
+    if (!recForceDownload && typeof File === 'function' && navigator.canShare && navigator.share) {   // the Download button never opens the share sheet
       const f = new File([text], name, { type: mime });
       if (navigator.canShare({ files: [f] })) { await navigator.share({ files: [f] }); return 'shared'; }
     }
@@ -3771,17 +3776,25 @@ let recOpener = null;
 function recKey(e) { if (e.key === 'Escape') closeRecord(); }
 function recOffer(text, name) {
   const ov = document.createElement('div'); ov.className = 'rec-overlay';
-  ov.innerHTML = '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
-    '<h2 id="rec-ot">Your record is ready</h2>' +
-    '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
-    '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-dl">Download</button><button type="button" class="rec-save rec-primary">Share…</button></div></div>';
+  const pdfDesk = /\.pdf$/i.test(name) && recLastErr === 'desktop';
+  const isMac = /Mac/i.test(navigator.platform || '');
+  ov.innerHTML = pdfDesk
+    ? '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
+      '<h2 id="rec-ot">Your PDF is ready</h2>' +
+      '<p style="margin:0 0 8px;font-size:14px;color:var(--text-muted)"><strong>Download</strong> saves it to your Downloads folder. Open it there to print or move it.</p>' +
+      '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)"><strong>Share\u2026</strong> opens ' + (isMac ? 'the Mac share sheet (Mail, Messages, AirDrop, Notes)' : 'your browser\'s share menu') + '.</p>' +
+      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-save">Share\u2026</button><button type="button" class="rec-dl rec-primary">Download</button></div></div>'
+    : '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
+      '<h2 id="rec-ot">Your record is ready</h2>' +
+      '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
+      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-dl">Download</button><button type="button" class="rec-save rec-primary">Share…</button></div></div>';
   document.body.appendChild(ov);
   const done = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) done(); });
   ov.querySelector('.rec-cancel').onclick = done;
   ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recDraftClear(); recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' saved to your downloads'); };
   ov.querySelector('.rec-save').onclick = async () => {
-    const h = await recDeliver(text, name);
+    recForceShare = true; const h = await recDeliver(text, name); recForceShare = false;
     if (h === 'refused') { recToast('Sharing is not available right now — use Download'); return; }
     if (h === 'cancelled') return;
     done(); recDraftClear(); if (h === 'shared') recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' shared');
