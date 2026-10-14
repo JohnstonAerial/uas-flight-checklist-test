@@ -326,8 +326,10 @@
   .body-set .keep-row, .body-set .region-row { flex-wrap: wrap; }
   .body-set .keep-row > span, .body-set .region-row > span { flex: 1 1 auto; }
   .body-set .keep-row select { font-size: 15px; flex: 1 1 52%; min-width: 0; }
-  .body-set .cust-row::before { content: '📝 Your checklist & tab'; white-space: nowrap; flex: 0 1 auto; }
-  .body-set .cust-row .cust-btn { font-size: 14px; white-space: nowrap; flex: 0 0 auto; }
+  .body-set .cust-row { flex-wrap: wrap; row-gap: 8px; }
+  .body-set .cust-row::before { content: '📝 Your checklist & tab'; font-size: 14px; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
+  .body-set .cust-row .cust-btn { font-size: 13px; padding: 6px 12px; white-space: nowrap; flex: 0 0 auto; }
+  .body-set .cust-row .cust-toggle { margin-left: auto; }
   .fn-block { padding: 8px 16px 10px; border-top: 1px solid var(--border); text-align: left; }
   .fn-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--text); }
   .fn-row > span { flex: 1 1 auto; }
@@ -553,7 +555,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.7e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.7f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1711,7 +1713,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   }
   const row = document.createElement('div');
   row.className = 'cust-row';
-  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">✎ Customize</button>' +
+  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">Customize</button>' +
     '<div class="cust-help">' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
