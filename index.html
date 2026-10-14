@@ -198,7 +198,13 @@
   .panel.editing .item.is-hidden .item-text { text-decoration: line-through; }
   .section.all-hidden { display: none; }
   .panel.editing .section.all-hidden { display: block; }
-  .add-row { display: none; gap: 8px; padding: 8px 4px 0; }
+  .add-row { display: none; gap: 8px; padding: 8px 4px 0; flex-wrap: wrap; }
+  .add-row input.add-url { flex: 1 1 100%; order: 3; font-size: 14px; }
+  .add-row input.bad { border-color: var(--red, #c0392b); }
+  .item.has-link { flex-wrap: wrap; }
+  .item-link { flex: 0 0 calc(100% - 36px); box-sizing: border-box; margin: -6px 0 0 36px; font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; word-break: break-all; -webkit-user-select: none; user-select: none; }
+  .item-link:active { opacity: .6; }
+  .item.na .item-link { opacity: .6; }
   .panel.editing .add-row { display: flex; }
   .add-row input { flex: 1; min-width: 0; font-family: inherit; font-size: 16px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
   .add-row button { font-family: inherit; font-size: 13px; color: #fff; background: var(--blue-mid); border: none; border-radius: 10px; padding: 8px 14px; cursor: pointer; }
@@ -511,7 +517,7 @@
     .tab-lbl { display: inline; }
     .tab.active { display: block; padding: 6px 0 0; font-size: 13pt; text-align: left; color: #000 !important; border: 0; }
     .progress-bar-wrap, #wx-panel, #region-card, .settings, .cust-row, .edit-note, .progress-card, .complete-banner, .flag-hint, .saved-note, .coffee-note, .foot-links,
-    .edit-bar, .toast, .item-menu, .rec-overlay, .rec-btn, .pc-btns, .pc-mini, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
+    .edit-bar, .toast, .item-menu, .item-link, .rec-overlay, .rec-btn, .pc-btns, .pc-mini, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
     .content { max-width: none; padding: 0; margin: 0; }
     .panel { padding: 0; }
     .print-fields { display: block; margin: 0 0 4px; }
@@ -542,7 +548,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.6c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.7a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1524,12 +1530,42 @@ function gripUp() {
 }
 function gripCancel() { gripEnd(); }
 
-function makeItem(text) {
+// Optional link on your own items: a web address or an app address (for example dji://). Anything that could run code is refused.
+const LINK_BLOCK = /^(javascript|data|vbscript|file|blob|about|chrome|view-source|ms-|intent):/i;
+function cleanLink(raw) {
+  let v = String(raw || '').trim();
+  if (!v || v.length > 300 || /\s/.test(v)) return null;
+  if (LINK_BLOCK.test(v)) return null;
+  if (/^(mailto|tel|sms|facetime):/i.test(v)) return v;
+  if (/^[a-z][a-z0-9+.\-]*:\/\/\S*$/i.test(v)) return v;                     // https://..., dji://..., googlemaps://...
+  if (/^[^\/:@]+\.[^\/:@]{2,}(\/.*)?$/.test(v)) return 'https://' + v;       // airaware.aloft.ai  ->  https://airaware.aloft.ai
+  return null;
+}
+function linkLabel(u) {
+  let m = u.match(/^(https?):\/\/([^\/?#]+)/i);
+  if (m) return 'Open ' + m[2].replace(/^www\./i, '') + ' \u203A';
+  m = u.match(/^([a-z][a-z0-9+.\-]*):/i);
+  const sc = m ? m[1].toLowerCase() : '';
+  if (sc === 'tel') return 'Call \u203A';
+  if (sc === 'mailto') return 'Email \u203A';
+  if (sc === 'sms') return 'Text \u203A';
+  return 'Open ' + sc + ' app \u203A';
+}
+function makeItem(text, url) {
   const it = document.createElement('div');
   it.className = 'item custom';
   it.setAttribute('onclick', 'toggle(this)');
   it.innerHTML = document.querySelector('.item .check-circle').outerHTML + '<div class="item-text"></div>';
   it.querySelector('.item-text').textContent = text;
+  const lk = cleanLink(url);
+  if (lk) {
+    const a = document.createElement('a');
+    a.className = 'item-link'; a.href = lk; a.textContent = linkLabel(lk);
+    if (/^https?:/i.test(lk)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+    a.addEventListener('click', e => e.stopPropagation());
+    a.addEventListener('pointerdown', e => e.stopPropagation());
+    it.appendChild(a); it.classList.add('has-link');
+  }
   addItemButton(it);
   return it;
 }
@@ -1581,12 +1617,15 @@ function itemX(e, btn) {
 }
 function addCustomItem(e, form) {
   e.preventDefault();
-  const input = form.querySelector('input'), text = input.value.trim();
+  const input = form.querySelector('input'), urlIn = form.querySelector('.add-url'), text = input.value.trim();
   if (!text) return;
+  const rawUrl = urlIn ? urlIn.value.trim() : '', lk = rawUrl ? cleanLink(rawUrl) : '';
+  if (rawUrl && !lk) { urlIn.classList.add('bad'); urlIn.focus(); urlIn.setAttribute('placeholder', 'Not a valid link. Try https://... or app://...'); return; }
   const secEl = form.closest('.section'), panelEl = form.closest('.panel');
-  custFor(panelEl.id).added.push({ sec: sectionTitleOf(secEl), text });
-  secEl.querySelector('.section-card').appendChild(makeItem(text));
-  input.value = '';
+  const rec = { sec: sectionTitleOf(secEl), text }; if (lk) rec.url = lk;
+  custFor(panelEl.id).added.push(rec);
+  secEl.querySelector('.section-card').appendChild(makeItem(text, lk));
+  input.value = ''; if (urlIn) { urlIn.value = ''; urlIn.classList.remove('bad'); }
   custSave(); refreshCust(panelEl); saveProgress();
 }
 function toggleEdit(btn) {
@@ -1633,14 +1672,15 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     const form = document.createElement('form');
     form.className = 'add-row';
     form.setAttribute('onsubmit', 'addCustomItem(event, this)');
-    form.innerHTML = '<input type="text" maxlength="140" placeholder="Add your own item" enterkeyhint="done" autocomplete="off"><button type="submit">Add</button>';
+    form.innerHTML = '<input type="text" maxlength="140" placeholder="Add your own item" enterkeyhint="done" autocomplete="off"><button type="submit">Add</button><input type="text" class="add-url" maxlength="300" inputmode="url" placeholder="Link or app address (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">';
+    form.querySelector('.add-url').addEventListener('input', e => e.target.classList.remove('bad'));
     sec.appendChild(form);
   });
   if (c) {
     const secs = [...panelEl.querySelectorAll('.section')];
     (c.added || []).forEach(a => {
       const sec = secs.find(s => sectionTitleOf(s) === a.sec) || secs[secs.length - 1];
-      if (sec) sec.querySelector('.section-card').appendChild(makeItem(a.text));
+      if (sec) sec.querySelector('.section-card').appendChild(makeItem(a.text, a.url));
     });
     const keys = baseKeyMap(panelEl);
     keys.forEach((k, it) => { if ((c.hidden || []).includes(k)) it.classList.add('is-hidden'); });
