@@ -560,7 +560,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3303,15 +3303,15 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${visNote() ? `<div class="wx-sub">${visNote()}</div>` : ''}
           </div>
           <div class="wx-item">
-            <div class="wx-label">KP Index</div>
-            <div class="wx-value ${kp !== null ? kpColor(kp) : ''}">${kpVal}</div>
-            <div class="wx-sub">${kpNoteFn()}</div>
-          </div>
-          <div class="wx-item">
             <div class="wx-label">Precipitation</div>
             <div class="wx-value ${pb.cls}">${pb.val}</div>
             ${pb.lines.map(l => `<div class="wx-sub">${l}</div>`).join('')}
             <a class="wx-link" href="https://www.rainviewer.com/map.html?loc=${lat.toFixed(3)},${lon.toFixed(3)},8&layer=radar" target="_blank" rel="noopener">Radar map ›</a>
+          </div>
+          <div class="wx-item">
+            <div class="wx-label">KP Index</div>
+            <div class="wx-value ${kp !== null ? kpColor(kp) : ''}">${kpVal}</div>
+            <div class="wx-sub">${kpNoteFn()}</div>
           </div>
           <div class="wx-item">
             <div class="wx-label">Humidity</div>
