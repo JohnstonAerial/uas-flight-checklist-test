@@ -487,6 +487,8 @@
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
   .wx-golden { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 3px; }
   .wx-golden .wx-link { margin-top: 2px; }
+  .gh-w { white-space: nowrap; }
+  @media (max-width: 600px) { .gh-t, .gh-w { display: block; } .gh-sep { display: none; } }
   .wx-window { margin: 10px 0 2px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 12px; text-align: center; color: var(--text-muted); }
   .wx-window b { color: var(--text); }
   .wx-window-s { margin-top: 2px; }
@@ -557,7 +559,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -608,7 +610,7 @@
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov</a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
     <a class="wx-radar" href="https://radar.weather.gov" target="_blank" rel="noopener">🌧 Radar — NWS</a>
-    <a class="wx-facmap" href="https://faa.maps.arcgis.com/apps/webappviewer/index.html?id=9c2e4406710048e19806ebf6a06754ad" target="_blank" rel="noopener">🗺 Facility map — FAA</a>
+    <a class="wx-facmap" href="https://experience.arcgis.com/experience/e6e8b84c6f1144f69a30f9632ebe4352" target="_blank" rel="noopener">🗺 Facility map — FAA</a>
   </div>
 </div>
 
@@ -3135,7 +3137,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       try {
         const gs = wx.sunrise ? goldenHours(String(wx.sunrise).slice(0, 10), lat, lon, siteOff || 0) : [];
         const hm = (mins) => fmtT(String(wx.sunrise).slice(0, 10) + 'T' + String(Math.floor(mins / 60) % 24).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
-        if (gs.length) goldenLine = '<div class="wx-golden">✨ Golden hour ' + gs.map(a => hm(a[0]) + ' – ' + hm(a[1])).join(' · ') + '</div><div class="wx-golden"><a class="wx-link" href="' + agUrl + '" target="_blank" rel="noopener">Will the sky color up? AfterGlow sky forecast ›</a></div>';
+        if (gs.length) goldenLine = '<div class="wx-golden"><span class="gh-t">✨ Golden hour</span> ' + gs.map(a => '<span class="gh-w">' + hm(a[0]) + ' – ' + hm(a[1]) + '</span>').join('<span class="gh-sep"> · </span>') + '</div><div class="wx-golden"><a class="wx-link" href="' + agUrl + '" target="_blank" rel="noopener">Will the sky color up? AfterGlow sky forecast ›</a></div>';
       } catch (e) {}
 
       // Ceiling from METAR (kept in feet; converted for display)
@@ -3294,7 +3296,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-label">Temperature</div>
             <div class="wx-value">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
             ${obsT ? `<div class="wx-sub" data-rec-age="${Date.now() - obsT.ageMin * 60000}">${obsT.station} · ${fmtDist(obsT.dist)} away · ${ageText(obsT.ageMin * 60000)}</div>` : ''}
-            <div class="wx-sub wx-vis">${visBelowMin() ? `<span class="wx-alert"><strong>Visibility ${visTxt()}</strong>${visSrc()} · ⛔ Below 3 SM minimum</span>` : '<strong>Visibility ' + visTxt() + '</strong>' + visSrc()}</div>
+            <div class="wx-sub wx-vis">${visBelowMin() ? `<span class="wx-alert"><strong>Visibility ${visTxt()}</strong>${visSrc()} · ⛔ Below 3 SM minimum</span>` : '<strong' + (typeof visM === 'number' && visM >= 4828 ? ' class="wx-good"' : '') + '>Visibility ' + visTxt() + '</strong>' + visSrc()}</div>
             ${visNote() ? `<div class="wx-sub">${visNote()}</div>` : ''}
           </div>
           <div class="wx-item">
