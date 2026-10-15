@@ -261,6 +261,7 @@
   .toast.gone { opacity: 0; }
   .bk-banner { display: none; margin: 8px 0 10px; padding: 10px 12px; border: 1px solid #c0392b; border-radius: 10px; background: rgba(192,57,43,.08); font-size: 13px; line-height: 1.35; color: var(--text); align-items: center; gap: 10px; }
   body.bk-dirty .bk-banner { display: flex; }
+  .panel.editing .bk-banner { display: none !important; }
   .bk-banner span { flex: 1; }
   .bk-banner b { color: #c0392b; }
   .bk-banner .bk-go { flex: none; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #c0392b; border: 0; border-radius: 14px; padding: 7px 12px; cursor: pointer; }
@@ -573,7 +574,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2017,7 +2018,7 @@ try {
 function makeBkBanner(openBak) {
   const d = document.createElement('div'); d.className = 'bk-banner'; d.setAttribute('role', 'status');
   d.innerHTML = '<span>\u26A0 <b>Your changes are saved on this device only.</b> Back them up so you do not lose them.</span><button type="button" class="bk-go">Back up now</button><button type="button" class="bk-x" aria-label="Dismiss">\u2715</button>';
-  d.querySelector('.bk-go').onclick = openBak;
+  d.querySelector('.bk-go').onclick = () => { openBak(); bkClear(); };
   d.querySelector('.bk-x').onclick = bkClear;
   return d;
 }
