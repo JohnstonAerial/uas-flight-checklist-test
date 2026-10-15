@@ -23,6 +23,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     --green: #0F6E56;
     --green-light: #E1F5EE;
     --amber: #CA8A04;
+    --del: #e0301e;
     --amber-light: #FFF4E0;
     --text: #1a1a1a;
     --text-muted: #666;
@@ -50,6 +51,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
       --green: #3fcf9b;
       --green-light: #0a2a22;
       --amber: #F59E0B;
+      --del: #ff3b30;
       --amber-light: #33240a;
       --shadow: 0 2px 12px rgba(0,0,0,0.4);
     }
@@ -68,6 +70,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
       --green: #3fcf9b;
       --green-light: #0a2a22;
       --amber: #F59E0B;
+      --del: #ff3b30;
       --amber-light: #33240a;
       --shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
@@ -212,6 +215,21 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .reset-inline:active { background: var(--section-bg); }
   .item-x { display: none; flex-shrink: 0; margin-left: auto; align-self: center; font-family: inherit; font-size: 11px; color: var(--text-muted); background: transparent; border: 1px solid var(--border); border-radius: 12px; padding: 3px 9px; cursor: pointer; }
   .panel.editing .item-x { display: inline-block; }
+  /* items you added: Edit and Delete on their own row under the text */
+  .item.custom .cust-acts { display: none; }
+  .panel.editing .item.custom { flex-wrap: wrap; }
+  .panel.editing .item.custom .cust-acts { display: flex; flex: 0 0 100%; justify-content: flex-end; gap: 8px; margin-top: 2px; }
+  .item.custom .cust-acts .item-x { margin-left: 0; color: var(--del); border-color: var(--del); border-color: color-mix(in srgb, var(--del) 45%, transparent); }
+  .item-ed { font-family: inherit; font-size: 11px; color: var(--link); background: transparent; border: 1px solid var(--border); border-color: color-mix(in srgb, var(--link) 45%, transparent); border-radius: 12px; padding: 3px 11px; cursor: pointer; }
+  .item.custom.ce-open > .item-text, .item.custom.ce-open > .item-link, .item.custom.ce-open > .cust-acts { display: none !important; }
+  .cust-edit { flex: 1 1 0; min-width: 0; }
+  .cust-edit label { display: block; font-size: 11px; color: var(--text-muted); margin: 0 2px 3px; }
+  .cust-edit input { width: 100%; box-sizing: border-box; font-family: inherit; font-size: 16px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; margin-bottom: 8px; -webkit-user-select: text; user-select: text; }
+  .cust-edit input.bad { border-color: var(--del); }
+  .cust-edit .ce-err { color: var(--del); font-size: 12px; margin: -2px 2px 8px; }
+  .cust-edit .ce-row { display: flex; gap: 8px; justify-content: flex-end; }
+  .cust-edit .ce-row button { font-family: inherit; font-size: 14px; padding: 8px 16px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; }
+  .cust-edit .ce-row .ce-save { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .panel.editing .item { cursor: default; }
   .panel.editing .item:active { background: transparent; }
   .item.is-hidden { display: none; }
@@ -570,7 +588,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     .tab-lbl { display: inline; }
     .tab.active { display: block; padding: 6px 0 0; font-size: 13pt; text-align: left; color: #000 !important; border: 0; }
     .progress-bar-wrap, #wx-panel, #region-card, .settings, .cust-row, .edit-note, .progress-card, .complete-banner, .flag-hint, .saved-note, .coffee-note, .foot-links,
-    .edit-bar, .toast, .item-menu, .item-link, .rec-overlay, .rec-btn, .pc-btns, .pc-mini, .add-row, .item-x, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
+    .edit-bar, .toast, .item-menu, .item-link, .rec-overlay, .rec-btn, .pc-btns, .pc-mini, .add-row, .item-x, .item-ed, .cust-acts, .cust-edit, .item-grip, .sec-meta, .sec-arrow, .xfer { display: none !important; }
     .content { max-width: none; padding: 0; margin: 0; }
     .panel { padding: 0; }
     .print-fields { display: block; margin: 0 0 4px; }
@@ -601,7 +619,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9s</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9t</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1637,7 +1655,12 @@ function addItemButton(it) {
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'item-x';
   b.setAttribute('onclick', 'itemX(event, this)');
-  it.appendChild(b);
+  if (it.classList.contains('custom')) {
+    const acts = document.createElement('div'); acts.className = 'cust-acts';
+    const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'item-ed'; ed.textContent = 'Edit';
+    ed.setAttribute('onclick', 'itemEdit(event, this)');
+    acts.appendChild(ed); acts.appendChild(b); it.appendChild(acts);
+  } else it.appendChild(b);
   labelItemButton(it);
 }
 function labelItemButton(it) {
@@ -1672,6 +1695,55 @@ function itemX(e, btn) {
     }
   }
   custSave(); refreshCust(panelEl); saveProgress();
+}
+function setItemLink(it, lk) {
+  const old = it.querySelector(':scope > .item-link'); if (old) old.remove();
+  it.classList.remove('has-link');
+  if (!lk) return;
+  const a = document.createElement('a');
+  a.className = 'item-link'; a.href = lk; a.textContent = linkLabel(lk);
+  if (/^https?:/i.test(lk)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+  a.addEventListener('click', e => e.stopPropagation());
+  a.addEventListener('pointerdown', e => e.stopPropagation());
+  const acts = it.querySelector(':scope > .cust-acts'); it.insertBefore(a, acts);
+  it.classList.add('has-link');
+}
+function itemEdit(e, btn) {
+  e.stopPropagation();
+  const it = btn.closest('.item'); if (!it || it.querySelector(':scope > .cust-edit')) return;
+  const panelEl = it.closest('.panel'), sec = sectionTitleOf(it.closest('.section')), oldText = itemTextOf(it);
+  const rec = custFor(panelEl.id).added.find(a => a.sec === sec && a.text === oldText);
+  const f = document.createElement('form'); f.className = 'cust-edit';
+  f.innerHTML = '<label>Item</label><input type="text" class="ce-t" maxlength="140" autocomplete="off" enterkeyhint="done">' +
+    '<label>Link or app address (optional)</label><input type="text" class="ce-u" maxlength="300" inputmode="url" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">' +
+    '<div class="ce-err" hidden></div><div class="ce-row"><button type="button" class="ce-cancel">Cancel</button><button type="submit" class="ce-save">Save</button></div>';
+  const ti = f.querySelector('.ce-t'), ui = f.querySelector('.ce-u'), err = f.querySelector('.ce-err');
+  ti.value = oldText; ui.value = (rec && rec.url) || (it.querySelector(':scope > .item-link') ? it.querySelector(':scope > .item-link').getAttribute('href') : '');
+  ui.setAttribute('list', 'link-lib'); ui.addEventListener('focus', fillLinkLib);
+  [ti, ui].forEach(i => i.addEventListener('input', () => { i.classList.remove('bad'); err.hidden = true; }));
+  f.addEventListener('click', ev => ev.stopPropagation());
+  f.addEventListener('pointerdown', ev => ev.stopPropagation());
+  const close = () => { f.remove(); it.classList.remove('ce-open'); };
+  f.querySelector('.ce-cancel').onclick = close;
+  f.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); });
+  f.addEventListener('submit', ev => {
+    ev.preventDefault();
+    const text = ti.value.trim(), raw = ui.value.trim(), lk = raw ? cleanLink(raw) : '';
+    const fail = (el, msg) => { el.classList.add('bad'); err.textContent = msg; err.hidden = false; el.focus(); };
+    if (!text) return fail(ti, 'Enter the checklist item first.');
+    if (raw && !lk) return fail(ui, 'Not a valid link. Try https://... or app://...');
+    const c = custFor(panelEl.id);
+    if (c.added.some(a => a !== rec && a.sec === sec && a.text === text)) return fail(ti, 'You already have this item in this section.');
+    it.querySelector('.item-text').textContent = text;
+    setItemLink(it, lk);
+    if (rec) { rec.text = text; if (lk) rec.url = lk; else delete rec.url; }
+    else c.added.push(lk ? { sec: sec, text: text, url: lk } : { sec: sec, text: text });
+    if (c.order && c.order[sec]) c.order[sec] = orderKeys(it.closest('.section-card')).map(p => p[0]);   // keep its place if you had reordered this section
+    close();
+    custSave(); refreshCust(panelEl); saveProgress();
+  });
+  it.classList.add('ce-open'); it.appendChild(f);
+  ti.focus(); ti.setSelectionRange(ti.value.length, ti.value.length);
 }
 function addCustomItem(e, form, quiet) {
   if (e) e.preventDefault();
