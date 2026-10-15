@@ -619,7 +619,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9t</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9u</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1622,9 +1622,14 @@ function linkLabel(u) {
     const q = u.match(/run-shortcut\?(.*)$/i);
     try { const nm = q ? new URLSearchParams(q[1]).get('name') : ''; if (nm && nm.trim()) return nm.trim() + ' \u203A'; } catch (e) {}
   }
-  if (sc === 'tel') return 'Call \u203A';
-  if (sc === 'mailto') return 'Email \u203A';
-  if (sc === 'sms') return 'Text \u203A';
+  // email, phone, text and FaceTime links show just the address or number; anything after ? (subject, body...) still works but isn't shown
+  const rest = u.slice(u.indexOf(':') + 1).replace(/^\/\//, '');
+  const dec = x => { try { return decodeURIComponent(x); } catch (e) { return x; } };
+  if (sc === 'mailto') { const a = dec(rest.split('?')[0].split(',')[0].trim()); return (a || 'Email') + ' \u203A'; }
+  if (sc === 'tel' || sc === 'sms' || sc === 'facetime' || sc === 'facetime-audio') {
+    const n = dec(rest.split(/[?&;]/)[0].split(',')[0].trim());
+    return (n || (sc === 'tel' ? 'Call' : sc === 'sms' ? 'Text' : 'FaceTime')) + ' \u203A';
+  }
   return 'Open ' + sc + ' app \u203A';
 }
 function makeItem(text, url) {
