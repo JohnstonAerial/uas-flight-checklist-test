@@ -259,12 +259,16 @@
   .cust-tip { margin-top: 8px; padding: 8px 10px; background: var(--section-bg); border-radius: 10px; line-height: 1.4; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; max-width: 90%; background: var(--green); color: #fff; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3); text-align: center; transition: opacity 0.4s; }
   .toast.gone { opacity: 0; }
-  .toast.bk { display: flex; align-items: center; gap: 12px; text-align: left; width: max-content; max-width: min(92vw, 400px); }
-  .toast.bk button { flex: none; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--green); background: #fff; border: 0; border-radius: 14px; padding: 7px 12px; cursor: pointer; }
+  .bk-banner { display: none; margin: 8px 0 10px; padding: 10px 12px; border: 1px solid #c0392b; border-radius: 10px; background: rgba(192,57,43,.08); font-size: 13px; line-height: 1.35; color: var(--text); align-items: center; gap: 10px; }
+  body.bk-dirty .bk-banner { display: flex; }
+  .bk-banner span { flex: 1; }
+  .bk-banner b { color: #c0392b; }
+  .bk-banner .bk-go { flex: none; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #c0392b; border: 0; border-radius: 14px; padding: 7px 12px; cursor: pointer; }
+  .bk-banner .bk-x { flex: none; font-family: inherit; font-size: 16px; color: var(--text-muted); background: transparent; border: 0; padding: 4px 6px; cursor: pointer; }
   .bk-warn { display: none; margin: 8px 0 10px; padding: 9px 11px; border: 1px solid #c0392b; border-radius: 10px; background: rgba(192,57,43,.08); font-size: 13px; line-height: 1.35; color: var(--text); }
   .panel.editing .bk-warn { display: block; }
   .bk-warn b.k { color: #c0392b; }
-  @media (prefers-color-scheme: dark) { .bk-warn b.k { color: #ff7b6e; } .bk-warn { border-color: #ff7b6e; background: rgba(255,123,110,.10); } }
+  @media (prefers-color-scheme: dark) { .bk-banner b { color: #ff7b6e; } .bk-banner { border-color: #ff7b6e; background: rgba(255,123,110,.10); } .bk-warn b.k { color: #ff7b6e; } .bk-warn { border-color: #ff7b6e; background: rgba(255,123,110,.10); } }
 
   /* ── Preflight record ── */
   .pc-btns .rec-btn { width: 100%; text-align: center; border-radius: 20px; padding: 6px 12px; font-size: 12px; margin: 0; color: var(--blue); background: transparent; border: 1px solid var(--blue); font-family: inherit; cursor: pointer; min-height: 32px; font-weight: 600; }
@@ -523,6 +527,7 @@
   .print-fields { display: none; }
   /* ── Print: plain checklist you can tick with a pencil ── */
   @media print {
+    .bk-banner { display: none !important; }
     @page { margin: 14mm 12mm; }
     :root { --text:#000; --text-muted:#000; --text-light:#000; --card:#fff; --section-bg:#fff; --border:#999; --bg:#fff; --amber-light:#fff; }
     html, body { background: #fff !important; color: #000 !important; min-height: 0; }
@@ -568,7 +573,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1450,8 +1455,7 @@ if (region === 'intl') applyRegion('intl', false);
 // ── Customize: hide items that don't apply where you fly, or add your own (saved on this device) ──
 const CUSTOM_KEY = 'uasCustomItems';
 let cust = (function () { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY)) || {}; } catch (e) { return {}; } })();
-let custDirty = false;
-function custSave() { if (document.querySelector('.panel.editing')) custDirty = true; try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(cust)); } catch (e) {} }
+function custSave() { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(cust)); } catch (e) {} }
 (function migrateCust() {          // follow reworded items (hidden and custom order); saved once if anything changed
   let changed = false;
   Object.keys(cust).forEach(id => {
@@ -1674,7 +1678,6 @@ function toggleEdit(btn) {
     const st = panelEl.querySelector('.settings');
     if (st) { st.classList.remove('open'); st.classList.remove('open-bak'); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (custDirty) { custDirty = false; backupToast(panelEl); }
   }
   refreshCust(panelEl);
 }
@@ -1909,7 +1912,7 @@ let tabsCfg = (function () {
   try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {} }; }
   catch (e) { return { names: {}, hidden: [], icons: {} }; }
 })();
-function tabsSave() { if (document.querySelector('.panel.editing')) custDirty = true; try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
+function tabsSave() { try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
 const tabEls = [...document.querySelectorAll('.tabs .tab')];
 tabEls.forEach(t => {
   const txt = t.textContent.trim(), m = txt.match(/^(\S+)\s+(.+)$/), id = (t.getAttribute('onclick') || '').match(/showPanel\('([^']+)'/);
@@ -2000,6 +2003,24 @@ function xferWarm(el) {
   if (xferPre && xferPre.key === key) return;
   xferEncode(snap).then(code => { xferPre = { key, code }; }).catch(() => {});
 }
+// Back-up reminder: shown under the Settings / Back up & restore buttons after anything that a backup carries is changed
+const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'wxUnits'];
+let bkReady = false;
+setTimeout(() => { bkReady = true; }, 2000);
+function bkMark() { if (bkReady) document.body.classList.add('bk-dirty'); }
+function bkClear() { document.body.classList.remove('bk-dirty'); }
+try {
+  const _si = Storage.prototype.setItem, _ri = Storage.prototype.removeItem;
+  Storage.prototype.setItem = function (k, v) { if (this === window.localStorage && BK_WATCH.indexOf(k) > -1 && this.getItem(k) !== String(v)) bkMark(); return _si.apply(this, arguments); };
+  Storage.prototype.removeItem = function (k) { if (this === window.localStorage && BK_WATCH.indexOf(k) > -1 && this.getItem(k) !== null) bkMark(); return _ri.apply(this, arguments); };
+} catch (e) {}
+function makeBkBanner(openBak) {
+  const d = document.createElement('div'); d.className = 'bk-banner'; d.setAttribute('role', 'status');
+  d.innerHTML = '<span>\u26A0 <b>Your changes are saved on this device only.</b> Back them up so you do not lose them.</span><button type="button" class="bk-go">Back up now</button><button type="button" class="bk-x" aria-label="Dismiss">\u2715</button>';
+  d.querySelector('.bk-go').onclick = openBak;
+  d.querySelector('.bk-x').onclick = bkClear;
+  return d;
+}
 function makeXfer() {
   const d = document.createElement('div');
   d.className = 'xfer';
@@ -2051,6 +2072,7 @@ async function xferDecode(text) {
 function xferMsg(el, text, bad) {
   const m = el.closest('.xfer').querySelector('.xfer-msg');
   m.textContent = text; m.className = 'xfer-msg' + (bad ? ' bad' : '');
+  if (!bad && text.charAt(0) === '\u2713') bkClear();
 }
 async function xferCopy(btn) {
   const box = btn.closest('.xfer'), codeP = xferEncode(xferSnapshot(box.querySelector('.xfer-prog').checked));
@@ -2205,6 +2227,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   };
   const tgSet = mkTg('tg-set', '⚙ Settings', 'open'), tgBak = mkTg('tg-bak', '💾 Back up &amp; restore', 'open-bak');
   heads.append(tgSet, tgBak);
+  const bkb = makeBkBanner(() => { if (tgBak.getAttribute('aria-expanded') !== 'true') tgBak.click(); try { tgBak.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} });
   const bodySet = document.createElement('div'); bodySet.className = 'settings-body body-set';
   const bodyBak = document.createElement('div'); bodyBak.className = 'settings-body body-bak';
   const note = document.createElement('div'); note.className = 'settings-note';
@@ -2247,7 +2270,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     };
     bd.appendChild(up);
   });
-  wrap.append(heads, bodySet, bodyBak);
+  wrap.append(heads, bkb, bodySet, bodyBak);
   card.before(wrap);
   const reset = card.querySelector('.reset-inline'), all = cust.querySelector('.sec-all');
   const col = document.createElement('div'); col.className = 'pc-btns';
@@ -3865,16 +3888,6 @@ async function recDeliver(text, name) {
   const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
   return 'downloaded';
-}
-function backupToast(panelEl) {
-  const old = document.querySelector('.toast.bk'); if (old) old.remove();
-  const t = document.createElement('div'); t.className = 'toast bk'; t.setAttribute('role', 'status');
-  const m = document.createElement('span'); m.textContent = 'Changes saved on this device. Back them up so you do not lose them.';
-  const b = document.createElement('button'); b.type = 'button'; b.textContent = 'Back up now';
-  const close = () => { t.classList.add('gone'); setTimeout(() => t.remove(), 500); };
-  b.onclick = () => { close(); const tg = panelEl.querySelector('.settings-toggle.tg-bak'); if (tg) { if (tg.getAttribute('aria-expanded') !== 'true') tg.click(); try { tg.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} } };
-  t.append(m, b); document.body.appendChild(t);
-  setTimeout(close, 12000);
 }
 function recToast(msg, ms) {
   const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
