@@ -601,7 +601,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9r</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9s</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1600,6 +1600,10 @@ function linkLabel(u) {
   if (m) return 'Open ' + m[2].replace(/^www\./i, '') + ' \u203A';
   m = u.match(/^([a-z][a-z0-9+.\-]*):/i);
   const sc = m ? m[1].toLowerCase() : '';
+  if (sc === 'shortcuts') {                      // shortcuts://run-shortcut?name=Open%20Air%20Control  ->  the shortcut's own name
+    const q = u.match(/run-shortcut\?(.*)$/i);
+    try { const nm = q ? new URLSearchParams(q[1]).get('name') : ''; if (nm && nm.trim()) return nm.trim() + ' \u203A'; } catch (e) {}
+  }
   if (sc === 'tel') return 'Call \u203A';
   if (sc === 'mailto') return 'Email \u203A';
   if (sc === 'sms') return 'Text \u203A';
@@ -1742,6 +1746,18 @@ function restoreDefaults(btn) {
   custSave(); refreshCust(panelEl); saveProgress();
 }
 
+// Tap-to-fill: the link box offers every link already used on your own items, on any tab
+function fillLinkLib() {
+  let dl = document.getElementById('link-lib');
+  if (!dl) { dl = document.createElement('datalist'); dl.id = 'link-lib'; document.body.appendChild(dl); }
+  const seen = new Set(); dl.innerHTML = '';
+  document.querySelectorAll('.item.custom a.item-link').forEach(a => {
+    const h = a.getAttribute('href'); if (!h || seen.has(h)) return; seen.add(h);
+    const o = document.createElement('option'); o.value = h;
+    const t = a.closest('.item'); o.label = t && t.querySelector('.item-text') ? t.querySelector('.item-text').textContent : '';
+    dl.appendChild(o);
+  });
+}
 document.querySelectorAll('.panel').forEach(panelEl => {
   const c = cust[panelEl.id];
   panelEl.querySelectorAll('.section-card').forEach(card => card.querySelectorAll(':scope > .item').forEach((it, i) => { it.dataset.i = i; }));
@@ -1752,6 +1768,8 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     form.setAttribute('onsubmit', 'addCustomItem(event, this)');
     form.innerHTML = '<input type="text" maxlength="140" placeholder="* Checklist item, e.g. Check airspace" enterkeyhint="done" autocomplete="off"><button type="submit">Add item</button><input type="text" class="add-url" maxlength="300" inputmode="url" placeholder="Link or app address (optional)" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">';
     form.querySelector('.add-url').addEventListener('input', e => e.target.classList.remove('bad'));
+    form.querySelector('.add-url').setAttribute('list', 'link-lib');
+    form.querySelector('.add-url').addEventListener('focus', fillLinkLib);
     form.querySelector('input').addEventListener('input', e => e.target.classList.remove('bad'));
     sec.appendChild(form);
   });
@@ -2134,7 +2152,8 @@ async function xferShare(btn) {
 }
 async function xferSave(btn) {
   const json = JSON.stringify(xferSnapshot(btn.closest('.xfer').querySelector('.xfer-prog').checked));
-  const name = 'uas-checklist-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  const nd = new Date(), p2 = (n) => String(n).padStart(2, '0');   // the device's own date, not UTC (UTC turns to tomorrow in the evening in the US)
+  const name = 'uas-checklist-backup-' + nd.getFullYear() + '-' + p2(nd.getMonth() + 1) + '-' + p2(nd.getDate()) + '.json';
   const file = new File([json], name, { type: 'application/json' });
   // Desktop Chrome and Edge: a real Save dialog, so you choose the folder and the name
   if (window.showSaveFilePicker) {
