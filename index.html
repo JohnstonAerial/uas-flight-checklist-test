@@ -412,7 +412,7 @@
   .region-card .rc-btns button { flex: 1; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--link); background: var(--section-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 6px; cursor: pointer; }
   .keep-row { max-width: 600px; margin: 0 auto 10px; padding: 0 16px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; font-size: 11px; color: var(--text-light); text-align: center; }
   .keep-row select { font-family: inherit; font-size: 11px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 4px 8px; }
-  .flag-hint { font-size: 11px; color: var(--text-light); text-align: center; padding: 2px 16px 8px; }
+  .flag-hint { font-size: 11px; color: var(--text-light); text-align: center; padding: 2px 16px 8px;  text-wrap: balance; }
 
   .check-circle {
     width: 24px;
@@ -560,7 +560,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1379,7 +1379,7 @@ function resetCurrent() {
   updateProgress(current);
   saveProgress();
   const h = p.querySelector('.flag-hint');
-  if (h) h.textContent = 'Tip: press and hold an item to flag it or mark it N/A';
+  if (h) h.textContent = 'Tip: press and hold an item for Needs attention or N/A';
 }
 
 document.querySelectorAll('.panel .progress-card').forEach(c => {
@@ -1393,7 +1393,7 @@ document.querySelectorAll('.panel .progress-card').forEach(c => {
 document.querySelectorAll('.panel .complete-banner').forEach(b => {
   const h = document.createElement('div');
   h.className = 'flag-hint';
-  h.textContent = 'Tip: press and hold an item to flag it or mark it N/A';
+  h.textContent = 'Tip: press and hold an item for Needs attention or N/A';
   b.after(h);
   const row = document.createElement('div');
   row.className = 'keep-row';
