@@ -601,7 +601,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9m</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9n</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1473,7 +1473,7 @@ function applyRegion(r, changeUnits) {
   document.querySelectorAll('.region-sel').forEach(sel => { sel.value = r; });
   const card = document.getElementById('region-card'); if (card) card.remove();
   if (changeUnits && (intl || prev === 'intl') && typeof toggleUnits === 'function') {
-    units = intl ? 'metric' : 'imperial'; store('wxUnits', units); updateUnitsButton(); if (typeof wlSync === 'function') wlSync(); if (lastDraw) lastDraw();
+    units = intl ? 'metric' : 'imperial'; store('wxUnits', units); updateUnitsButton(); if (typeof wlSync === 'function') { wlSync(); tpSync(); } if (lastDraw) lastDraw();
   }
   document.querySelectorAll('.panel').forEach(p => { if (typeof refreshCust === 'function') refreshCust(p); });
 }
@@ -2012,7 +2012,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
+const XFER_KEYS = ['uasRegion', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -2032,7 +2032,7 @@ function xferWarm(el) {
   xferEncode(snap).then(code => { xferPre = { key, code }; }).catch(() => {});
 }
 // Back-up reminder: shown under the Settings / Back up & restore buttons after anything that a backup carries is changed
-const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'wxUnits', 'uasTheme'];
+const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'wxUnits', 'uasTheme'];
 let bkReady = false;
 setTimeout(() => { bkReady = true; }, 2000);
 function bkMark() { if (bkReady) document.body.classList.add('bk-dirty'); }
@@ -2270,7 +2270,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
     '<div class="wl-hint">sustained / gusts · amber at about two-thirds, red at the limit.</div>' +
     '<div class="wl-row kp-row"><span>🧲 Kp warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-a" aria-label="Kp index where the warning turns amber"> / <input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-r" aria-label="Kp index where the warning turns red"></span></div>' +
-    '<div class="wl-hint">amber at / red at · from 1 to 9, standard 4 / 5. Higher Kp can disturb GPS and the compass.</div>';
+    '<div class="wl-hint">amber at / red at · from 1 to 9, standard 4 / 5. Higher Kp can disturb GPS and the compass.</div>' +
+    '<div class="wl-row tp-row"><span>🥶 Cold warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ca" aria-label="Temperature at or below which the warning turns amber"> / <input type="number" inputmode="decimal" class="tp-cr" aria-label="Temperature at or below which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
+    '<div class="wl-row tp-row"><span>🥵 Heat warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ha" aria-label="Temperature at or above which the warning turns amber"> / <input type="number" inputmode="decimal" class="tp-hr" aria-label="Temperature at or above which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
+    '<div class="wl-hint">amber at / red at · standard cold 40 / 14 °F (4 / −10 °C), heat 95 / 104 °F (35 / 40 °C). Check your aircraft\'s operating range.</div>';
   const fnb = document.createElement('div'); fnb.className = 'fn-block';
   fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
     '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
@@ -2893,6 +2896,23 @@ function goldenHours(dayISO, lat, lon, offSec) {
 const fmtTemp = (f) => isMetric() ? Math.round((f - 32) * 5 / 9) + '°C' : Math.round(f) + '°F';
 const fmtVis = (m) => m == null ? '—' : isMetric() ? (m / 1000).toFixed(1) + ' km' : (m / 1609.34).toFixed(1) + ' SM';
 const fmtPrecip = (mm) => isMetric() ? (mm < 10 ? mm.toFixed(1) : Math.round(mm)) + '\u00a0mm' : (mm / 25.4).toFixed(2) + '\u00a0in';
+const TEMP_DEF = { ca: 40, cr: 14, ha: 95, hr: 104 };   // standard limits in °F: cold amber/red (at or below), heat amber/red (at or above)
+function tempLimits() {
+  let o = null; try { o = JSON.parse(localStorage.getItem('uasTempLimits')); } catch (e) {}
+  const ok = (v) => typeof v === 'number' && isFinite(v) && v > -100 && v < 200 ? v : null;
+  const u = { ca: ok(o && o.ca), cr: ok(o && o.cr), ha: ok(o && o.ha), hr: ok(o && o.hr) };
+  const ca = u.ca != null ? u.ca : TEMP_DEF.ca, ha = u.ha != null ? u.ha : TEMP_DEF.ha;
+  let cr = u.cr != null ? u.cr : TEMP_DEF.cr, hr = u.hr != null ? u.hr : TEMP_DEF.hr;
+  if (cr > ca) cr = ca;                    // red can never sit on the milder side of amber
+  if (hr < ha) hr = ha;
+  return { ca: ca, cr: cr, ha: ha, hr: hr, u: u };
+}
+function tempColor(f) {
+  const l = tempLimits();
+  if (f <= l.cr || f >= l.hr) return 'wx-alert';
+  if (f <= l.ca || f >= l.ha) return 'wx-warn';
+  return 'wx-good';
+}
 const fmtDist = (mi) => isMetric() ? Math.round(mi * 1.609344) + ' km' : Math.round(mi) + ' mi';
 const fmtAlt = (ft) => isMetric() ? (Math.round(ft * 0.3048 / 10) * 10).toLocaleString() + ' m' : Number(ft).toLocaleString() + ' ft';
 function updateUnitsButton() {
@@ -2903,7 +2923,7 @@ function toggleUnits() {
   units = isMetric() ? 'imperial' : 'metric';
   store('wxUnits', units);
   updateUnitsButton();
-  wlSync();
+  wlSync(); if (typeof tpSync === 'function') tpSync();
   if (lastDraw) { lastDraw(); }
 }
 // Wind limit boxes: stored in mph, shown in the units in use; an empty box means the standard limit (shown greyed)
@@ -2938,7 +2958,26 @@ function kpSave() {
   if (lastDraw) { lastDraw(); }
 }
 document.querySelectorAll('.kp-a, .kp-r').forEach(i => i.addEventListener('input', kpSave));
-wlSync(); kpSync(); fnSync(); acSync();
+// Temperature warning boxes: stored in °F, shown in the units in use; an empty box means the standard point (shown greyed)
+const TP_K = ['ca', 'cr', 'ha', 'hr'];
+const tpShow = (f) => isMetric() ? Math.round((f - 32) * 5 / 9) : Math.round(f);
+function tpSync() {
+  const l = tempLimits(), act = document.activeElement;
+  TP_K.forEach(k => document.querySelectorAll('.tp-' + k).forEach(i => { i.placeholder = String(tpShow(TEMP_DEF[k])); if (i !== act) i.value = l.u[k] != null ? String(tpShow(l.u[k])) : ''; }));
+  document.querySelectorAll('.tp-unit').forEach(u => { u.textContent = isMetric() ? '°C' : '°F'; });
+}
+function tpSave() {
+  const a = document.activeElement, cur = tempLimits(), o = {};
+  TP_K.forEach(k => {
+    if (a && a.classList.contains('tp-' + k)) { const v = parseFloat(a.value); o[k] = isFinite(v) ? Math.round((isMetric() ? v * 9 / 5 + 32 : v) * 10) / 10 : null; }
+    else o[k] = cur.u[k];
+  });
+  try { if (TP_K.some(k => o[k] != null)) localStorage.setItem('uasTempLimits', JSON.stringify(o)); else localStorage.removeItem('uasTempLimits'); } catch (e) {}
+  tpSync();
+  if (lastDraw) { lastDraw(); }
+}
+document.querySelectorAll('.tp-ca, .tp-cr, .tp-ha, .tp-hr').forEach(i => i.addEventListener('input', tpSave));
+wlSync(); kpSync(); tpSync(); fnSync(); acSync();
 
 let site = recall('wxSite', null);       // {name, lat, lon}, or null = use my current location
 let recentSites = recall('wxRecent', []);
@@ -3374,7 +3413,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           </div>
           <div class="wx-item">
             <div class="wx-label">Temperature</div>
-            <div class="wx-value">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
+            <div class="wx-value ${tempOk ? tempColor(wx.main.temp) : ''}">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
             ${obsT ? `<div class="wx-sub" data-rec-age="${Date.now() - obsT.ageMin * 60000}">${obsT.station} · ${fmtDist(obsT.dist)} away · ${ageText(obsT.ageMin * 60000)}</div>` : ''}
             <div class="wx-label wx-vislab">Visibility</div>
             <div class="wx-value wx-vis-val ${visBelowMin() ? 'wx-alert' : (typeof visM === 'number' && visM >= 4828 ? 'wx-good' : '')}">${visTxt()}<span class="wx-vis-src">${visSrc()}</span></div>
