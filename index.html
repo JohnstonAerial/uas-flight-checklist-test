@@ -226,6 +226,8 @@
   .settings-body { position: relative; }
   .set-up:hover, .set-up:focus-visible { color: var(--text); }
   .panel.editing .set-up { display: none; }
+  /* Settings or Back up & restore open: nothing below it, so the Close bar is the end of the page (not while customizing) */
+  @media screen { .panel:not(.editing) .settings.open ~ *, .panel:not(.editing) .settings.open-bak ~ * { display: none !important; } }
   .settings-body { display: none; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 4px 0; margin-top: 8px; }
   .settings.open .body-set, .settings.open-bak .body-bak, .panel.editing .body-set { display: block; }
   .panel.editing .set-heads { display: none; }
@@ -573,7 +575,7 @@
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9k</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
