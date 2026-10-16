@@ -222,6 +222,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .item.custom .cust-acts .item-x { margin-left: 0; color: var(--del); border-color: var(--del); border-color: color-mix(in srgb, var(--del) 45%, transparent); }
   .item-ed { font-family: inherit; font-size: 11px; color: var(--link); background: transparent; border: 1px solid var(--border); border-color: color-mix(in srgb, var(--link) 45%, transparent); border-radius: 12px; padding: 3px 11px; cursor: pointer; }
   .item.custom.ce-open > .item-text, .item.custom.ce-open > .item-link, .item.custom.ce-open > .cust-acts { display: none !important; }
+  .tab-ac-wrap { margin: 10px 0 4px; }
+  .tab-ac-lbl { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
   .tab-clone { margin: 8px 0 4px; }
   .clone-box { margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
   .clone-box[hidden] { display: none; }
@@ -639,7 +641,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9ac</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.10a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1789,12 +1791,15 @@ function cloneOpen(btn) {
     box.appendChild(msg('', 'Everything on ' + myName + ' is replaced with ' + tabName(t) + ' (' + n + ' items). Your other tabs are not changed. "Restore original list" brings ' + myName + '\'s own original items back.'));
     box.appendChild(msg('', '\uD83D\uDCBE Back up first: Settings > Back up & restore. Undo only works until you leave or reload this page.'));
     box.appendChild(btnOf('Replace ' + myName, 'primary', () => {
-      const snap = JSON.parse(JSON.stringify(custFor(panelEl.id)));
+      const snap = JSON.parse(JSON.stringify(custFor(panelEl.id))), sd = (tabsCfg.drone || {})[pid], sr = (tabsCfg.reg || {})[pid];
       cloneTab(panelEl, t.dataset.pid);
       box.innerHTML = '';
       box.appendChild(msg('ok', '\u2713 ' + myName + ' is now a copy of ' + tabName(t) + '. Rename it above, then tweak it.'));
       box.appendChild(btnOf('Undo', '', () => {
         cust[panelEl.id] = snap; custSave(); rebuildCust(panelEl); saveProgress();
+        if (sd) tabsCfg.drone[pid] = sd; else delete tabsCfg.drone[pid];
+        if (sr) tabsCfg.reg[pid] = sr; else delete tabsCfg.reg[pid];
+        tabsSave(); refreshTabs();
         box.innerHTML = ''; box.appendChild(msg('ok', '\u2713 Undone. ' + myName + ' is back the way it was.'));
       }));
     }));
@@ -1832,6 +1837,9 @@ function cloneTab(panelEl, srcPid) {
       c.added.push(rec); card.appendChild(makeItem(x.text, x.url));
     });
   });
+  const sp = tabEls.find(x => x.dataset.pid === srcPid), tp = panelEl.id.replace('panel-', '');
+  ['drone', 'reg'].forEach(k => { if (!tabsCfg[k]) tabsCfg[k] = {}; const v = tabsCfg[k][srcPid]; if (v) tabsCfg[k][tp] = v; else delete tabsCfg[k][tp]; });
+  tabsSave(); refreshTabs();
   custSave(); refreshCust(panelEl); saveProgress();
 }
 function itemEdit(e, btn) {
@@ -1990,6 +1998,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="tab-icons"><span class="ti-label">Tab icon</span><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
+    '<div class="tab-ac-wrap"><div class="tab-ac-lbl">For records and PDFs saved from this tab</div><div class="ac-block tab-ac">' +
+    '<div class="fn-row"><span>\uD83D\uDE81 Drone</span><input type="text" class="tab-drone" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
+    '<div class="fn-row"><span>\uD83E\uDEAA Reg. #</span><input type="text" class="tab-reg" maxlength="30" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div></div>' +
+    '<div class="tab-note">Leave blank to use the Drone and Reg. # from Settings. Pilot name stays in Settings.</div></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name and icon only.</div>' +
     '<div class="tab-clone"><button type="button" class="cust-btn" onclick="cloneOpen(this)">Clone another tab onto this one\u2026</button><div class="clone-box" hidden></div></div>' +
     '<div class="tab-hidden-list"></div>' +
@@ -2157,8 +2169,8 @@ if (!region) {
 // ── Tabs: rename or hide (saved on this device) ──
 const TABS_KEY = 'uasTabs';
 let tabsCfg = (function () {
-  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {} }; }
-  catch (e) { return { names: {}, hidden: [], icons: {} }; }
+  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {}, drone: (v && v.drone) || {}, reg: (v && v.reg) || {} }; }
+  catch (e) { return { names: {}, hidden: [], icons: {}, drone: {}, reg: {} }; }
 })();
 function tabsSave() { try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
 const tabEls = [...document.querySelectorAll('.tabs .tab')];
@@ -2190,6 +2202,9 @@ function refreshTabs() {
       p.querySelectorAll('.ti-btn').forEach(b => b.classList.toggle('sel', b.dataset.i === cur));
       if (more && document.activeElement !== more) more.value = (cur && !TAB_ICONS.includes(cur)) ? cur : '';
     }
+    const pidv = p.id.replace('panel-', ''), di = p.querySelector('.tab-drone'), ri = p.querySelector('.tab-reg');
+    if (di && document.activeElement !== di) { di.value = (tabsCfg.drone || {})[pidv] || ''; di.placeholder = acGet('uasDrone') || 'e.g. Mavic 4 Pro'; }
+    if (ri && document.activeElement !== ri) { ri.value = (tabsCfg.reg || {})[pidv] || ''; ri.placeholder = acGet('uasRegNo') || 'e.g. FA3XXXXXXX'; }
     const hb = p.querySelector('.tab-hide-btn'); if (hb) hb.disabled = visible.length <= 1;
     const list = p.querySelector('.tab-hidden-list');
     if (list) {
@@ -2202,6 +2217,12 @@ function refreshTabs() {
       });
     }
   });
+}
+function saveTabAc(inp) {
+  const pid = inp.closest('.panel').id.replace('panel-', ''), k = inp.classList.contains('tab-drone') ? 'drone' : 'reg', v = inp.value.trim().slice(0, k === 'drone' ? 40 : 30);
+  if (!tabsCfg[k]) tabsCfg[k] = {};
+  if (v) tabsCfg[k][pid] = v; else delete tabsCfg[k][pid];
+  tabsSave();
 }
 function saveTabName(inp) {
   const pid = inp.closest('.panel').id.replace('panel-', ''), v = inp.value.trim().slice(0, 24);
@@ -2457,8 +2478,10 @@ function fnSave(inp) {
 
 // ── Drone and registration number: printed on saved flight records and the checklist PDF (saved on this device; both optional) ──
 function acGet(k) { let v = ''; try { v = (localStorage.getItem(k) || '').trim(); } catch (e) {} return v; }
-function acPair() {                           // [label, value] for one line on a record, or null when nothing is saved
-  const d = acGet('uasDrone'), r = acGet('uasRegNo');
+function acDrone(pid) { return ((tabsCfg.drone || {})[pid || current] || '').trim() || acGet('uasDrone'); }
+function acReg(pid) { return ((tabsCfg.reg || {})[pid || current] || '').trim() || acGet('uasRegNo'); }
+function acPair(pid) {                        // [label, value] for one line on a record, or null when nothing is saved (this tab's drone and reg. #, else the Settings ones)
+  const d = acDrone(pid), r = acReg(pid);
   if (d) return ['Drone', d + (r ? ' · Reg ' + r : '')];
   if (r) return ['Registration', r];
   return null;
@@ -4154,7 +4177,8 @@ function buildChecklistPdf(panelEl, tabName, layout, paper) {
   d.fieldLine([['Date', 0.5], ['Time', 0.5]]);
   d.fieldLine([['Site', 1]]);
   d.fieldLine([['Pilot', 0.5, acGet('uasPilot')], ['Visual observer', 0.5]]);
-  d.fieldLine([['Drone', 0.5, acGet('uasDrone')], ['Registration', 0.5, acGet('uasRegNo')]]);
+  const apid = panelEl.id.replace('panel-', '');
+  d.fieldLine([['Drone', 0.5, acDrone(apid)], ['Registration', 0.5, acReg(apid)]]);
   const c = recCollect(panelEl, true);
   d.startCols();
   c.secs.forEach(s => { d.sub(s.name, 30); s.rows.forEach(r => d.item(r.st, r.txt + (r.st === 3 ? ' (N/A)' : ''))); });
