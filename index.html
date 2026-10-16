@@ -116,6 +116,13 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .tab-edit .cust-btn:disabled { opacity: 0.4; cursor: default; }
   .tab-note { margin-top: 4px; }
   .tab-icons { margin-top: 10px; text-align: center; }
+  .ti-head { display: flex; align-items: center; justify-content: center; gap: 12px; }
+  .ti-head .ti-label { display: inline; margin: 0; }
+  .ti-cur { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; font-size: 24px; line-height: 1; }
+  .ti-cur svg { display: block; width: 26px; height: 26px; }
+  .ti-head .cust-btn { font-size: 13px; padding: 5px 12px; }
+  .ti-body { margin-top: 8px; }
+  .ti-body[hidden] { display: none; }
   .ti-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
   .ti-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
   .ti-btn { font-size: 22px; line-height: 1; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; padding: 0; }
@@ -430,7 +437,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .ac-block .fn-hint { grid-column: 1 / -1; margin-top: 0; }
   .fn-hint { font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: 6px; overflow-wrap: anywhere; }
   .region-hint { flex: 1 1 100%; font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: -2px; }
-  .panel.editing .body-set > .keep-row:not(.region-row), .panel.editing .body-set > .wl-block, .panel.editing .body-set > .fn-block, .panel.editing .body-set > .pdfset:not(.themeset) { display: none; }
+  .panel.editing .body-set > .themeset, .panel.editing .body-set > .region-row, .panel.editing .body-set > .settings-note, .panel.editing .body-set > .keep-row:not(.region-row), .panel.editing .body-set > .wl-block, .panel.editing .body-set > .fn-block, .panel.editing .body-set > .pdfset:not(.themeset) { display: none; }
   .panel.editing .body-set .cust-row { flex-direction: column; align-items: stretch; gap: 6px; text-align: left; }
   .panel.editing .body-set .cust-row::before { font-weight: 600; font-size: 14px; color: var(--text); }
   .panel.editing .body-set .cust-row .tab-edit { justify-content: flex-start; }
@@ -656,7 +663,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9g</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1944,6 +1951,12 @@ function firstIcon(v) {
   try { if (window.Intl && Intl.Segmenter) { for (const g of new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(v)) return g.segment; } } catch (e) {}
   return Array.from(v)[0];
 }
+function toggleIcons(btn) {
+  const body = btn.closest('.tab-icons').querySelector('.ti-body');
+  body.hidden = !body.hidden;
+  btn.textContent = body.hidden ? 'Change \u203A' : 'Close \u25B4';
+  btn.setAttribute('aria-expanded', String(!body.hidden));
+}
 function setTabColor(el, val) {
   const pid = el.closest('.panel').id.replace('panel-', '');
   if (!tabsCfg.iconColor) tabsCfg.iconColor = {};
@@ -2019,10 +2032,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="cust-help">' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
-    '<div class="tab-icons"><span class="ti-label">Tab icon</span><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
+    '<div class="tab-icons"><div class="ti-head"><span class="ti-label">Tab icon</span><span class="ti-cur"></span><button type="button" class="cust-btn ti-toggle" aria-expanded="false" onclick="toggleIcons(this)">Change \u203A</button></div><div class="ti-body" hidden><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
     '<div class="ti-colors" hidden><span class="ti-label">Icon color</span><div class="tc-row">' + '<button type="button" class="tc-auto" onclick="setTabColor(this, \'\')">Auto</button>' + TAB_COLORS.map(c => '<button type="button" class="tc-dot" data-c="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" onclick="setTabColor(this, this.dataset.c)"></button>').join('') + '</div></div>' +
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
-    '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
+    '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div></div>' +
     '<div class="tab-ac-wrap"><div class="tab-ac-lbl">For records and PDFs saved from this tab</div><div class="ac-block tab-ac">' +
     '<div class="fn-row"><span>\uD83D\uDC64 Pilot</span><input type="text" class="tab-pilot" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
     '<div class="fn-row"><span>\uD83D\uDE81 Drone</span><input type="text" class="tab-drone" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
@@ -2225,7 +2238,8 @@ function refreshTabs() {
     const inp = p.querySelector('.tab-name');
     if (inp && t && document.activeElement !== inp) inp.value = tabName(t);
     if (t) {
-      const cur = tabIcon(t), more = p.querySelector('.tab-icon-in');
+      const cur = tabIcon(t), more = p.querySelector('.tab-icon-in'), curEl = p.querySelector('.ti-cur');
+      if (curEl) { if (TAB_SVGS[cur]) { curEl.innerHTML = TAB_SVGS[cur]; curEl.style.color = tabColor(t) || ''; } else { curEl.style.color = ''; curEl.textContent = cur || '\u2014'; } }
       p.querySelectorAll('.ti-btn').forEach(b => b.classList.toggle('sel', b.dataset.i === cur));
       const tcc = tabColor(t), tcw = p.querySelector('.ti-colors');
       p.querySelectorAll('.ti-btn').forEach(b => { b.style.color = (TAB_SVGS[b.dataset.i] && tcc) ? tcc : ''; });
