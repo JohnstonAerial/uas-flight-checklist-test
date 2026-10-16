@@ -663,7 +663,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.1a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.1b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2804,7 +2804,7 @@ function calmWindow(om, hIdx, nowBad) {
   }
   const cnt = (f) => day_.filter(f).length;
   const cw = cnt(x => x.windBad), cr = cnt(x => x.wet), cv = cnt(x => x.visBad);
-  return { kind: 'none', cause: cw >= cr && cw >= cv ? 'wind' : cr >= cv ? 'wet' : 'vis', aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3), W, G };
+  return { kind: 'none', lowNow: !!nowBad, cause: cw >= cr && cw >= cv ? 'wind' : cr >= cv ? 'wet' : 'vis', aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3), W, G };
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
@@ -2816,7 +2816,7 @@ function calmHtml(c, H, hIdx, siteTag) {
   }
   const why = c.cause === 'wind' ? 'Wind or gusts stay above your orange point (' + fmtSpeedNum(c.aw) + ' / ' + fmtSpeedNum(c.ag) + ' ' + speedUnit() + ') · your limits are ' + fmtSpeedNum(c.W) + ' / ' + fmtSpeedNum(c.G) + ' ' + speedUnit()
     : c.cause === 'wet' ? 'Rain or storms in the forecast for most of the daylight hours' : 'Low cloud or visibility reported now or forecast for most of the daylight hours';
-  return '<div class="wx-window none"><div class="wx-window-t">🕊 No calm window in the next 12 hrs</div><div class="wx-window-s">' + why + '</div></div>';
+  return '<div class="wx-window none"><div class="wx-window-t">🕊 No calm window in the next 12 hrs</div><div class="wx-window-s">' + (c.lowNow && c.cause === 'wind' ? 'Low cloud or visibility is reported now \u00b7 ' : '') + why + '</div></div>';
 }
 
 function windArrow(deg) {
