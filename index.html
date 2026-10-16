@@ -663,7 +663,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.1b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.2a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2465,16 +2465,19 @@ async function xferSave(btn) {
       xferMsg(btn, '✓ Backup complete. Restore it any time with Restore from file…'); return;
     } catch (e) { if (e && e.name === 'AbortError') return; }
   }
+  let shareErr = null;
   try {
     // Phones and tablets (no Share… button): Save file opens the share sheet. Where Share… is shown (computers), Save file is a plain download.
     if (!XFER_HAS_SHARE && navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file] });
       xferMsg(btn, '✓ Backup complete. Restore it any time with Restore from file…'); return;
     }
-  } catch (e) { if (e && e.name === 'AbortError') return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; shareErr = e; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  xferMsg(btn, 'Backup started. If your browser asks, choose where to save it. Restore it any time with Restore from file…');
+  xferMsg(btn, shareErr
+    ? 'The share sheet didn\u2019t open (' + (shareErr.name || 'error') + (shareErr.message ? ': ' + String(shareErr.message).slice(0, 80) : '') + '), so the file was downloaded instead. Tap Save file again to choose where to save it. Restore it any time with Restore from file\u2026'
+    : 'Backup started. If your browser asks, choose where to save it. Restore it any time with Restore from file\u2026');
 }
 function xferApply(el, obj) {
   if (!obj || obj.app !== 'uas-checklist' || !obj.data || typeof obj.data !== 'object') { xferMsg(el, 'That isn\'t a checklist backup.', true); return; }
