@@ -639,7 +639,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9ab</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9ac</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1772,27 +1772,46 @@ function itemCopy(e, btn) {
 function cloneOpen(btn) {
   const panelEl = btn.closest('.panel'), pid = panelEl.id.replace('panel-', ''), box = panelEl.querySelector('.clone-box');
   if (!box.hidden) { box.hidden = true; return; }
+  const me = tabEls.find(t => t.dataset.pid === pid), myName = me ? tabName(me) : 'this tab';
   const msg = (cls, t) => { const d = document.createElement('div'); d.className = 'cb-text ' + cls; d.textContent = t; return d; };
+  const btnOf = (label, cls, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'cust-btn' + (cls ? ' ' + cls : ''); b.textContent = label; b.onclick = fn; return b; };
   const choose = () => {
     box.innerHTML = ''; box.hidden = false;
     const others = tabEls.filter(t => t.dataset.pid && t.dataset.pid !== pid && !t.classList.contains('tab-hidden'));
-    box.appendChild(msg('', others.length ? 'Copy which tab onto this one?' : 'You have no other visible tabs to clone.'));
-    others.forEach(t => {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'cust-btn'; b.textContent = tabName(t);
-      b.onclick = () => confirmIt(t); box.appendChild(b);
-    });
-    const c = document.createElement('button'); c.type = 'button'; c.className = 'cust-btn'; c.textContent = 'Close'; c.onclick = () => { box.hidden = true; }; box.appendChild(c);
+    box.appendChild(msg('', others.length ? 'Copy which tab onto ' + myName + '? (' + myName + ' is the tab you are on and the one that gets replaced.)' : 'You have no other visible tabs to clone.'));
+    others.forEach(t => box.appendChild(btnOf(tabName(t), '', () => confirmIt(t))));
+    box.appendChild(btnOf('Close', '', () => { box.hidden = true; }));
   };
   const confirmIt = (t) => {
     const n = cloneItems(t.dataset.pid).reduce((a, x) => a + x.length, 0);
     box.innerHTML = '';
-    box.appendChild(msg('warn', 'This replaces everything on this tab with a copy of ' + tabName(t) + ' (' + n + ' items). Everything you customized here is replaced. "Restore original list" brings this tab\'s original items back.'));
-    const go = document.createElement('button'); go.type = 'button'; go.className = 'cust-btn primary'; go.textContent = 'Replace with ' + tabName(t);
-    go.onclick = () => { cloneTab(panelEl, t.dataset.pid); box.innerHTML = ''; box.appendChild(msg('ok', '\u2713 This tab is now a copy of ' + tabName(t) + '. Rename it above, then tweak it.')); };
-    const no = document.createElement('button'); no.type = 'button'; no.className = 'cust-btn'; no.textContent = 'Cancel'; no.onclick = choose;
-    box.appendChild(go); box.appendChild(no);
+    box.appendChild(msg('warn', 'Replace ' + myName + ' with a copy of ' + tabName(t) + '?'));
+    box.appendChild(msg('', 'Everything on ' + myName + ' is replaced with ' + tabName(t) + ' (' + n + ' items). Your other tabs are not changed. "Restore original list" brings ' + myName + '\'s own original items back.'));
+    box.appendChild(msg('', '\uD83D\uDCBE Back up first: Settings > Back up & restore. Undo only works until you leave or reload this page.'));
+    box.appendChild(btnOf('Replace ' + myName, 'primary', () => {
+      const snap = JSON.parse(JSON.stringify(custFor(panelEl.id)));
+      cloneTab(panelEl, t.dataset.pid);
+      box.innerHTML = '';
+      box.appendChild(msg('ok', '\u2713 ' + myName + ' is now a copy of ' + tabName(t) + '. Rename it above, then tweak it.'));
+      box.appendChild(btnOf('Undo', '', () => {
+        cust[panelEl.id] = snap; custSave(); rebuildCust(panelEl); saveProgress();
+        box.innerHTML = ''; box.appendChild(msg('ok', '\u2713 Undone. ' + myName + ' is back the way it was.'));
+      }));
+    }));
+    box.appendChild(btnOf('Cancel', '', choose));
   };
   choose();
+}
+function rebuildCust(panelEl) {            // redraw a tab's customizations from saved data
+  const c = custFor(panelEl.id), secs = [...panelEl.querySelectorAll('.section')];
+  panelEl.querySelectorAll('.item.custom').forEach(it => it.remove());
+  panelEl.querySelectorAll('.item.is-hidden').forEach(it => it.classList.remove('is-hidden'));
+  (c.added || []).forEach(a => {
+    const sec = secs.find(x => sectionTitleOf(x) === a.sec) || secs[secs.length - 1];
+    if (sec) sec.querySelector('.section-card').appendChild(makeItem(a.text, a.url));
+  });
+  baseKeyMap(panelEl).forEach((k, it) => { if ((c.hidden || []).includes(k)) it.classList.add('is-hidden'); });
+  applyOrder(panelEl); refreshCust(panelEl);
 }
 function cloneItems(srcPid) {            // what the source tab shows now, per section, in order: [{text, url}]
   const src = document.getElementById('panel-' + srcPid);
