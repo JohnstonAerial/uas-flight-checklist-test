@@ -277,6 +277,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-mini { display: flex; justify-content: space-between; align-items: center; flex: 1 1 100%; border-top: 1px solid var(--border); padding-top: 6px; margin-top: 2px; }
   .pc-mini .reset-inline::before { content: '\21BA\00a0'; } .pc-mini .sec-all::before { content: '\21D5\00a0'; }
   .pc-mini .reset-inline, .pc-mini .sec-all { width: auto; margin: 0; padding: 4px 2px; font-size: 13px; min-height: 36px; white-space: nowrap; text-align: center; border-radius: 0; color: var(--text-muted); background: transparent; border: 0; font-family: inherit; cursor: pointer; }
+  .pc-mini .sec-split { display: inline-flex; padding: 0; min-height: 0; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  .pc-mini .sec-split::before { content: none; }
+  .pc-mini .sec-split button { font-family: inherit; font-size: 13px; color: var(--text-muted); background: transparent; border: 0; padding: 4px 12px; min-height: 34px; white-space: nowrap; cursor: pointer; }
+  .pc-mini .sec-split button + button { border-left: 1px solid var(--border); }
+  .pc-mini .sec-split button:disabled { opacity: 0.4; cursor: default; }
   .progress-info .progress-track { flex: 0 0 100%; margin-top: 0; }
   .pc-btns { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 6px; flex: 1 1 100%; container-type: inline-size; }
   @container (max-width: 305px) { .pc-btns > .rec-btn.rec-record { flex-direction: row; gap: 8px; min-height: 40px; padding: 6px 8px; } .pc-btns .rec-btn.rec-record small { display: none; } }
@@ -623,7 +628,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9y</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9z</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1905,8 +1910,10 @@ function updateSectionMeta(panelEl) {
 function syncAllButton(panelEl) {
   const b = panelEl.querySelector('.sec-all');
   if (!b) return;
-  const anyCollapsed = [...panelEl.querySelectorAll('.section:not(.all-hidden)')].some(s => s.classList.contains('collapsed'));
-  b.textContent = anyCollapsed ? 'Expand all' : 'Collapse all';
+  const vis = [...panelEl.querySelectorAll('.section:not(.all-hidden)')];
+  const ex = b.querySelector('.sa-ex'), co = b.querySelector('.sa-co');
+  if (ex) ex.disabled = !vis.some(s => s.classList.contains('collapsed'));     // nothing closed: Expand has nothing to do
+  if (co) co.disabled = !vis.some(s => !s.classList.contains('collapsed'));    // everything closed: Collapse has nothing to do
 }
 function setCollapsed(sec, on, save) {
   sec.classList.toggle('collapsed', on);
@@ -1984,10 +1991,9 @@ function foldFinishedOnLoad() {
   });
 }
 
-function toggleAllSections(btn) {
-  const panelEl = btn.closest('.panel'), secs = [...panelEl.querySelectorAll('.section')];
-  const anyCollapsed = secs.filter(s => !s.classList.contains('all-hidden')).some(s => s.classList.contains('collapsed'));
-  secs.forEach(s => setCollapsed(s, !anyCollapsed, false));
+function setAllSections(btn, fold) {          // Expand (fold = false) or Collapse (fold = true) every section on this tab
+  const panelEl = btn.closest('.panel');
+  panelEl.querySelectorAll('.section').forEach(s => setCollapsed(s, fold, false));
   collapseSave(); syncAllButton(panelEl);
 }
 
@@ -2010,7 +2016,9 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   let row = panelEl.querySelector('.cust-row');
   if (!row) { row = document.createElement('div'); row.className = 'cust-row'; panelEl.querySelector('.keep-row').after(row); }
   const all = document.createElement('button');
-  all.type = 'button'; all.className = 'cust-btn sec-all'; all.setAttribute('onclick', 'toggleAllSections(this)');
+  all.className = 'sec-all sec-split'; all.setAttribute('role', 'group'); all.setAttribute('aria-label', 'Sections');
+  all.innerHTML = '<button type="button" class="sa-ex" aria-label="Expand all sections" onclick="setAllSections(this, false)">\u25BE Expand</button>' +
+                  '<button type="button" class="sa-co" aria-label="Collapse all sections" onclick="setAllSections(this, true)">\u25B4 Collapse</button>';
   const first = row.querySelector('.cust-btn');
   if (first) first.after(all); else row.appendChild(all);
   updateSectionMeta(panelEl); syncAllButton(panelEl);
