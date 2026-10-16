@@ -22,9 +22,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     --blue-mid: #378ADD;
     --green: #0F6E56;
     --green-light: #E1F5EE;
-    --amber: #CA8A04;
+    --amber: #D97706;
     --del: #e0301e;
-    --amber-light: #FFF4E0;
+    --amber-light: #FFF1DC;
     --text: #1a1a1a;
     --text-muted: #666;
     --text-light: #6b6b6b;
@@ -407,6 +407,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .body-set .wl-row > span:first-child { white-space: nowrap; }
   .wl-ctl { display: flex; align-items: center; gap: 6px; }
   .wl-hint { font-size: 11px; }
+  .body-set .wl-block .wl-row { margin-bottom: 8px; }
+  .body-set .wl-block .wl-hint { margin: 2px 0 16px; }
   .body-set .settings-note { max-width: none; margin: 0; padding: 12px 16px 10px; text-align: left; border-bottom: 1px solid var(--border); }
   .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
   .settings-help a { padding: 6px 0; }
@@ -621,7 +623,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9w</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9x</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2151,7 +2153,7 @@ function makeXfer() {
   d.className = 'xfer';
   d.innerHTML = '<div class="xfer-sub">Save your settings and progress, or move them to another device or browser.</div>' +
     '<div class="bk-h">Back up</div><label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
-    '<div class="xfer-btns' + (XFER_HAS_SHARE ? ' has-share' : '') + '"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button>' + (XFER_HAS_SHARE ? '<button type="button" class="cust-btn share-btn" onclick="xferShare(this)" onpointerdown="xferWarm(this)" aria-label="Share a backup">Share…</button>' : '') + '<button type="button" class="cust-btn" onclick="xferSave(this)">Save file</button>' + '</div>' +
+    '<div class="xfer-btns' + (XFER_HAS_SHARE ? ' has-share' : '') + '"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button>' + (XFER_HAS_SHARE ? '<button type="button" class="cust-btn share-btn" onclick="xferShare(this)" onpointerdown="xferWarm(this)" aria-label="Share a backup">Share…</button>' : '') + '<button type="button" class="cust-btn primary" onclick="xferSave(this)">Save file</button>' + '</div>' +
     '<div class="bk-div"></div><div class="bk-h">Restore</div>' +
     '<div class="xfer-btns rs"><button type="button" class="cust-btn primary" onclick="xferFile(this)">Restore from file\u2026</button>' +
     '<button type="button" class="cust-btn xfer-paste" aria-expanded="false" onclick="xferPaste(this)">Paste code\u2026</button>' +
@@ -2381,12 +2383,12 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '&body=' + encodeURIComponent('What works, what is missing, or what is confusing:\n\n\n\n---\nApp version: ' + fbVer + '\nDevice and browser: ' + navigator.userAgent);
   const wl = document.createElement('div'); wl.className = 'wl-block';
   wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="numeric" min="1" max="999" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="numeric" min="1" max="999" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
-    '<div class="wl-hint">sustained / gusts · amber at about two-thirds, red at the limit.</div>' +
-    '<div class="wl-row kp-row"><span>🧲 Kp warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-a" aria-label="Kp index where the warning turns amber"> / <input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-r" aria-label="Kp index where the warning turns red"></span></div>' +
-    '<div class="wl-hint">amber at / red at · from 1 to 9, standard 4 / 5. Higher Kp can disturb GPS and the compass.</div>' +
-    '<div class="wl-row tp-row"><span>🥶 Cold warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ca" aria-label="Temperature at or below which the warning turns amber"> / <input type="number" inputmode="decimal" class="tp-cr" aria-label="Temperature at or below which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
-    '<div class="wl-row tp-row"><span>🥵 Heat warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ha" aria-label="Temperature at or above which the warning turns amber"> / <input type="number" inputmode="decimal" class="tp-hr" aria-label="Temperature at or above which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
-    '<div class="wl-hint">amber at / red at · standard cold 40 / 14 °F (4 / −10 °C), heat 95 / 104 °F (35 / 40 °C). Check your aircraft\'s operating range.</div>';
+    '<div class="wl-hint">sustained / gusts · orange at about two-thirds, red at the limit.</div>' +
+    '<div class="wl-row kp-row"><span>🧲 Kp warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-a" aria-label="Kp index where the warning turns orange"> / <input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-r" aria-label="Kp index where the warning turns red"></span></div>' +
+    '<div class="wl-hint">orange at / red at · from 1 to 9, standard 4 / 5. Higher Kp can disturb GPS and the compass.</div>' +
+    '<div class="wl-row tp-row"><span>🥶 Cold warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ca" aria-label="Temperature at or below which the warning turns orange"> / <input type="number" inputmode="decimal" class="tp-cr" aria-label="Temperature at or below which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
+    '<div class="wl-row tp-row"><span>🥵 Heat warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ha" aria-label="Temperature at or above which the warning turns orange"> / <input type="number" inputmode="decimal" class="tp-hr" aria-label="Temperature at or above which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
+    '<div class="wl-hint">orange at / red at · standard cold 40 / 14 °F (4 / −10 °C), heat 95 / 104 °F (35 / 40 °C). Check your aircraft\'s operating range.</div>';
   const fnb = document.createElement('div'); fnb.className = 'fn-block';
   fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
     '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
@@ -2586,7 +2588,7 @@ function calmHtml(c, H, hIdx, siteTag) {
     return '<div class="wx-window"><div class="wx-window-t">🕊 Best window <b>' + from + ' – ' + to + '</b>' + siteTag + '</div><div class="wx-window-s">' +
       (c.wasWet ? 'Rain clears by ' + from + ' · ' : '') + 'Wind up to ' + fmtSpeed(c.maxW) + ', gusts up to ' + fmtSpeed(c.maxG) + '</div></div>';
   }
-  const why = c.cause === 'wind' ? 'Wind or gusts stay above your amber point (' + fmtSpeedNum(c.aw) + ' / ' + fmtSpeedNum(c.ag) + ' ' + speedUnit() + ') · your limits are ' + fmtSpeedNum(c.W) + ' / ' + fmtSpeedNum(c.G) + ' ' + speedUnit()
+  const why = c.cause === 'wind' ? 'Wind or gusts stay above your orange point (' + fmtSpeedNum(c.aw) + ' / ' + fmtSpeedNum(c.ag) + ' ' + speedUnit() + ') · your limits are ' + fmtSpeedNum(c.W) + ' / ' + fmtSpeedNum(c.G) + ' ' + speedUnit()
     : c.cause === 'wet' ? 'Rain or storms in the forecast for most of the daylight hours' : 'Low visibility in the forecast for most of the daylight hours';
   return '<div class="wx-window none"><div class="wx-window-t">🕊 No calm window in the next 12 hrs</div><div class="wx-window-s">' + why + '</div></div>';
 }
