@@ -623,7 +623,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9x</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9y</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2255,7 +2255,7 @@ async function xferSave(btn) {
   } catch (e) { if (e && e.name === 'AbortError') return; }
   const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  xferMsg(btn, '✓ File saved to your downloads.');
+  xferMsg(btn, 'Backup started. If your browser asks, choose where to save it. Restore it any time with Restore from file…');
 }
 function xferApply(el, obj) {
   if (!obj || obj.app !== 'uas-checklist' || !obj.data || typeof obj.data !== 'object') { xferMsg(el, 'That isn\'t a checklist backup.', true); return; }
@@ -3253,7 +3253,7 @@ async function loadWeather() {
       body.innerHTML = '<div class="wx-status wx-warn">' + msg + '</div>';
       srSay(msg);
     },
-    { timeout: 15000, maximumAge: 60000 }
+    { timeout: 30000, maximumAge: 60000 }
   );
 }
 
