@@ -363,7 +363,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .body-bak .xfer-incl { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 10px; padding: 6px 16px 8px; margin: 0; }
   .body-bak .xfer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; padding: 4px 16px 14px; }
   .body-bak .xfer-btns .cust-btn { font-size: 14px; padding: 8px 6px; min-height: 40px; }
-  .body-bak .xfer-btns.rs { grid-template-columns: 1fr; padding-top: 10px; padding-bottom: 6px; }
+  .body-bak .xfer-btns.rs { grid-template-columns: 1fr 1fr; padding-top: 10px; padding-bottom: 14px; }
+  .body-bak .xfer-btns.rs .cust-btn.on { border-color: var(--blue); }
+  .body-bak .xfer-code[hidden] { display: none; }
   .body-bak .xfer-btns.rc { grid-template-columns: 1fr; padding-top: 10px; }
   .body-bak .bk-or { font-size: 13px; color: var(--text-light); padding: 10px 16px 6px; }
   .body-bak .xfer-btns.has-share { grid-template-columns: 1fr 1fr 1fr; }
@@ -619,7 +621,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9u</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9v</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1862,7 +1864,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   }
   const row = document.createElement('div');
   row.className = 'cust-row';
-  row.innerHTML = '<button type="button" class="cust-btn cust-toggle" onclick="toggleEdit(this)">Customize</button>' +
+  row.innerHTML = '<button type="button" class="cust-btn primary cust-toggle" onclick="toggleEdit(this)">Customize \u203A</button>' +
     '<div class="cust-help">' +
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
@@ -2151,11 +2153,12 @@ function makeXfer() {
     '<div class="bk-h">Back up</div><label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
     '<div class="xfer-btns' + (XFER_HAS_SHARE ? ' has-share' : '') + '"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button>' + (XFER_HAS_SHARE ? '<button type="button" class="cust-btn share-btn" onclick="xferShare(this)" onpointerdown="xferWarm(this)" aria-label="Share a backup">Share…</button>' : '') + '<button type="button" class="cust-btn" onclick="xferSave(this)">Save file</button>' + '</div>' +
     '<div class="bk-div"></div><div class="bk-h">Restore</div>' +
-    '<div class="xfer-btns rs"><button type="button" class="cust-btn primary" onclick="xferFile(this)">Restore from file…</button>' +
+    '<div class="xfer-btns rs"><button type="button" class="cust-btn primary" onclick="xferFile(this)">Restore from file\u2026</button>' +
+    '<button type="button" class="cust-btn xfer-paste" aria-expanded="false" onclick="xferPaste(this)">Paste code\u2026</button>' +
     '<input type="file" class="xfer-file" accept=".json,application/json,text/plain" hidden onchange="xferFileChosen(this)"></div>' +
-    '<div class="bk-or">Or paste a backup code</div>' +
+    '<div class="xfer-code" hidden>' +
     '<textarea class="xfer-box" rows="2" placeholder="Paste a backup code here" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"></textarea>' +
-    '<div class="xfer-btns rc"><button type="button" class="cust-btn" onclick="xferRestore(this)">Restore from code</button></div>' +
+    '<div class="xfer-btns rc"><button type="button" class="cust-btn" onclick="xferRestore(this)">Restore from code</button></div></div>' +
     '<div class="xfer-msg" role="status"></div>';
   return d;
 }
@@ -2208,6 +2211,7 @@ async function xferCopy(btn) {
   } catch (e) {}
   const code = await codeP;
   try { await navigator.clipboard.writeText(code); xferMsg(btn, ok); return; } catch (e) {}
+  xferShowCode(box, true);
   const ta = box.querySelector('.xfer-box'); ta.value = code; ta.focus(); ta.select();
   xferMsg(btn, 'Couldn\'t copy automatically. Touch and hold the code in the box, then choose Copy.', true);
 }
@@ -2281,6 +2285,15 @@ async function xferRestore(btn) {
   try { obj = await xferDecode(box.value); }
   catch (e) { xferMsg(btn, e && e.friendly ? e.message : 'That code didn\'t work. Check that you copied all of it.', true); return; }
   xferApply(btn, obj);
+}
+function xferShowCode(x, on) {
+  const c = x.querySelector('.xfer-code'), b = x.querySelector('.xfer-paste');
+  c.hidden = !on; b.classList.toggle('on', on); b.setAttribute('aria-expanded', on ? 'true' : 'false');
+}
+function xferPaste(btn) {
+  const x = btn.closest('.xfer'), open = x.querySelector('.xfer-code').hidden;
+  xferShowCode(x, open);
+  if (open) { const t = x.querySelector('.xfer-box'); try { t.focus(); } catch (e) {} }
 }
 function xferFile(btn) { btn.closest('.xfer').querySelector('.xfer-file').click(); }
 async function xferFileChosen(inp) {
