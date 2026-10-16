@@ -119,6 +119,13 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .ti-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
   .ti-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
   .ti-btn { font-size: 22px; line-height: 1; width: 42px; height: 42px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; padding: 0; }
+  .ti-colors { margin-top: 10px; text-align: center; }
+  .ti-colors[hidden] { display: none; }
+  .tc-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin-top: 6px; }
+  .tc-dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--card); box-shadow: 0 0 0 1px var(--border); cursor: pointer; padding: 0; }
+  .tc-dot.sel { box-shadow: 0 0 0 2px var(--text); }
+  .tc-auto { font-family: inherit; font-size: 12px; color: var(--link); background: transparent; border: 1px solid var(--border); border-radius: 14px; padding: 4px 11px; cursor: pointer; }
+  .tc-auto.sel { border: 2px solid var(--text); padding: 3px 10px; }
   .ti-btn.sel { border: 2px solid var(--blue-mid); }
   .ti-more { margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
   .ti-more input { font-family: inherit; font-size: 16px; width: 11em; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 6px 10px; text-align: center; }
@@ -648,7 +655,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1926,17 +1933,24 @@ function toggleEdit(btn) {
   }
   refreshCust(panelEl);
 }
-const TAB_SVGS = { 'svg:drone-top': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><circle cx="25" cy="7" r="4.5"/><circle cx="7" cy="25" r="4.5"/><circle cx="25" cy="25" r="4.5"/><path d="M10.2 10.2L13 13M21.8 10.2L19 13M10.2 21.8L13 19M21.8 21.8L19 19"/><rect x="12" y="12" width="8" height="8" rx="2" fill="currentColor"/></svg>', 'svg:drone-side': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M19 8h10M8 8v5M24 8v5M8 13l3 1M24 13l-3 1M10 18l-3 7M22 18l3 7M5 25h5M22 25h5"/><rect x="11" y="12" width="10" height="6" rx="2" fill="currentColor"/><circle cx="16" cy="21.5" r="2.5" fill="currentColor"/></svg>' };
-const TAB_ICONS = ['🏞','🗺','📋','🚁','svg:drone-top','svg:drone-side','📷','🎥','🔋','⚠️','🏗','🏠','🏢','🌉','⚡','🔧','📡','🧭','✅','⭐','📍','🌲','🌅','📝','🔍','🌤'];
+const TAB_SVGS = { 'svg:drone-top': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><circle cx="25" cy="7" r="4.5"/><circle cx="7" cy="25" r="4.5"/><circle cx="25" cy="25" r="4.5"/><path d="M10.2 10.2L13 13M21.8 10.2L19 13M10.2 21.8L13 19M21.8 21.8L19 19"/><rect x="12" y="12" width="8" height="8" rx="2" fill="currentColor"/></svg>', 'svg:drone-side': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M19 8h10M8 8v5M24 8v5M8 13l3 1M24 13l-3 1M10 18l-3 7M22 18l3 7M5 25h5M22 25h5"/><rect x="11" y="12" width="10" height="6" rx="2" fill="currentColor"/><circle cx="16" cy="21.5" r="2.5" fill="currentColor"/></svg>', 'svg:drone-mavic': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 14L4.5 9.5M21 14l6.5-4.5M1.5 8h6M24.5 8h6"/><rect x="9.5" y="12.5" width="13" height="7" rx="3" fill="currentColor"/><circle cx="16" cy="24" r="3" fill="currentColor"/><path d="M13 19.5v1M19 19.5v1"/></svg>', 'svg:drone-fpv': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 8.5L23.5 23.5M23.5 8.5L8.5 23.5"/><circle cx="7" cy="7" r="4.5"/><circle cx="25" cy="7" r="4.5"/><circle cx="7" cy="25" r="4.5"/><circle cx="25" cy="25" r="4.5"/><rect x="12.5" y="11" width="7" height="10" rx="2" fill="currentColor"/><path d="M14 8.5h4"/></svg>', 'svg:drone-whoop': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><circle cx="24" cy="8" r="6"/><circle cx="8" cy="24" r="6"/><circle cx="24" cy="24" r="6"/><path d="M12.5 12.5L14.5 14.5M19.5 12.5L17.5 14.5M12.5 19.5L14.5 17.5M19.5 19.5L17.5 17.5"/><rect x="13" y="13" width="6" height="6" rx="1.5" fill="currentColor"/></svg>', 'svg:drone-wing': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3.5c1.6 0 2.2 2 2.2 4.5v15.5l-2.2 2.5-2.2-2.5V8c0-2.5.6-4.5 2.2-4.5z" fill="currentColor"/><path d="M18 12.5l11.5 5.5v2.5L18 17M14 12.5L2.5 18v2.5L14 17M13.5 26.5H9.5v1.8l6.5-1.3 6.5 1.3v-1.8h-4"/></svg>', 'svg:drone-hex': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="16" cy="16" r="3.6" fill="currentColor"/><path d="M16 16L27 16M16 16L21.5 25.5M16 16L10.5 25.5M16 16L5 16M16 16L10.5 6.5M16 16L21.5 6.5"/><circle cx="27" cy="16" r="3"/><circle cx="21.5" cy="25.5" r="3"/><circle cx="10.5" cy="25.5" r="3"/><circle cx="5" cy="16" r="3"/><circle cx="10.5" cy="6.5" r="3"/><circle cx="21.5" cy="6.5" r="3"/></svg>', 'svg:drone-inspire': '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4h-6.5M29.5 4H23M6 4v9M26 4v9M6 13l5 2M26 13l-5 2"/><rect x="10" y="12" width="12" height="7" rx="2.5" fill="currentColor"/><circle cx="16" cy="23.5" r="3.3" fill="currentColor"/><path d="M9 28l-2 2M23 28l2 2M7 30h4M21 30h4"/></svg>' };
+const TAB_COLORS = [['#2563EB', 'Blue'], ['#0F9D75', 'Green'], ['#E8590C', 'Orange'], ['#DC2626', 'Red'], ['#9333EA', 'Purple'], ['#0891B2', 'Teal'], ['#DB2777', 'Pink'], ['#6B7280', 'Gray']];
+const TAB_ICONS = ['🏞','🗺','📋','🚁','svg:drone-top','svg:drone-side','svg:drone-mavic','svg:drone-fpv','svg:drone-whoop','svg:drone-wing','svg:drone-hex','svg:drone-inspire','📷','🎥','🔋','⚠️','🏗','🏠','🏢','🌉','⚡','🔧','📡','🧭','✅','⭐','📍','🌲','🌅','📝','🔍','🌤'];
 function firstIcon(v) {
   v = (v || '').trim(); if (!v) return '';
   try { if (window.Intl && Intl.Segmenter) { for (const g of new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(v)) return g.segment; } } catch (e) {}
   return Array.from(v)[0];
 }
+function setTabColor(el, val) {
+  const pid = el.closest('.panel').id.replace('panel-', '');
+  if (!tabsCfg.iconColor) tabsCfg.iconColor = {};
+  if (val) tabsCfg.iconColor[pid] = val; else delete tabsCfg.iconColor[pid];
+  tabsSave(); refreshTabs();
+}
 function setTabIcon(el, val) {
   if (val === undefined) return;
   const pid = el.closest('.panel').id.replace('panel-', '');
-  if (val === null) delete tabsCfg.icons[pid]; else if (val === '' && el.classList.contains('tab-icon-in')) return; else tabsCfg.icons[pid] = val;
+  if (val === null) { delete tabsCfg.icons[pid]; if (tabsCfg.iconColor) delete tabsCfg.iconColor[pid]; } else if (val === '' && el.classList.contains('tab-icon-in')) return; else tabsCfg.icons[pid] = val;
   tabsSave(); refreshTabs();
 }
 function restoreDefaults(btn) {
@@ -2003,6 +2017,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="tab-edit"><label>Tab name <input class="tab-name" type="text" maxlength="24" autocomplete="off" oninput="saveTabName(this)" onblur="refreshTabs()"></label>' +
     '<button type="button" class="cust-btn tab-hide-btn" onclick="hideTab(this)">Hide this tab</button></div>' +
     '<div class="tab-icons"><span class="ti-label">Tab icon</span><div class="ti-grid">' + TAB_ICONS.map(e => '<button type="button" class="ti-btn" data-i="' + e + '" aria-label="Use this icon" onclick="setTabIcon(this, this.dataset.i)">' + (TAB_SVGS[e] || e) + '</button>').join('') + '</div>' +
+    '<div class="ti-colors" hidden><span class="ti-label">Icon color</span><div class="tc-row">' + '<button type="button" class="tc-auto" onclick="setTabColor(this, \'\')">Auto</button>' + TAB_COLORS.map(c => '<button type="button" class="tc-dot" data-c="' + c[0] + '" style="background:' + c[0] + '" aria-label="' + c[1] + '" onclick="setTabColor(this, this.dataset.c)"></button>').join('') + '</div></div>' +
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
     '<div class="tab-ac-wrap"><div class="tab-ac-lbl">For records and PDFs saved from this tab</div><div class="ac-block tab-ac">' +
@@ -2176,8 +2191,8 @@ if (!region) {
 // ── Tabs: rename or hide (saved on this device) ──
 const TABS_KEY = 'uasTabs';
 let tabsCfg = (function () {
-  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {}, drone: (v && v.drone) || {}, reg: (v && v.reg) || {} }; }
-  catch (e) { return { names: {}, hidden: [], icons: {}, drone: {}, reg: {} }; }
+  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {}, drone: (v && v.drone) || {}, reg: (v && v.reg) || {}, iconColor: (v && v.iconColor) || {} }; }
+  catch (e) { return { names: {}, hidden: [], icons: {}, drone: {}, reg: {}, iconColor: {} }; }
 })();
 function tabsSave() { try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
 const tabEls = [...document.querySelectorAll('.tabs .tab')];
@@ -2186,6 +2201,7 @@ tabEls.forEach(t => {
   t.dataset.pid = id ? id[1] : '';
   if (m && !/[A-Za-z0-9]/.test(m[1])) { t.dataset.emoji = m[1]; t.dataset.name = m[2]; } else { t.dataset.emoji = ''; t.dataset.name = txt; }
 });
+const tabColor = (t) => { const c = ((tabsCfg.iconColor || {})[t.dataset.pid] || ''); return TAB_COLORS.some(x => x[0] === c) ? c : ''; };
 const tabName = (t) => tabsCfg.names[t.dataset.pid] || t.dataset.name;
 const tabIcon = (t) => {
   const v = (t.dataset.pid in tabsCfg.icons) ? tabsCfg.icons[t.dataset.pid] : t.dataset.emoji;
@@ -2195,7 +2211,7 @@ function refreshTabs() {
   tabEls.forEach(t => {
     const ic = tabIcon(t);
     t.textContent = '';
-    if (ic) { const i = document.createElement('span'); i.className = 'tab-ico'; if (TAB_SVGS[ic]) i.innerHTML = TAB_SVGS[ic]; else i.textContent = ic; t.appendChild(i); t.appendChild(document.createTextNode(' ')); }
+    if (ic) { const i = document.createElement('span'); i.className = 'tab-ico'; if (TAB_SVGS[ic]) { i.innerHTML = TAB_SVGS[ic]; const tc = tabColor(t); if (tc) i.style.color = tc; } else i.textContent = ic; t.appendChild(i); t.appendChild(document.createTextNode(' ')); }
     const l = document.createElement('span'); l.className = 'tab-lbl'; l.textContent = tabName(t); t.appendChild(l);
     t.classList.toggle('tab-hidden', tabsCfg.hidden.includes(t.dataset.pid));
   });
@@ -2207,6 +2223,9 @@ function refreshTabs() {
     if (t) {
       const cur = tabIcon(t), more = p.querySelector('.tab-icon-in');
       p.querySelectorAll('.ti-btn').forEach(b => b.classList.toggle('sel', b.dataset.i === cur));
+      const tcc = tabColor(t), tcw = p.querySelector('.ti-colors');
+      p.querySelectorAll('.ti-btn').forEach(b => { b.style.color = (TAB_SVGS[b.dataset.i] && tcc) ? tcc : ''; });
+      if (tcw) { tcw.hidden = !TAB_SVGS[cur]; tcw.querySelectorAll('.tc-dot').forEach(d => d.classList.toggle('sel', d.dataset.c === tcc)); const au = tcw.querySelector('.tc-auto'); if (au) au.classList.toggle('sel', !tcc); }
       if (more && document.activeElement !== more) more.value = (cur && !TAB_ICONS.includes(cur)) ? cur : '';
     }
     const pidv = p.id.replace('panel-', ''), di = p.querySelector('.tab-drone'), ri = p.querySelector('.tab-reg');
@@ -2233,14 +2252,14 @@ function refreshEditBars() {            // the bottom bar while customizing: nam
     const pid = p.id.replace('panel-', ''), me = tabEls.find(t => t.dataset.pid === pid), nm = bar.querySelector('.eb-name'), box = bar.querySelector('.eb-chips');
     if (nm && me) nm.textContent = tabName(me);
     if (!box) return;
-    const sig = pid + '|' + vis.map(t => t.dataset.pid + ':' + tabName(t) + ':' + tabIcon(t)).join('|');
+    const sig = pid + '|' + vis.map(t => t.dataset.pid + ':' + tabName(t) + ':' + tabIcon(t) + ':' + tabColor(t)).join('|');
     if (box.dataset.sig === sig) return;
     box.dataset.sig = sig; box.innerHTML = '';
     if (vis.length < 2) return;
     vis.forEach(t => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'cust-btn eb-chip' + (t.dataset.pid === pid ? ' on' : '');
       const ic = tabIcon(t);
-      if (ic) { const i = document.createElement('span'); i.className = 'eb-ico'; if (TAB_SVGS[ic]) i.innerHTML = TAB_SVGS[ic]; else i.textContent = ic; b.appendChild(i); }
+      if (ic) { const i = document.createElement('span'); i.className = 'eb-ico'; if (TAB_SVGS[ic]) { i.innerHTML = TAB_SVGS[ic]; const tc = tabColor(t); if (tc) i.style.color = tc; } else i.textContent = ic; b.appendChild(i); }
       b.appendChild(document.createTextNode(tabName(t)));
       b.onclick = () => {
         if (t.dataset.pid === pid) return;
