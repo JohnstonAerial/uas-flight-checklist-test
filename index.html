@@ -656,7 +656,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1958,7 +1958,7 @@ function setTabIcon(el, val) {
 }
 function restoreDefaults(btn) {
   const panelEl = btn.closest('.panel'), c = cust[panelEl.id], pid = panelEl.id.replace('panel-', '');
-  const hasItems = c && ((c.hidden || []).length || (c.added || []).length || (c.order && Object.keys(c.order).length)), hasName = !!tabsCfg.names[pid] || (pid in tabsCfg.icons);
+  const hasItems = c && ((c.hidden || []).length || (c.added || []).length || (c.order && Object.keys(c.order).length)), hasName = !!tabsCfg.names[pid] || (pid in tabsCfg.icons) || !!(tabsCfg.iconColor || {})[pid];
   if (!hasItems && !hasName) return;
   const nh = c ? (c.hidden || []).length : 0, na = c ? (c.added || []).length : 0, hasOrder = !!(c && c.order && Object.keys(c.order).length);
   const parts = [];
@@ -1972,7 +1972,7 @@ function restoreDefaults(btn) {
   panelEl.querySelectorAll('.section-card').forEach(card => [...card.querySelectorAll(':scope > .item')].sort((a, b) => a.dataset.i - b.dataset.i).forEach(it => card.appendChild(it)));
   panelEl.querySelectorAll('.item.is-hidden').forEach(i => i.classList.remove('is-hidden'));
   delete cust[panelEl.id];
-  if (hasName) { delete tabsCfg.names[pid]; delete tabsCfg.icons[pid]; tabsSave(); refreshTabs(); }
+  if (hasName) { delete tabsCfg.names[pid]; delete tabsCfg.icons[pid]; if (tabsCfg.iconColor) delete tabsCfg.iconColor[pid]; tabsSave(); refreshTabs(); }
   custSave(); refreshCust(panelEl); saveProgress();
 }
 
@@ -2635,13 +2635,16 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   tip.after(sn);
   const en = document.createElement('div'); en.className = 'edit-note';
   en.innerHTML = '<button type="button" class="en-mini" onclick="editTipShow()">ⓘ How to customize ›</button><div class="en-full">' +
-    '<div class="en-line"><b>Tabs:</b> rename this tab, change its icon, or hide it using the boxes just below.</div>' +
+    '<div class="en-line"><b>Tabs:</b> rename this tab, change its icon (the drawn drone icons can be colored), or hide it using the boxes just below.</div>' +
+    '<div class="en-line"><b>Pilot, Drone, Reg. #:</b> set them for this tab and they print on its saved flight records and PDFs. Leave a box blank to use the default in Settings.</div>' +
+    '<div class="en-line"><b>Clone:</b> <b>Clone another tab onto this one</b> copies another tab\'s whole list over this tab. Back up first. Undo is offered right after.</div>' +
+    '<div class="en-line"><b>Copy:</b> on an item you added, <b>Copy to…</b> puts a copy on another tab.</div>' +
     '<div class="en-line"><b>Hide:</b> tap Hide on items you don\'t need.</div>' +
     '<div class="en-line"><b>Add:</b> type a checklist item in the box at the bottom of any section (add a link or app address if you like), then tap Add item.</div>' +
     '<div class="en-line"><b>Move:</b> drag <b>≡</b> to reorder within a section.</div>' +
-    '<div class="en-line"><b>Restore:</b> <b>Restore original list</b> undoes your changes on this tab only. Hidden items come back, items you added are removed, and the order, name and icon reset.</div>' +
+    '<div class="en-line"><b>Restore:</b> <b>Restore original list</b> undoes your changes on this tab only. Hidden items come back, items you added are removed, and the order, name and icon reset. Your Pilot, Drone and Reg. # boxes are not changed.</div>' +
     '<div class="en-line"><b>Back up:</b> your changes are saved only in this browser on this device. Open <b>Back up &amp; restore</b> and tap <b>Save file</b> to keep a copy.</div>' +
-    '<div class="en-foot">Tap another tab to customize it too. Press <b>Done</b> when finished.</div>' +
+    '<div class="en-foot">Tap another tab, or a tab in the bar at the bottom, to customize it too. Press <b>Done</b> when finished.</div>' +
     '<button type="button" class="en-got" onclick="editTipOff()">Got it</button></div>';
   if (editTipIsOff()) en.classList.add('collapsed');
   const bw = document.createElement('div'); bw.className = 'bk-warn';
