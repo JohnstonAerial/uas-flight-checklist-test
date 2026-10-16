@@ -430,6 +430,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .ac-block .fn-hint { grid-column: 1 / -1; margin-top: 0; }
   .fn-hint { font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: 6px; overflow-wrap: anywhere; }
   .region-hint { flex: 1 1 100%; font-size: 11px; line-height: 1.4; color: var(--text-light); margin-top: -2px; }
+  .panel.editing .body-set > .keep-row:not(.region-row), .panel.editing .body-set > .wl-block, .panel.editing .body-set > .fn-block, .panel.editing .body-set > .pdfset:not(.themeset) { display: none; }
   .panel.editing .body-set .cust-row { flex-direction: column; align-items: stretch; gap: 6px; text-align: left; }
   .panel.editing .body-set .cust-row::before { font-weight: 600; font-size: 14px; color: var(--text); }
   .panel.editing .body-set .cust-row .tab-edit { justify-content: flex-start; }
@@ -655,7 +656,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1805,7 +1806,7 @@ function cloneOpen(btn) {
     box.appendChild(msg('', 'Everything on ' + myName + ' is replaced with ' + tabName(t) + ' (' + n + ' items). Your other tabs are not changed. "Restore original list" brings ' + myName + '\'s own original items back.'));
     box.appendChild(msg('', '\uD83D\uDCBE Back up first: Settings > Back up & restore. Undo only works until you leave or reload this page.'));
     box.appendChild(btnOf('Replace ' + myName, 'primary', () => {
-      const snap = JSON.parse(JSON.stringify(custFor(panelEl.id))), sd = (tabsCfg.drone || {})[pid], sr = (tabsCfg.reg || {})[pid];
+      const snap = JSON.parse(JSON.stringify(custFor(panelEl.id))), sd = (tabsCfg.drone || {})[pid], sr = (tabsCfg.reg || {})[pid], spl = (tabsCfg.pilot || {})[pid];
       cloneTab(panelEl, t.dataset.pid);
       box.innerHTML = '';
       box.appendChild(msg('ok', '\u2713 ' + myName + ' is now a copy of ' + tabName(t) + '. Rename it above, then tweak it.'));
@@ -1813,6 +1814,8 @@ function cloneOpen(btn) {
         cust[panelEl.id] = snap; custSave(); rebuildCust(panelEl); saveProgress();
         if (sd) tabsCfg.drone[pid] = sd; else delete tabsCfg.drone[pid];
         if (sr) tabsCfg.reg[pid] = sr; else delete tabsCfg.reg[pid];
+        if (!tabsCfg.pilot) tabsCfg.pilot = {};
+        if (spl) tabsCfg.pilot[pid] = spl; else delete tabsCfg.pilot[pid];
         tabsSave(); refreshTabs();
         box.innerHTML = ''; box.appendChild(msg('ok', '\u2713 Undone. ' + myName + ' is back the way it was.'));
       }));
@@ -1852,7 +1855,7 @@ function cloneTab(panelEl, srcPid) {
     });
   });
   const sp = tabEls.find(x => x.dataset.pid === srcPid), tp = panelEl.id.replace('panel-', '');
-  ['drone', 'reg'].forEach(k => { if (!tabsCfg[k]) tabsCfg[k] = {}; const v = tabsCfg[k][srcPid]; if (v) tabsCfg[k][tp] = v; else delete tabsCfg[k][tp]; });
+  ['drone', 'reg', 'pilot'].forEach(k => { if (!tabsCfg[k]) tabsCfg[k] = {}; const v = tabsCfg[k][srcPid]; if (v) tabsCfg[k][tp] = v; else delete tabsCfg[k][tp]; });
   tabsSave(); refreshTabs();
   custSave(); refreshCust(panelEl); saveProgress();
 }
@@ -2021,9 +2024,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
     '<div class="tab-ac-wrap"><div class="tab-ac-lbl">For records and PDFs saved from this tab</div><div class="ac-block tab-ac">' +
+    '<div class="fn-row"><span>\uD83D\uDC64 Pilot</span><input type="text" class="tab-pilot" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
     '<div class="fn-row"><span>\uD83D\uDE81 Drone</span><input type="text" class="tab-drone" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
     '<div class="fn-row"><span>\uD83E\uDEAA Reg. #</span><input type="text" class="tab-reg" maxlength="30" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div></div>' +
-    '<div class="tab-note">Leave blank to use the Drone and Reg. # from Settings. Pilot name stays in Settings.</div></div>' +
+    '<div class="tab-note">Leave any box blank to use the default from Settings.</div></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name and icon only.</div>' +
     '<div class="tab-clone"><button type="button" class="cust-btn" onclick="cloneOpen(this)">Clone another tab onto this one\u2026</button><div class="clone-box" hidden></div></div>' +
     '<div class="tab-hidden-list"></div>' +
@@ -2191,8 +2195,8 @@ if (!region) {
 // ── Tabs: rename or hide (saved on this device) ──
 const TABS_KEY = 'uasTabs';
 let tabsCfg = (function () {
-  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {}, drone: (v && v.drone) || {}, reg: (v && v.reg) || {}, iconColor: (v && v.iconColor) || {} }; }
-  catch (e) { return { names: {}, hidden: [], icons: {}, drone: {}, reg: {}, iconColor: {} }; }
+  try { const v = JSON.parse(localStorage.getItem(TABS_KEY)); return { names: (v && v.names) || {}, hidden: (v && v.hidden) || [], icons: (v && v.icons) || {}, drone: (v && v.drone) || {}, reg: (v && v.reg) || {}, pilot: (v && v.pilot) || {}, iconColor: (v && v.iconColor) || {} }; }
+  catch (e) { return { names: {}, hidden: [], icons: {}, drone: {}, reg: {}, pilot: {}, iconColor: {} }; }
 })();
 function tabsSave() { try { localStorage.setItem(TABS_KEY, JSON.stringify(tabsCfg)); } catch (e) {} }
 const tabEls = [...document.querySelectorAll('.tabs .tab')];
@@ -2228,7 +2232,8 @@ function refreshTabs() {
       if (tcw) { tcw.hidden = !TAB_SVGS[cur]; tcw.querySelectorAll('.tc-dot').forEach(d => d.classList.toggle('sel', d.dataset.c === tcc)); const au = tcw.querySelector('.tc-auto'); if (au) au.classList.toggle('sel', !tcc); }
       if (more && document.activeElement !== more) more.value = (cur && !TAB_ICONS.includes(cur)) ? cur : '';
     }
-    const pidv = p.id.replace('panel-', ''), di = p.querySelector('.tab-drone'), ri = p.querySelector('.tab-reg');
+    const pidv = p.id.replace('panel-', ''), di = p.querySelector('.tab-drone'), ri = p.querySelector('.tab-reg'), pli = p.querySelector('.tab-pilot');
+    if (pli && document.activeElement !== pli) { pli.value = (tabsCfg.pilot || {})[pidv] || ''; pli.placeholder = acGet('uasPilot') || 'Your name'; }
     if (di && document.activeElement !== di) { di.value = (tabsCfg.drone || {})[pidv] || ''; di.placeholder = acGet('uasDrone') || 'e.g. Mavic 4 Pro'; }
     if (ri && document.activeElement !== ri) { ri.value = (tabsCfg.reg || {})[pidv] || ''; ri.placeholder = acGet('uasRegNo') || 'e.g. FA3XXXXXXX'; }
     const hb = p.querySelector('.tab-hide-btn'); if (hb) hb.disabled = visible.length <= 1;
@@ -2271,7 +2276,7 @@ function refreshEditBars() {            // the bottom bar while customizing: nam
   });
 }
 function saveTabAc(inp) {
-  const pid = inp.closest('.panel').id.replace('panel-', ''), k = inp.classList.contains('tab-drone') ? 'drone' : 'reg', v = inp.value.trim().slice(0, k === 'drone' ? 40 : 30);
+  const pid = inp.closest('.panel').id.replace('panel-', ''), k = inp.classList.contains('tab-pilot') ? 'pilot' : inp.classList.contains('tab-drone') ? 'drone' : 'reg', v = inp.value.trim().slice(0, k === 'reg' ? 30 : 40);
   if (!tabsCfg[k]) tabsCfg[k] = {};
   if (v) tabsCfg[k][pid] = v; else delete tabsCfg[k][pid];
   tabsSave();
@@ -2530,6 +2535,7 @@ function fnSave(inp) {
 
 // ── Drone and registration number: printed on saved flight records and the checklist PDF (saved on this device; both optional) ──
 function acGet(k) { let v = ''; try { v = (localStorage.getItem(k) || '').trim(); } catch (e) {} return v; }
+function acPilot(pid) { return ((tabsCfg.pilot || {})[pid || current] || '').trim() || acGet('uasPilot'); }
 function acDrone(pid) { return ((tabsCfg.drone || {})[pid || current] || '').trim() || acGet('uasDrone'); }
 function acReg(pid) { return ((tabsCfg.reg || {})[pid || current] || '').trim() || acGet('uasRegNo'); }
 function acPair(pid) {                        // [label, value] for one line on a record, or null when nothing is saved (this tab's drone and reg. #, else the Settings ones)
@@ -2589,10 +2595,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
     '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
   const acb = document.createElement('div'); acb.className = 'fn-block ac-block';
-  acb.innerHTML = '<div class="fn-row"><span>👤 Pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
-    '<div class="fn-row"><span>🚁 Drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
-    '<div class="fn-row"><span>🪪 Reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="e.g. FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
-    '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. Saved on this device only.</div>';
+  acb.innerHTML = '<div class="fn-row"><span>👤 Default pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
+    '<div class="fn-row"><span>🚁 Default drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
+    '<div class="fn-row"><span>🪪 Default reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="e.g. FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
+    '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. A tab uses these only when its own Pilot, Drone and Reg. # (under Customize) are blank. Saved on this device only.</div>';
   const pdb = document.createElement('div'); pdb.className = 'pdfset';
   pdb.innerHTML = '<div class="pd-row"><span>📄 PDF layout</span><div class="pd-seg" role="radiogroup" aria-label="PDF layout"><button type="button" role="radio" data-k="layout" data-v="compact">Compact</button><button type="button" role="radio" data-k="layout" data-v="large">Large print</button></div></div>' +
     '<div class="pd-row"><span>📏 PDF paper</span><div class="pd-seg" role="radiogroup" aria-label="PDF paper size"><button type="button" role="radio" data-k="paper" data-v="letter">Letter</button><button type="button" role="radio" data-k="paper" data-v="a4">A4</button></div></div>' +
@@ -3966,7 +3972,7 @@ function buildRecord(o) {
   if (o.site) L.push(B('Site', o.site));
   const co = o.coords ? recCoords() : ''; if (co) L.push(B('Coordinates', co));
   const tab = recNoEmoji(recTabName()); if (tab) L.push(B('Checklist', tab));
-  const pl = acGet('uasPilot'); if (pl) L.push(B('Pilot', pl));
+  const pl = acPilot(); if (pl) L.push(B('Pilot', pl));
   const ac = acPair(); if (ac) L.push(B(ac[0], ac[1]));
   if (o.laanc) L.push(B('Airspace authorization', o.laanc));
   if (o.flightTime) L.push(B('Flight time', o.flightTime));
@@ -4196,7 +4202,7 @@ function buildRecordPdf(o) {
   d.para(new Date().toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }), 10.5, { gray: 0.3 });
   d.gap(6);
   const co = o.coords ? recCoords() : '', tab = recNoEmoji(recTabName());
-  [['Customer', o.customer], ['Site', o.site], ['Coordinates', co], ['Checklist', tab], ['Pilot', acGet('uasPilot')], acPair() || ['', ''], ['Airspace authorization', o.laanc], ['Flight time', o.flightTime], ['Visual observer', o.observer]]
+  [['Customer', o.customer], ['Site', o.site], ['Coordinates', co], ['Checklist', tab], ['Pilot', acPilot()], acPair() || ['', ''], ['Airspace authorization', o.laanc], ['Flight time', o.flightTime], ['Visual observer', o.observer]]
     .forEach(p => { if (p[1]) d.kv(p[0], p[1]); });
   if (o.weather) { d.h2('Conditions'); recWeatherLines().forEach(l => { d.para(l, 10.5); d.gap(1.5); }); }
   const c = recCollect(document.getElementById('panel-' + current), o.unchecked);
@@ -4229,8 +4235,8 @@ function buildChecklistPdf(panelEl, tabName, layout, paper) {
   if (tabName) { d.ensure(24); d.text(pdfEnc(tabName), d.mx, d.y + 13, 13, true); d.y += 20; d.rule(d.y, 1.8, 0); }
   d.fieldLine([['Date', 0.5], ['Time', 0.5]]);
   d.fieldLine([['Site', 1]]);
-  d.fieldLine([['Pilot', 0.5, acGet('uasPilot')], ['Visual observer', 0.5]]);
   const apid = panelEl.id.replace('panel-', '');
+  d.fieldLine([['Pilot', 0.5, acPilot(apid)], ['Visual observer', 0.5]]);
   d.fieldLine([['Drone', 0.5, acDrone(apid)], ['Registration', 0.5, acReg(apid)]]);
   const c = recCollect(panelEl, true);
   d.startCols();
