@@ -222,6 +222,12 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .item.custom .cust-acts .item-x { margin-left: 0; color: var(--del); border-color: var(--del); border-color: color-mix(in srgb, var(--del) 45%, transparent); }
   .item-ed { font-family: inherit; font-size: 11px; color: var(--link); background: transparent; border: 1px solid var(--border); border-color: color-mix(in srgb, var(--link) 45%, transparent); border-radius: 12px; padding: 3px 11px; cursor: pointer; }
   .item.custom.ce-open > .item-text, .item.custom.ce-open > .item-link, .item.custom.ce-open > .cust-acts { display: none !important; }
+  .tab-clone { margin: 8px 0 4px; }
+  .clone-box { margin-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .clone-box[hidden] { display: none; }
+  .clone-box .cb-text { flex: 0 0 100%; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+  .clone-box .cb-text.ok { color: var(--green); }
+  .clone-box .cb-text.warn { color: var(--del); }
   .cust-copy { flex: 0 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
   .panel:not(.editing) .cust-copy { display: none; }
   .cust-copy .cc-label { flex: 0 0 100%; font-size: 11px; color: var(--text-muted); }
@@ -633,7 +639,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9aa</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9ab</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1763,6 +1769,52 @@ function itemCopy(e, btn) {
   cl.onclick = () => box.remove(); box.appendChild(cl); box.appendChild(msg);
   it.appendChild(box);
 }
+function cloneOpen(btn) {
+  const panelEl = btn.closest('.panel'), pid = panelEl.id.replace('panel-', ''), box = panelEl.querySelector('.clone-box');
+  if (!box.hidden) { box.hidden = true; return; }
+  const msg = (cls, t) => { const d = document.createElement('div'); d.className = 'cb-text ' + cls; d.textContent = t; return d; };
+  const choose = () => {
+    box.innerHTML = ''; box.hidden = false;
+    const others = tabEls.filter(t => t.dataset.pid && t.dataset.pid !== pid && !t.classList.contains('tab-hidden'));
+    box.appendChild(msg('', others.length ? 'Copy which tab onto this one?' : 'You have no other visible tabs to clone.'));
+    others.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cust-btn'; b.textContent = tabName(t);
+      b.onclick = () => confirmIt(t); box.appendChild(b);
+    });
+    const c = document.createElement('button'); c.type = 'button'; c.className = 'cust-btn'; c.textContent = 'Close'; c.onclick = () => { box.hidden = true; }; box.appendChild(c);
+  };
+  const confirmIt = (t) => {
+    const n = cloneItems(t.dataset.pid).reduce((a, x) => a + x.length, 0);
+    box.innerHTML = '';
+    box.appendChild(msg('warn', 'This replaces everything on this tab with a copy of ' + tabName(t) + ' (' + n + ' items). Everything you customized here is replaced. "Restore original list" brings this tab\'s original items back.'));
+    const go = document.createElement('button'); go.type = 'button'; go.className = 'cust-btn primary'; go.textContent = 'Replace with ' + tabName(t);
+    go.onclick = () => { cloneTab(panelEl, t.dataset.pid); box.innerHTML = ''; box.appendChild(msg('ok', '\u2713 This tab is now a copy of ' + tabName(t) + '. Rename it above, then tweak it.')); };
+    const no = document.createElement('button'); no.type = 'button'; no.className = 'cust-btn'; no.textContent = 'Cancel'; no.onclick = choose;
+    box.appendChild(go); box.appendChild(no);
+  };
+  choose();
+}
+function cloneItems(srcPid) {            // what the source tab shows now, per section, in order: [{text, url}]
+  const src = document.getElementById('panel-' + srcPid);
+  return [...src.querySelectorAll('.section')].map(sec => [...sec.querySelectorAll('.section-card > .item')]
+    .filter(it => !it.classList.contains('is-hidden'))
+    .map(it => { const a = it.querySelector(':scope > .item-link'); return { text: itemTextOf(it), url: a ? a.getAttribute('href') : '' }; }));
+}
+function cloneTab(panelEl, srcPid) {
+  const data = cloneItems(srcPid), secs = [...panelEl.querySelectorAll('.section')], c = custFor(panelEl.id);
+  panelEl.querySelectorAll('.item.custom').forEach(it => it.remove());
+  c.hidden = []; c.added = []; c.order = {};
+  baseKeyMap(panelEl).forEach((k, it) => { it.classList.remove('checked', 'flagged', 'na'); it.classList.add('is-hidden'); c.hidden.push(k); });
+  data.forEach((items, i) => {
+    const sec = secs[Math.min(i, secs.length - 1)], name = sectionTitleOf(sec), card = sec.querySelector('.section-card');
+    items.forEach(x => {
+      if (c.added.some(a => a.sec === name && a.text === x.text)) return;
+      const rec = { sec: name, text: x.text }; if (x.url) rec.url = x.url;
+      c.added.push(rec); card.appendChild(makeItem(x.text, x.url));
+    });
+  });
+  custSave(); refreshCust(panelEl); saveProgress();
+}
 function itemEdit(e, btn) {
   e.stopPropagation();
   const it = btn.closest('.item'); if (!it || it.querySelector(':scope > .cust-edit')) return;
@@ -1920,6 +1972,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div>' +
     '<div class="tab-note">Renaming changes the tab\'s name and icon only.</div>' +
+    '<div class="tab-clone"><button type="button" class="cust-btn" onclick="cloneOpen(this)">Clone another tab onto this one\u2026</button><div class="clone-box" hidden></div></div>' +
     '<div class="tab-hidden-list"></div>' +
     '<div class="cust-actions"><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><button type="button" class="cust-btn" onclick="restoreDefaults(this)">Restore original list</button></div></div>';
   panelEl.querySelector('.keep-row').after(row);
