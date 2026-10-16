@@ -621,7 +621,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9v</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.8.9w</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1787,7 +1787,7 @@ function toggleEdit(btn) {
   if (!on) {
     flushAddRows(panelEl);
     const st = panelEl.querySelector('.settings');
-    if (st) { st.classList.remove('open'); st.classList.remove('open-bak'); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); }
+    if (st) { st.classList.remove('open'); st.classList.remove('open-bak'); xferClearMsg(st); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   refreshCust(panelEl);
@@ -2286,7 +2286,11 @@ async function xferRestore(btn) {
   catch (e) { xferMsg(btn, e && e.friendly ? e.message : 'That code didn\'t work. Check that you copied all of it.', true); return; }
   xferApply(btn, obj);
 }
+function xferClearMsg(root) {                       // the green/red result line goes away when its section or box is closed
+  root.querySelectorAll('.xfer-msg').forEach(m => { m.textContent = ''; m.className = 'xfer-msg'; });
+}
 function xferShowCode(x, on) {
+  if (!on) xferClearMsg(x);
   const c = x.querySelector('.xfer-code'), b = x.querySelector('.xfer-paste');
   c.hidden = !on; b.classList.toggle('on', on); b.setAttribute('aria-expanded', on ? 'true' : 'false');
 }
@@ -2358,7 +2362,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const mkTg = (cls, label, key, other) => {
     const t = document.createElement('button'); t.type = 'button'; t.className = 'settings-toggle ' + cls; t.setAttribute('aria-expanded', 'false');
     t.innerHTML = '<span>' + label + '</span><span class="chev" aria-hidden="true">▾</span>';
-    t.onclick = () => { const o = !wrap.classList.contains(key); wrap.classList.remove('open', 'open-bak'); if (o) wrap.classList.add(key);
+    t.onclick = () => { const o = !wrap.classList.contains(key); wrap.classList.remove('open', 'open-bak'); if (o) wrap.classList.add(key); if (!wrap.classList.contains('open-bak')) xferClearMsg(wrap);
       tgSet.setAttribute('aria-expanded', String(wrap.classList.contains('open'))); tgBak.setAttribute('aria-expanded', String(wrap.classList.contains('open-bak'))); };
     return t;
   };
@@ -2409,7 +2413,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
     
     up.onclick = () => {
-      wrap.classList.remove('open', 'open-bak'); tgSet.setAttribute('aria-expanded', 'false'); tgBak.setAttribute('aria-expanded', 'false');
+      wrap.classList.remove('open', 'open-bak'); tgSet.setAttribute('aria-expanded', 'false'); tgBak.setAttribute('aria-expanded', 'false'); xferClearMsg(wrap);
       try { const r = heads.getBoundingClientRect(); if (r.top < 110 || r.bottom > window.innerHeight) heads.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
     };
     bd.appendChild(up);
