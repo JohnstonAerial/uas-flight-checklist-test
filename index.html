@@ -312,7 +312,14 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-btns .reset-inline, .pc-btns .sec-all { width: 100%; text-align: center; border-radius: 20px; padding: 6px 12px; font-size: 12px; margin: 0; color: var(--text-muted); background: transparent; border: 1px solid var(--border); font-family: inherit; cursor: pointer; }
   .saved-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 0 16px 8px; }
   .edit-bar { display: none; position: fixed; left: 0; right: 0; bottom: 0; max-width: 600px; margin: 0 auto; z-index: 50; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-bottom: none; border-radius: 14px 14px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.18); padding: 10px 14px calc(10px + env(safe-area-inset-bottom)) 16px; font-size: 13px; font-weight: 600; color: var(--text); }
-  .panel.editing { padding-bottom: 76px; }
+  .panel.editing { padding-bottom: 124px; }
+  .edit-bar { flex-wrap: wrap; row-gap: 6px; }
+  .edit-bar .eb-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1 1 0; margin-right: 8px; }
+  .eb-chips { flex: 0 0 100%; display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+  .eb-chip { display: inline-flex; align-items: center; gap: 5px; flex: 0 0 auto; padding: 5px 10px; font-size: 12px; }
+  .eb-chip .eb-ico { display: inline-flex; width: 16px; height: 16px; align-items: center; justify-content: center; }
+  .eb-chip .eb-ico svg { width: 16px; height: 16px; }
+  .eb-chip.on { outline: 2px solid var(--link); outline-offset: -1px; }
   .panel.editing .edit-bar { display: flex; }
   .cust-tip { margin-top: 8px; padding: 8px 10px; background: var(--section-bg); border-radius: 10px; line-height: 1.4; }
   .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 200; max-width: 90%; background: #0F6E56; color: #fff; font-size: 13px; font-weight: 600; padding: 10px 16px; border-radius: 20px; box-shadow: 0 4px 14px rgba(0,0,0,0.3); text-align: center; transition: opacity 0.4s; }
@@ -641,7 +648,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2217,6 +2224,32 @@ function refreshTabs() {
       });
     }
   });
+  refreshEditBars();
+}
+function refreshEditBars() {            // the bottom bar while customizing: names the tab you are on and lets you jump to another
+  const vis = tabEls.filter(t => t.dataset.pid && !t.classList.contains('tab-hidden'));
+  document.querySelectorAll('.panel').forEach(p => {
+    const bar = p.querySelector(':scope > .edit-bar'); if (!bar) return;
+    const pid = p.id.replace('panel-', ''), me = tabEls.find(t => t.dataset.pid === pid), nm = bar.querySelector('.eb-name'), box = bar.querySelector('.eb-chips');
+    if (nm && me) nm.textContent = tabName(me);
+    if (!box) return;
+    const sig = pid + '|' + vis.map(t => t.dataset.pid + ':' + tabName(t) + ':' + tabIcon(t)).join('|');
+    if (box.dataset.sig === sig) return;
+    box.dataset.sig = sig; box.innerHTML = '';
+    if (vis.length < 2) return;
+    vis.forEach(t => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cust-btn eb-chip' + (t.dataset.pid === pid ? ' on' : '');
+      const ic = tabIcon(t);
+      if (ic) { const i = document.createElement('span'); i.className = 'eb-ico'; if (TAB_SVGS[ic]) i.innerHTML = TAB_SVGS[ic]; else i.textContent = ic; b.appendChild(i); }
+      b.appendChild(document.createTextNode(tabName(t)));
+      b.onclick = () => {
+        if (t.dataset.pid === pid) return;
+        showPanel(t.dataset.pid, t);
+        setTimeout(() => { const np = document.getElementById('panel-' + t.dataset.pid), r = np && np.querySelector('.cust-row'); if (r) window.scrollTo({ top: Math.max(0, r.getBoundingClientRect().top + window.scrollY - 76), behavior: 'smooth' }); }, 60);
+      };
+      box.appendChild(b);
+    });
+  });
 }
 function saveTabAc(inp) {
   const pid = inp.closest('.panel').id.replace('panel-', ''), k = inp.classList.contains('tab-drone') ? 'drone' : 'reg', v = inp.value.trim().slice(0, k === 'drone' ? 40 : 30);
@@ -2590,13 +2623,14 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   bw.innerHTML = '\u26A0 <b class="k">After you change the list, back it up.</b> Open <b>Back up &amp; restore</b>, then tap <b>Save file</b>.';
   const ch = cust.querySelector('.cust-help'); if (ch) { ch.prepend(bw); ch.prepend(en); } else { sn.after(bw); sn.after(en); }
   const bar = document.createElement('div'); bar.className = 'edit-bar';
-  bar.innerHTML = '<span>✎ Editing this checklist and tab</span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button>';
+  bar.innerHTML = '<span class="eb-title">✎ Editing: <b class="eb-name"></b></span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><div class="eb-chips"></div>';
   panelEl.prepend(bar);
   const coffee = document.createElement('div'); coffee.className = 'coffee-note';
   coffee.innerHTML = 'Built by a Part 107 pilot, for pilots. Free to use. If it helped you fly smarter, <a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">buy me a coffee ☕</a>';
   panelEl.appendChild(coffee);
   panelEl.appendChild(help);
 });
+refreshEditBars();
 function themeGet() { try { const t = JSON.parse(localStorage.getItem('uasTheme') || '""'); return t === 'light' || t === 'dark' ? t : 'auto'; } catch (e) { return 'auto'; } }
 function themeApply() {
   const t = themeGet();
