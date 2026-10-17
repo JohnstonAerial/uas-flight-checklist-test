@@ -586,6 +586,15 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-vis-src { font-size: 11px; font-weight: 400; color: var(--text-muted); }
   .wx-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
   .wx-more { background: none; border: 0; padding: 0 0 0 4px; font: inherit; font-size: 11px; color: var(--link, #0a84ff); cursor: pointer; }
+  .wx-cl { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); }
+  .wx-lay { display: flex; justify-content: space-between; gap: 8px; line-height: 1.5; }
+  .wx-lay b { font-weight: 600; color: var(--text); }
+  .wx-cts[hidden] { display: none; }
+  .wx-ctl { margin-top: 3px; }
+  .wx-ck { display: flex; gap: 3px; margin-top: 5px; }
+  .wx-ck div { flex: 1; text-align: center; font-size: 9px; line-height: 1.2; }
+  .wx-ck i { display: block; height: 14px; border-radius: 4px; margin-bottom: 2px; }
+  .wx-cnote { margin-top: 3px; font-size: 10.5px; font-style: italic; }
   .wx-hts { margin-top: 3px; font-size: 11px; color: var(--text-muted); }
   .wx-hts[hidden] { display: none; }
   .wx-hrow { display: flex; justify-content: space-between; gap: 8px; line-height: 1.5; }
@@ -705,7 +714,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6i</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6j</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2926,6 +2935,35 @@ function calmWindow(om, hIdx, nowBad, obsFine) {
   return { kind: 'none', lowNow: !!nowBad, cause: cw >= cr && cw >= cv ? 'wind' : cr >= cv ? 'wet' : 'vis', aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3), W, G };
 }
 // Next 12 hours strip (under Best window): wind with gust beneath, coloured by your limits; rain chance where it is 30% or more; hours after sunset dimmed
+// Cloud ceiling tile: layers from the airport report, and (behind "more") how forecast cloud cover changes over the next hours
+let cloudOpen = false;
+function cloudToggle() {
+  cloudOpen = !cloudOpen;
+  document.querySelectorAll('.wx-cts').forEach(d => { d.hidden = !cloudOpen; });
+  document.querySelectorAll('.wx-cmore').forEach(b => { b.textContent = cloudOpen ? '\u25B4 fewer' : '\u25BE more'; b.setAttribute('aria-expanded', cloudOpen ? 'true' : 'false'); });
+}
+function cloudHtml(metar, ceilFt, om, hIdx) {
+  const COV = { FEW: 'Few', SCT: 'Scattered', BKN: 'Broken', OVC: 'Overcast', OVX: 'Sky obscured', VV: 'Sky obscured' };
+  const layers = ((metar && metar.clouds) || []).map(c => ({ cov: COV[c.code || c.cover], base: c.base_feet_agl })).filter(x => x.cov && x.base != null && isFinite(x.base)).sort((a, b) => a.base - b.base).slice(0, 4);
+  let top = '';
+  if (ceilFt !== null && layers.length) top = layers.map(x => '<div class="wx-lay"><span>' + x.cov + '</span><b>' + fmtAlt(x.base) + '</b></div>').join('');   // with no ceiling the note above already lists the layers
+  let trend = '';
+  const H = om && om.hourly;
+  if (hIdx >= 0 && H && H.cloud_cover && H.time) {
+    const pts = [];
+    for (let k = 0; k <= 8 && hIdx + k < H.time.length; k += 2) { const v = H.cloud_cover[hIdx + k]; if (v != null && isFinite(v)) pts.push({ k, v: Math.round(v), t: H.time[hIdx + k] }); }
+    if (pts.length >= 3) {
+      const lab = (p) => p.k === 0 ? 'Now' : new Date(p.t).toLocaleTimeString([], { hour: 'numeric' }).replace(/\s*([AP])M$/i, (mm, a) => a.toLowerCase());
+      const a = pts[0], z = pts[pts.length - 1], d = z.v - a.v;
+      const word = d <= -20 ? 'Clouds easing: ' + a.v + '% now \u2192 ' + z.v + '% by ' + lab(z) : d >= 20 ? 'Clouds building: ' + a.v + '% now \u2192 ' + z.v + '% by ' + lab(z) : 'Clouds steady, about ' + a.v + '%';
+      trend = '<div class="wx-cts"' + (cloudOpen ? '' : ' hidden') + '><div class="wx-ctl">' + word + '</div><div class="wx-ck">' +
+        pts.map(p => '<div><i style="background:rgba(142,142,147,' + (0.12 + 0.88 * p.v / 100).toFixed(2) + ')"></i>' + lab(p) + '<br>' + p.v + '%</div>').join('') +
+        '</div><div class="wx-cnote">Forecast cloud cover, a guide only.</div></div>';
+    }
+  }
+  if (!top && !trend) return '';
+  return '<div class="wx-cl">' + top + (trend ? '<button type="button" class="wx-more wx-cmore" aria-expanded="' + cloudOpen + '" onclick="cloudToggle()">' + (cloudOpen ? '\u25B4 fewer' : '\u25BE more') + '</button>' + trend : '') + '</div>';
+}
 function hourStripHtml(om, hIdx) {
   const H = om && om.hourly;
   if (hIdx < 0 || !H || !H.time || !H.wind_speed_10m || !H.wind_gusts_10m) return '';
@@ -3651,7 +3689,7 @@ async function renderWeather(lat, lon, attempt = 1) {
   lastDraw = null;
   try {
       const [wxRes, kpData, metarData, radarRes] = await Promise.allSettled([
-        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,precipitation_probability,precipitation,weather_code,cape&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
+        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,cloud_cover,precipitation_probability,precipitation,weather_code,cape&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
         fetchKP(),
         fetchMetar(lat, lon),
         fetchRadar(lat, lon)
@@ -3916,6 +3954,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${lowerTxt() ? `<div class="wx-sub">${lowerTxt()}</div>` : ''}
             ${lowCloudTxt() ? `<div class="wx-sub">${lowCloudTxt()}</div>` : ''}
             ${maxAltTxt() ? `<div class="wx-sub"><strong>${maxAltTxt()}</strong></div>` : ''}
+            ${metarData2 ? cloudHtml(m, ceilFt, om, hIdx) : ''}
           </div>
           <div class="wx-item">
             <div class="wx-label">Temperature</div>
