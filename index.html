@@ -704,7 +704,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2716,7 +2716,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const hb2 = hb.cloneNode(true); hb2.onclick = hb.onclick;
   if (hintsHidden()) bodyBak.classList.add('hide-hints');
   const wsr = document.createElement('div'); wsr.className = 'keep-row region-row';
-  wsr.innerHTML = '<span>🌬 Wind speed</span><select class="ws-sel" aria-label="Wind speed units" onchange="windUnitSet(this.value)"><option value="">Match units</option><option value="mph">mph</option><option value="kmh">km/h</option><option value="ms">m/s</option><option value="kt">knots</option></select><div class="region-hint">Match units follows the units button. Choose m/s or knots to read wind the way your drone app does.</div>';
+  wsr.innerHTML = '<span>🌬 Wind speed</span><select class="ws-sel" aria-label="Wind speed units" onchange="windUnitSet(this.value)"><option value="">Match units</option><option value="mph">mph</option><option value="kmh">km/h</option><option value="ms">m/s</option><option value="kt">knots</option></select><div class="region-hint">Match units follows the units button at the top of the weather panel. Choose a unit here and wind stays in it when you tap that button.</div>';
   bodySet.append(note, hb, grp('Display', true), thb, wsr, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer()); bodyBak.querySelector('.xfer-sub').after(hb2);
   [bodySet, bodyBak].forEach((bd, bi) => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
