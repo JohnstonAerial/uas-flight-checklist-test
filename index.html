@@ -687,7 +687,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4l</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4m</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2384,8 +2384,9 @@ const XFER_HAS_SHARE = (() => {
 })();
 const XFER_SAVE_HINT = (() => {   // describe only the buttons this device actually shows
   const sheet = (() => { try { return typeof navigator.share === 'function' && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); } catch (e) { return false; } })();
-  if (XFER_HAS_SHARE) return '<b>Save file</b> keeps a .json file on this device. <b>Share…</b> sends it to yourself or someone else, for example by AirDrop, Messages or email. ';
-  if (sheet) return '<b>Save file</b> opens your share sheet: choose <b>Save to Files</b>, or send the backup to yourself by AirDrop, Messages or email. ';
+  const apple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent || '');   // AirDrop and Save to Files exist only on Apple devices
+  if (XFER_HAS_SHARE) return '<b>Save file</b> keeps a .json file on this device. <b>Share…</b> sends it to yourself or someone else, for example by ' + (apple ? 'AirDrop, Messages or email. ' : 'email or a messaging app. ');
+  if (sheet) return apple ? '<b>Save file</b> opens your share sheet: choose <b>Save to Files</b>, or send the backup to yourself by AirDrop, Messages or email. ' : '<b>Save file</b> opens your share sheet: choose where to save the backup, or send it to yourself by email or a messaging app. ';
   return '<b>Save file</b> keeps a .json file on this device. ';
 })();
 let xferPre = null;                                                  // backup code made ahead of the tap, so Share runs inside the tap
