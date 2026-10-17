@@ -453,6 +453,14 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .body-set .wl-block .wl-row { margin-bottom: 8px; }
   .body-set .wl-block .wl-hint { margin: 2px 0 16px; }
   .body-set .settings-note { max-width: none; margin: 0; padding: 12px 16px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  .body-set .keep-row select, .body-set .region-row select { flex: 0 0 auto; width: auto; max-width: 62%; }
+  .body-set .region-row { row-gap: 4px; }
+  .region-row .rbreak { flex: 1 1 100%; height: 0; }
+  .set-grp { padding: 12px 16px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); border-top: 1px solid var(--border); text-align: left; }
+  .set-grp.first { border-top: 0; padding-top: 8px; }
+  .set-hints { display: block; width: 100%; text-align: right; padding: 6px 16px 0; background: none; border: 0; font-family: inherit; font-size: 13px; color: var(--link); cursor: pointer; min-height: 32px; }
+  .body-set:not(.show-hints) .pd-hint, .body-set:not(.show-hints) .wl-hint, .body-set:not(.show-hints) .region-hint:not(.keep), .body-set:not(.show-hints) .ac-block .fn-hint { display: none; }
+  .panel.editing .body-set > .set-grp, .panel.editing .body-set > .set-hints { display: none; }
   .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
   .settings-help a { padding: 6px 0; }
   @media (max-width: 340px) { .wl-row { gap: 5px; } .wl-row input { width: 48px; } }
@@ -670,7 +678,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.3b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2206,7 +2214,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const row = document.createElement('div');
   row.className = 'keep-row region-row';
   row.innerHTML = '<span>🌍 Where you fly</span><select class="region-sel" aria-label="Where you fly" onchange="applyRegion(this.value, true)"><option value="us">USA</option><option value="intl">Outside USA</option></select><div class="region-hint">Sets checklist items, weather units and US-only airspace links.</div>' +
-    '<span>🌙 I fly at night</span><select class="night-sel" aria-label="I fly at night" onchange="nightSet(this.value === \'1\')"><option value="0">No</option><option value="1">Yes, with lights</option></select><div class="region-hint">Best window also counts night hours. Night flying needs anti-collision lights and current night training or waiver. Off by default.</div>';
+    '<div class="rbreak"></div><span>🌙 I fly at night</span><select class="night-sel" aria-label="I fly at night" onchange="nightSet(this.value === \'1\')"><option value="0">No</option><option value="1">Yes, with lights</option></select><div class="region-hint keep">Best window counts night hours. Needs anti-collision lights and night training or a waiver.</div>';
   row.querySelector('select').value = region || 'us';
   row.querySelector('.night-sel').value = nightOn() ? '1' : '0';
   panelEl.querySelector('.keep-row').after(row);
@@ -2635,7 +2643,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const acb = document.createElement('div'); acb.className = 'fn-block ac-block';
   acb.innerHTML = '<div class="fn-row"><span>👤 Default pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>🚁 Default drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
-    '<div class="fn-row"><span>🪪 Default reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="e.g. FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
+    '<div class="fn-row"><span>🪪 Default reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="FA3XXXXXXX" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
     '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. A tab uses these only when its own Pilot, Drone and Reg. # (under Customize) are blank. Saved on this device only.</div>';
   const pdb = document.createElement('div'); pdb.className = 'pdfset';
   pdb.innerHTML = '<div class="pd-row"><span>📄 PDF layout</span><div class="pd-seg" role="radiogroup" aria-label="PDF layout"><button type="button" role="radio" data-k="layout" data-v="compact">Compact</button><button type="button" role="radio" data-k="layout" data-v="large">Large print</button></div></div>' +
@@ -2650,7 +2658,10 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   thb.innerHTML = '<div class="pd-row"><span>🌗 Appearance</span><div class="pd-seg" role="radiogroup" aria-label="Appearance"><button type="button" role="radio" data-th="auto">Auto</button><button type="button" role="radio" data-th="light">Light</button><button type="button" role="radio" data-th="dark">Dark</button></div></div>' +
     '<div class="pd-hint">Auto follows your device. Choose Light or Dark to override it, for example Light in bright sun.</div>';
   thb.addEventListener('click', e => { const bt = e.target.closest('button[data-th]'); if (bt) themeSet(bt.dataset.th); });
-  bodySet.append(note, thb, reg, cust, keep, wl, fnb, acb, pdb); bodyBak.append(makeXfer());
+  const grp = (t, f) => { const d = document.createElement('div'); d.className = 'set-grp' + (f ? ' first' : ''); d.textContent = t; return d; };
+  const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'set-hints'; hb.textContent = 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', 'false');
+  hb.onclick = () => { const o = bodySet.classList.toggle('show-hints'); hb.textContent = o ? 'Hide explanations' : 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', String(o)); };
+  bodySet.append(note, hb, grp('Display', true), thb, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer());
   [bodySet, bodyBak].forEach((bd, bi) => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
     
