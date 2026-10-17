@@ -686,7 +686,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2379,6 +2379,12 @@ const XFER_HAS_SHARE = (() => {
     return !!window.showSaveFilePicker || !fileShare || !touch;
   } catch (e) { return false; }
 })();
+const XFER_SAVE_HINT = (() => {   // describe only the buttons this device actually shows
+  const sheet = (() => { try { return typeof navigator.share === 'function' && !!(window.matchMedia && matchMedia('(pointer: coarse)').matches); } catch (e) { return false; } })();
+  if (XFER_HAS_SHARE) return '<b>Save file</b> keeps a .json file on this device. <b>Share…</b> sends it to yourself or someone else, for example by AirDrop, Messages or email. ';
+  if (sheet) return '<b>Save file</b> opens your share sheet: choose <b>Save to Files</b>, or send the backup to yourself by AirDrop, Messages or email. ';
+  return '<b>Save file</b> keeps a .json file on this device. ';
+})();
 let xferPre = null;                                                  // backup code made ahead of the tap, so Share runs inside the tap
 function xferWarm(el) {
   const box = el.closest('.xfer'); if (!box) return;
@@ -2409,7 +2415,7 @@ function makeXfer() {
   d.className = 'xfer';
   d.innerHTML = '<div class="xfer-sub">Save your settings and progress, or move them to another device or browser.</div>' +
     '<div class="bk-h">Back up</div><label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
-    '<div class="xfer-hint">Include current progress also saves your checked, N/A and Needs attention marks. They clear after the time you set under Clear saved progress after.<br><b>Save file</b> keeps a .json file (on an iPhone, choose Save to Files). <b>Share…</b> sends it to yourself, for example by AirDrop, Messages or email. <b>Copy code</b> copies the backup as text to paste into Notes or an email.</div>' +
+    '<div class="xfer-hint">Include current progress also saves your checked, N/A and Needs attention marks. They clear after the time you set under Clear saved progress after.<br>' + XFER_SAVE_HINT + '<b>Copy code</b> copies the backup as text to paste into Notes or an email.</div>' +
     '<div class="xfer-btns' + (XFER_HAS_SHARE ? ' has-share' : '') + '"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button>' + (XFER_HAS_SHARE ? '<button type="button" class="cust-btn share-btn" onclick="xferShare(this)" onpointerdown="xferWarm(this)" aria-label="Share a backup">Share…</button>' : '') + '<button type="button" class="cust-btn primary" onclick="xferSave(this)">Save file</button>' + '</div>' +
     '<div class="bk-div"></div><div class="bk-h">Restore</div>' +
     '<div class="xfer-warn">Restore replaces this device\'s settings, tabs and lists with the backup. You will be asked to confirm first.</div>' +
