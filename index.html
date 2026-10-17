@@ -687,7 +687,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4555,6 +4555,13 @@ function openRecord(btn) {
   document.addEventListener('keydown', recKey);
   setTimeout(() => { const f = $('#rec-cust'); if (f) f.focus(); }, 50);
 }
+// Printing shrinks the page, and some browsers leave you partway down the checklist afterwards: remember the place and go back to it
+(function () {
+  let y = null;
+  const back = () => { if (y === null) return; const t = y; y = null; [0, 60, 250].forEach(ms => setTimeout(() => window.scrollTo(0, t), ms)); };
+  window.addEventListener('beforeprint', () => { y = window.scrollY; });
+  window.addEventListener('afterprint', back);
+})();
 document.querySelectorAll('.panel .pc-btns').forEach(col => {
   const b = document.createElement('button');
   b.type = 'button'; b.className = 'rec-btn'; b.className = 'rec-btn rec-record'; b.innerHTML = '<span class="ic" aria-hidden="true">📋</span>Save flight record';
