@@ -401,6 +401,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .body-bak { padding: 0; }
   .body-bak .xfer { max-width: none; margin: 0; padding: 0; border-top: 0; text-align: left; font-size: 14px; color: var(--text); }
   .body-bak .xfer-sub { font-size: 11px; color: var(--text-light); padding: 12px 16px 10px; border-bottom: 1px solid var(--border); margin: 0; }
+  .body-bak .xfer-hint, .body-bak .xfer-warn { font-size: 11px; line-height: 1.4; color: var(--text-light); padding: 0 16px 8px; margin: 0; }
+  .body-bak .xfer-warn { color: var(--text-muted); }
+  .body-bak.hide-hints .xfer-hint { display: none; }
   .bk-h { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; padding: 12px 16px 6px; }
   .body-bak .xfer-incl { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; gap: 10px; padding: 6px 16px 8px; margin: 0; }
   .body-bak .xfer-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; padding: 4px 16px 14px; }
@@ -683,7 +686,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1532,7 +1535,7 @@ setKeepHours(keepHours());
 function hintsHidden() { try { return localStorage.getItem('uasHideHints') === '1'; } catch (e) { return false; } }
 function hintsSet(hide) {   // Settings explanations: shown by default; a choice to hide them is saved and included in backups
   try { if (hide) localStorage.setItem('uasHideHints', '1'); else localStorage.removeItem('uasHideHints'); } catch (e) {}
-  document.querySelectorAll('.body-set').forEach(b => b.classList.toggle('hide-hints', hide));
+  document.querySelectorAll('.body-set, .body-bak').forEach(b => b.classList.toggle('hide-hints', hide));
   document.querySelectorAll('.set-hints').forEach(h => { h.textContent = hide ? 'ⓘ Show explanations' : 'Hide explanations'; h.setAttribute('aria-expanded', String(!hide)); });
 }
 function nightOn() { try { return localStorage.getItem('uasNight') === '1'; } catch (e) { return false; } }
@@ -2406,8 +2409,11 @@ function makeXfer() {
   d.className = 'xfer';
   d.innerHTML = '<div class="xfer-sub">Save your settings and progress, or move them to another device or browser.</div>' +
     '<div class="bk-h">Back up</div><label class="xfer-incl"><input type="checkbox" class="xfer-prog" checked> Include current progress</label>' +
+    '<div class="xfer-hint">Include current progress also saves your checked, N/A and Needs attention marks. They clear after the time you set under Clear saved progress after.<br><b>Save file</b> keeps a .json file (on an iPhone, choose Save to Files). <b>Share…</b> sends it to yourself, for example by AirDrop, Messages or email. <b>Copy code</b> copies the backup as text to paste into Notes or an email.</div>' +
     '<div class="xfer-btns' + (XFER_HAS_SHARE ? ' has-share' : '') + '"><button type="button" class="cust-btn" onclick="xferCopy(this)">Copy code</button>' + (XFER_HAS_SHARE ? '<button type="button" class="cust-btn share-btn" onclick="xferShare(this)" onpointerdown="xferWarm(this)" aria-label="Share a backup">Share…</button>' : '') + '<button type="button" class="cust-btn primary" onclick="xferSave(this)">Save file</button>' + '</div>' +
     '<div class="bk-div"></div><div class="bk-h">Restore</div>' +
+    '<div class="xfer-warn">Restore replaces this device\'s settings, tabs and lists with the backup. You will be asked to confirm first.</div>' +
+    '<div class="xfer-hint">Restore from file picks a backup you saved. Paste code takes a backup code you copied.</div>' +
     '<div class="xfer-btns rs"><button type="button" class="cust-btn primary" onclick="xferFile(this)">Restore from file\u2026</button>' +
     '<button type="button" class="cust-btn xfer-paste" aria-expanded="false" onclick="xferPaste(this)">Paste code\u2026</button>' +
     '<input type="file" class="xfer-file" accept=".json,application/json,text/plain" hidden onchange="xferFileChosen(this)"></div>' +
@@ -2673,7 +2679,9 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'set-hints'; hb.textContent = 'Hide explanations'; hb.setAttribute('aria-expanded', 'true');
   hb.onclick = () => hintsSet(!bodySet.classList.contains('hide-hints'));
   if (hintsHidden()) { bodySet.classList.add('hide-hints'); hb.textContent = 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', 'false'); }
-  bodySet.append(note, hb, grp('Display', true), thb, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer());
+  const hb2 = hb.cloneNode(true); hb2.onclick = hb.onclick;
+  if (hintsHidden()) bodyBak.classList.add('hide-hints');
+  bodySet.append(note, hb, grp('Display', true), thb, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer()); bodyBak.querySelector('.xfer-sub').after(hb2);
   [bodySet, bodyBak].forEach((bd, bi) => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
     
