@@ -670,7 +670,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.3a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.3b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1516,6 +1516,12 @@ setKeepHours(keepHours());
 
 
 // ── Region: tailor the checklist for the USA or for flying elsewhere ──
+function nightOn() { try { return localStorage.getItem('uasNight') === '1'; } catch (e) { return false; } }
+function nightSet(v) {
+  try { if (v) localStorage.setItem('uasNight', '1'); else localStorage.removeItem('uasNight'); } catch (e) {}
+  document.querySelectorAll('.night-sel').forEach(x => { x.value = v ? '1' : '0'; });
+  if (lastDraw) lastDraw();
+}
 const REGION_KEY = 'uasRegion';
 let region = (function () { try { const v = localStorage.getItem(REGION_KEY); return v === 'us' || v === 'intl' ? v : null; } catch (e) { return null; } })();
 const US_ONLY_ITEMS = [/^Check TFRs \(US\) at tfr\.faa\.gov$/, /^LAANC \(US\) —/, /^Recheck TFRs \(US\)/];   // hidden outside the USA
@@ -2776,12 +2782,6 @@ function windColor(mph, gust) {
 
 // Best window: the longest stretch of daylight hours in the next 12 where wind and gusts stay under the amber point of your limits,
 // with no rain, storms or low visibility. Returns null when the data is missing, {kind:'ok'} when every daylight hour is fine.
-function nightOn() { try { return localStorage.getItem('uasNight') === '1'; } catch (e) { return false; } }
-function nightSet(v) {
-  try { if (v) localStorage.setItem('uasNight', '1'); else localStorage.removeItem('uasNight'); } catch (e) {}
-  document.querySelectorAll('.night-sel').forEach(x => { x.value = v ? '1' : '0'; });
-  if (lastDraw) lastDraw();
-}
 function calmWindow(om, hIdx, nowBad, obsFine) {
   const H = om && om.hourly;
   if (hIdx < 0 || !H || !H.time || !H.wind_speed_10m || !H.wind_gusts_10m || !H.precipitation_probability) return null;
