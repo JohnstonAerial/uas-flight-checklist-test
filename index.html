@@ -693,7 +693,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2376,7 +2376,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasWindHts', 'uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
+const XFER_KEYS = ['uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -2403,7 +2403,7 @@ function xferWarm(el) {
   xferEncode(snap).then(code => { xferPre = { key, code }; }).catch(() => {});
 }
 // Back-up reminder: shown under the Settings / Back up & restore buttons after anything that a backup carries is changed
-const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasWindUnit', 'uasWindHts', 'uasTheme'];
+const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasWindUnit', 'uasTheme'];
 let bkReady = false;
 setTimeout(() => { bkReady = true; }, 2000);
 // ?notrack on the address turns off the back-up reminder (and, on the public site, Cloudflare counting); ?track turns both back on
@@ -2706,10 +2706,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   if (hintsHidden()) bodyBak.classList.add('hide-hints');
   const wsr = document.createElement('div'); wsr.className = 'keep-row region-row';
   wsr.innerHTML = '<span>🌬 Wind speed</span><select class="ws-sel" aria-label="Wind speed units" onchange="windUnitSet(this.value)"><option value="">Match units</option><option value="mph">mph</option><option value="kmh">km/h</option><option value="ms">m/s</option><option value="kt">knots</option></select><div class="region-hint">Match units follows the units button. Choose m/s or knots to read wind the way your drone app does.</div>';
-  const whr = document.createElement('div'); whr.className = 'keep-row region-row';
-  whr.innerHTML = '<span>\uD83D\uDCCF Wind heights</span><span class="wh-chk"><label><input type="checkbox" class="wh-80"> <span class="wh-l80"></span></label> <label><input type="checkbox" class="wh-180"> <span class="wh-l180"></span></label></span><div class="region-hint">Tap "more" on the Wind tile to see wind at several heights. Surface and 400 ft (120 m) always show; add these if you fly higher or want to spot wind that builds with height.</div>';
-  whr.querySelectorAll('input').forEach(i => i.addEventListener('change', () => windHtsSet()));
-  bodySet.append(note, hb, grp('Display', true), thb, wsr, whr, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer()); bodyBak.querySelector('.xfer-sub').after(hb2);
+  bodySet.append(note, hb, grp('Display', true), thb, wsr, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer()); bodyBak.querySelector('.xfer-sub').after(hb2);
   [bodySet, bodyBak].forEach((bd, bi) => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
     
@@ -2831,8 +2828,7 @@ function windLimits() {
   const ok = (v) => typeof v === 'number' && isFinite(v) && v > 0 ? v : null;
   return { w: ok(o && o.w), g: ok(o && o.g) };
 }
-// Wind by height (Wind tile, tap "more"): surface and 400 ft always; 260 ft and 590 ft can be switched off in Settings (uasWindHts)
-function windHts() { try { const v = localStorage.getItem('uasWindHts'); if (v === null) return ['80', '180']; return v.split(',').filter(x => x === '80' || x === '180'); } catch (e) { return ['80', '180']; } }
+// Wind by height (Wind tile, tap "more"): surface, 260 ft and 400 ft (10, 80 and 120 m)
 let windHtsOpen = false;
 function windHtsToggle(btn) {
   windHtsOpen = !windHtsOpen;
@@ -2841,12 +2837,11 @@ function windHtsToggle(btn) {
 }
 function windHtsHTML(wx, surf) {
   if (wx.wind120 == null) return '';
-  const m = isMetric(), on = windHts();
+  const m = isMetric();
   const rows = [];
   if (surf != null) rows.push([m ? '10 m' : '33 ft', surf, 0]);
-  if (on.includes('80') && wx.wind80 != null) rows.push([m ? '80 m' : '260 ft', wx.wind80, 1]);
+  if (wx.wind80 != null) rows.push([m ? '80 m' : '260 ft', wx.wind80, 1]);
   rows.push([m ? '120 m' : '400 ft', wx.wind120, 1]);
-  if (on.includes('180') && wx.wind180 != null) rows.push([m ? '180 m' : '590 ft', wx.wind180, 1]);
   const top = rows.filter(r => r[2]).reduce((a, r) => r[1] > a[1] ? r : a, ['', -1]);
   const l = windLimits(), W = l.w || WIND_DEF.w;
   const shear = surf != null && top[1] >= surf * 1.5 && Math.round(top[1]) >= Math.round(W * 2 / 3);
@@ -3398,19 +3393,7 @@ function wlSync() {
   document.querySelectorAll('.wl-g').forEach(i => { i.placeholder = fmtSpeedNum(WIND_DEF.g); if (i !== act) i.value = l.g ? fmtSpeedNum(l.g) : ''; });
   document.querySelectorAll('.wl-unit').forEach(u => { u.textContent = speedUnit(); });
   document.querySelectorAll('.ws-sel').forEach(x => { x.value = windPref(); });
-  const wh = windHts();
-  document.querySelectorAll('.wh-80').forEach(x => { x.checked = wh.includes('80'); });
-  document.querySelectorAll('.wh-180').forEach(x => { x.checked = wh.includes('180'); });
-  document.querySelectorAll('.wh-l80').forEach(x => { x.textContent = isMetric() ? '80 m' : '260 ft'; });
-  document.querySelectorAll('.wh-l180').forEach(x => { x.textContent = isMetric() ? '180 m' : '590 ft'; });
   document.querySelectorAll('.wl-w, .wl-g').forEach(i => { i.step = windUnitKey() === 'ms' ? '0.1' : '1'; });
-}
-function windHtsSet() {
-  const a = [document.querySelector('.wh-80'), document.querySelector('.wh-180')];
-  const v = [a[0] && a[0].checked ? '80' : '', a[1] && a[1].checked ? '180' : ''].filter(Boolean).join(',');
-  try { localStorage.setItem('uasWindHts', v); } catch (e) {}
-  if (typeof bkMark === 'function') bkMark();
-  wlSync(); if (lastDraw) lastDraw();
 }
 function windUnitSet(v) {
   try { if (WIND_UNITS[v]) localStorage.setItem('uasWindUnit', v); else localStorage.removeItem('uasWindUnit'); } catch (e) {}
@@ -3634,7 +3617,7 @@ async function renderWeather(lat, lon, attempt = 1) {
   lastDraw = null;
   try {
       const [wxRes, kpData, metarData, radarRes] = await Promise.allSettled([
-        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,wind_speed_180m,precipitation_probability,precipitation,weather_code,cape&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
+        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,precipitation_probability,precipitation,weather_code,cape&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=2`),
         fetchKP(),
         fetchMetar(lat, lon),
         fetchRadar(lat, lon)
@@ -3658,7 +3641,6 @@ async function renderWeather(lat, lon, attempt = 1) {
         visibility: hIdx >= 0 ? om.hourly.visibility[hIdx] : null,
         wind120: hIdx >= 0 ? om.hourly.wind_speed_120m[hIdx] : null,
         wind80: hIdx >= 0 && om.hourly.wind_speed_80m ? om.hourly.wind_speed_80m[hIdx] : null,
-        wind180: hIdx >= 0 && om.hourly.wind_speed_180m ? om.hourly.wind_speed_180m[hIdx] : null,
         sunrise: om.daily && om.daily.sunrise ? om.daily.sunrise[0] : null,
         sunset: om.daily && om.daily.sunset ? om.daily.sunset[0] : null,
         weatherCode: cur.weather_code,
