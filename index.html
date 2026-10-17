@@ -693,7 +693,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1578,7 +1578,7 @@ function applyRegion(r, changeUnits) {
   document.querySelectorAll('.region-sel').forEach(sel => { sel.value = r; });
   const card = document.getElementById('region-card'); if (card) card.remove();
   if (changeUnits && (intl || prev === 'intl') && typeof toggleUnits === 'function') {
-    units = intl ? 'metric' : 'imperial'; store('wxUnits', units); updateUnitsButton(); if (typeof wlSync === 'function') { wlSync(); tpSync(); } if (lastDraw) lastDraw();
+    units = intl ? 'metric' : 'imperial'; store('wxUnits', units); try { localStorage.removeItem('uasWindUnit'); } catch (e) {} updateUnitsButton(); if (typeof wlSync === 'function') { wlSync(); tpSync(); } if (lastDraw) lastDraw();
   }
   document.querySelectorAll('.panel').forEach(p => { if (typeof refreshCust === 'function') refreshCust(p); });
 }
@@ -3381,11 +3381,12 @@ const fmtDist = (mi) => isMetric() ? Math.round(mi * 1.609344) + ' km' : Math.ro
 const fmtAlt = (ft) => isMetric() ? (Math.round(ft * 0.3048 / 10) * 10).toLocaleString() + ' m' : Number(ft).toLocaleString() + ' ft';
 function updateUnitsButton() {
   const b = document.getElementById('wx-units');
-  if (b) b.textContent = (windPref() ? speedUnit() : (isMetric() ? 'km/h' : 'mph')) + (isMetric() ? ' · °C' : ' · °F');
+  if (b) b.textContent = isMetric() ? 'km/h · °C' : 'mph · °F';
 }
 function toggleUnits() {
   units = isMetric() ? 'imperial' : 'metric';
   store('wxUnits', units);
+  try { localStorage.removeItem('uasWindUnit'); } catch (e) {}   // the button switches everything, wind included
   updateUnitsButton();
   wlSync(); if (typeof tpSync === 'function') tpSync();
   if (lastDraw) { lastDraw(); }
