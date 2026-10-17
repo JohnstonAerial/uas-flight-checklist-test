@@ -620,6 +620,17 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   @media (max-width: 560px) { .gh-t, .gh-w { display: block; } .gh-sep { display: none; } }
   .wx-window { margin: 10px 0 2px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 12px; text-align: center; color: var(--text-muted); }
   .wx-window b { color: var(--text); }
+  .wx-strip { margin: 8px 0 2px; padding: 8px 8px 6px; border-radius: 10px; background: var(--section-bg); }
+  .hs-title { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+  .hs-row { display: flex; gap: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 2px; }
+  .hs-h { flex: 0 0 40px; text-align: center; font-size: 10px; color: var(--text-muted); }
+  .hs-t { margin-bottom: 3px; }
+  .hs-c { border-radius: 7px; padding: 5px 0 4px; font-size: 13px; font-weight: 700; color: #000; line-height: 1.15; }
+  .hs-c small { display: block; font-size: 9px; font-weight: 600; opacity: 0.8; }
+  .hc-good { background: var(--green); } .hc-warn { background: var(--amber); } .hc-alert { background: #e0301e; color: #fff; }
+  .hs-dark .hs-c, .hs-dark .hs-t { opacity: 0.5; }
+  .hs-r { margin-top: 3px; font-size: 10px; color: #3d8bfd; min-height: 12px; }
+  .hs-key { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
   .wx-window-s { margin-top: 2px; }
   .wx-window.good { border-color: var(--green); background: var(--green-light); }
   .wx-window.good .wx-window-t { color: var(--green); font-weight: 600; }
@@ -693,7 +704,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2913,6 +2924,29 @@ function calmWindow(om, hIdx, nowBad, obsFine) {
   const cw = cnt(x => x.windRed), cr = cnt(x => x.wet), cv = cnt(x => x.visBad);
   return { kind: 'none', lowNow: !!nowBad, cause: cw >= cr && cw >= cv ? 'wind' : cr >= cv ? 'wet' : 'vis', aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3), W, G };
 }
+// Next 12 hours strip (under Best window): wind with gust beneath, coloured by your limits; rain chance where it is 30% or more; hours after sunset dimmed
+function hourStripHtml(om, hIdx) {
+  const H = om && om.hourly;
+  if (hIdx < 0 || !H || !H.time || !H.wind_speed_10m || !H.wind_gusts_10m) return '';
+  const n = Math.min(12, H.time.length - hIdx);
+  if (n < 3) return '';
+  const D = om.daily || {}, d0 = String(H.time[0]).slice(0, 10);
+  const cls = { 'wx-good': 'hc-good', 'wx-warn': 'hc-warn', 'wx-alert': 'hc-alert' };
+  let cells = '';
+  for (let k = 0; k < n; k++) {
+    const i = hIdx + k, t = H.time[i], dd = String(t).slice(0, 10) === d0 ? 0 : 1;
+    const w = H.wind_speed_10m[i], g = H.wind_gusts_10m[i];
+    if (w == null) continue;
+    const gOk = g != null && isFinite(g), wr = Math.round(w), gr = gOk ? Math.round(g) : null;
+    const r = D.sunrise && D.sunrise[dd], su = D.sunset && D.sunset[dd], ms = new Date(t).getTime() + 1800000;
+    const dark = r && su ? (ms < new Date(r).getTime() || ms > new Date(su).getTime()) : false;
+    const pp = H.precipitation_probability ? H.precipitation_probability[i] : null;
+    const lab = k === 0 ? 'Now' : new Date(t).toLocaleTimeString([], { hour: 'numeric' }).replace(/\s*([AP])M$/i, (m, a) => a.toLowerCase());
+    cells += '<div class="hs-h' + (dark ? ' hs-dark' : '') + '"><div class="hs-t">' + lab + '</div><div class="hs-c ' + cls[windColor(wr, gr)] + '">' + fmtSpeedNum(w) + (gOk && gr > wr ? '<small>' + fmtSpeedNum(g) + '</small>' : '<small>&nbsp;</small>') + '</div><div class="hs-r">' + (pp != null && pp >= 30 ? Math.round(pp) + '%' : '') + '</div></div>';
+  }
+  if (!cells) return '';
+  return '<div class="wx-strip"><div class="hs-title">Next 12 hours · wind / gust (' + speedUnit() + ')</div><div class="hs-row" role="group" aria-label="Hour by hour wind forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">Colours follow your wind limits · blue = chance of rain · dimmed = after sunset</div></div>';
+}
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
   const hr = (i) => new Date(H.time[i]).toLocaleTimeString([], { hour: 'numeric' });
@@ -3913,6 +3947,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         <div class="wx-sun">🌅 Sunrise ${fmtT(wx.sunrise)} &nbsp;·&nbsp; 🌇 Sunset ${fmtT(wx.sunset)}${siteTag}</div>
         ${goldenLine}
         ${calmHtml(calmWindow(om, hIdx, calmNowBad(), obsVisFine()), om.hourly, hIdx, siteTag)}
+        ${hourStripHtml(om, hIdx)}
         <div class="wx-night" id="wx-night" hidden></div>
         <div class="wx-updated" id="wx-updated">Updated ${now} · ${srcText}<span id="wx-age"></span></div>
         <div class="wx-disclaimer">Guide only. Conditions can differ at your site. Check your own weather sources and look at the sky before you fly. Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener">RainViewer</a>.</div>
