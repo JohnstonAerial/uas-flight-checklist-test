@@ -464,7 +464,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .set-grp { padding: 12px 16px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-light); border-top: 1px solid var(--border); text-align: left; }
   .set-grp.first { border-top: 0; padding-top: 8px; }
   .set-hints { display: block; width: 100%; text-align: right; padding: 6px 16px 0; background: none; border: 0; font-family: inherit; font-size: 13px; color: var(--link); cursor: pointer; min-height: 32px; }
-  .body-set:not(.show-hints) .pd-hint, .body-set:not(.show-hints) .wl-hint, .body-set:not(.show-hints) .region-hint:not(.keep), .body-set:not(.show-hints) .ac-block .fn-hint { display: none; }
+  .body-set.hide-hints .pd-hint, .body-set.hide-hints .wl-hint, .body-set.hide-hints .region-hint:not(.keep), .body-set.hide-hints .ac-block .fn-hint { display: none; }
   .panel.editing .body-set > .set-grp, .panel.editing .body-set > .set-hints { display: none; }
   .settings-help { max-width: 600px; margin: 6px auto 10px; padding: 0 16px; text-align: center; font-size: 14px; }
   .settings-help a { padding: 6px 0; }
@@ -683,7 +683,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.4e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1529,6 +1529,12 @@ setKeepHours(keepHours());
 
 
 // ── Region: tailor the checklist for the USA or for flying elsewhere ──
+function hintsHidden() { try { return localStorage.getItem('uasHideHints') === '1'; } catch (e) { return false; } }
+function hintsSet(hide) {   // Settings explanations: shown by default; a choice to hide them is saved and included in backups
+  try { if (hide) localStorage.setItem('uasHideHints', '1'); else localStorage.removeItem('uasHideHints'); } catch (e) {}
+  document.querySelectorAll('.body-set').forEach(b => b.classList.toggle('hide-hints', hide));
+  document.querySelectorAll('.set-hints').forEach(h => { h.textContent = hide ? 'ⓘ Show explanations' : 'Hide explanations'; h.setAttribute('aria-expanded', String(!hide)); });
+}
 function nightOn() { try { return localStorage.getItem('uasNight') === '1'; } catch (e) { return false; } }
 function nightSet(v) {
   try { if (v) localStorage.setItem('uasNight', '1'); else localStorage.removeItem('uasNight'); } catch (e) {}
@@ -2358,7 +2364,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasRegion', 'uasNight', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
+const XFER_KEYS = ['uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -2378,7 +2384,7 @@ function xferWarm(el) {
   xferEncode(snap).then(code => { xferPre = { key, code }; }).catch(() => {});
 }
 // Back-up reminder: shown under the Settings / Back up & restore buttons after anything that a backup carries is changed
-const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'wxUnits', 'uasTheme'];
+const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasTheme'];
 let bkReady = false;
 setTimeout(() => { bkReady = true; }, 2000);
 function bkMark() { if (bkReady) document.body.classList.add('bk-dirty'); }
@@ -2664,8 +2670,9 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="pd-hint">Auto follows your device. Choose Light or Dark to override it, for example Light in bright sun.</div>';
   thb.addEventListener('click', e => { const bt = e.target.closest('button[data-th]'); if (bt) themeSet(bt.dataset.th); });
   const grp = (t, f) => { const d = document.createElement('div'); d.className = 'set-grp' + (f ? ' first' : ''); d.textContent = t; return d; };
-  const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'set-hints'; hb.textContent = 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', 'false');
-  hb.onclick = () => { const o = bodySet.classList.toggle('show-hints'); hb.textContent = o ? 'Hide explanations' : 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', String(o)); };
+  const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'set-hints'; hb.textContent = 'Hide explanations'; hb.setAttribute('aria-expanded', 'true');
+  hb.onclick = () => hintsSet(!bodySet.classList.contains('hide-hints'));
+  if (hintsHidden()) { bodySet.classList.add('hide-hints'); hb.textContent = 'ⓘ Show explanations'; hb.setAttribute('aria-expanded', 'false'); }
   bodySet.append(note, hb, grp('Display', true), thb, reg, cust, keep, grp('Limits'), wl, grp('Your info'), fnb, acb, grp('PDF'), pdb); bodyBak.append(makeXfer());
   [bodySet, bodyBak].forEach((bd, bi) => {           // a small arrow at the bottom closes the section and goes back up to the buttons
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 ' + (bi ? 'Close back up & restore' : 'Close settings');
