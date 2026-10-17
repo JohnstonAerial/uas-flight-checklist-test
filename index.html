@@ -714,7 +714,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6k</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2860,7 +2860,7 @@ function windHtsHTML(wx, surf) {
   if (wx.wind120 == null) return '';
   const m = isMetric();
   const rows = [];
-  if (surf != null) rows.push([m ? '10 m' : '33 ft', surf, 0]);
+  if (surf != null) rows.push([m ? 'Ground (10 m)' : 'Ground (33 ft)', surf, 0]);
   if (wx.wind80 != null) rows.push([m ? '80 m' : '260 ft', wx.wind80, 1]);
   rows.push([m ? '120 m' : '400 ft', wx.wind120, 1]);
   const top = rows.filter(r => r[2]).reduce((a, r) => r[1] > a[1] ? r : a, ['', -1]);
@@ -2984,7 +2984,7 @@ function hourStripHtml(om, hIdx) {
     cells += '<div class="hs-h' + (dark ? ' hs-dark' : '') + '"><div class="hs-t">' + lab + '</div><div class="hs-c ' + cls[windColor(wr, gr)] + '">' + fmtSpeedNum(w) + (gOk && gr > wr ? '<small>' + fmtSpeedNum(g) + '</small>' : '<small>&nbsp;</small>') + '</div><div class="hs-r">' + (pp != null && pp >= 30 ? Math.round(pp) + '%' : '') + '</div></div>';
   }
   if (!cells) return '';
-  return '<div class="wx-strip"><div class="hs-title">Next 12 hours · wind / gust (' + speedUnit() + ')</div><div class="hs-row" role="group" aria-label="Hour by hour wind forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">Colours follow your wind limits · blue = chance of rain · dimmed = after sunset</div></div>';
+  return '<div class="wx-strip"><div class="hs-title">Next 12 hours · ground wind / gust (' + speedUnit() + ')</div><div class="hs-row" role="group" aria-label="Hour by hour wind forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">Colours follow your wind limits · blue = chance of rain · dimmed = after sunset</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
@@ -3935,7 +3935,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-value ${windColor(owMph, owGust)}">${fmtSpeedNum(owMph) + (owGust ? ' / ' + fmtSpeedNum(owGust) : '') + ' ' + speedUnit() + owArrow}</div>
             <div class="wx-sub">${owGust ? 'Sustained / Gusts' : 'No gusts reported'}${owDirTxt ? ' · ' + owDirTxt : ''}</div>
             <div class="wx-sub" data-rec-age="${Date.now() - ow.ageMin * 60000}">${ow.station} · ${fmtDist(ow.dist)} away · ${ageText(ow.ageMin * 60000)}</div>
-            ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${modelTxt}</strong></div>` : ''}
+            ${windOk ? `<div class="wx-sub wx-model">Model for your spot (ground): <strong class="${windColor(windMph, gustMph)}">${modelTxt}</strong></div>` : ''}
             ${windHtsHTML(wx, windOk ? windMph : null)}` : `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windOk ? windColor(windMph, gustMph) : ''}">${windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + speedUnit() + (dirOk ? ' ' + windArrow(wx.wind.deg) : '') : '—'}</div>
