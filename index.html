@@ -590,6 +590,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-hts[hidden] { display: none; }
   .wx-hrow { display: flex; justify-content: space-between; gap: 8px; line-height: 1.5; }
   .wx-hrow b { font-weight: 700; }
+  .wx-hnote { margin-top: 3px; font-size: 10.5px; font-style: italic; color: var(--text-muted); line-height: 1.3; }
   .wx-hshear { margin-top: 4px; padding: 3px 6px; border: 1px solid var(--amber); border-radius: 7px; line-height: 1.3; }
   .wx-model { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
   .wx-model strong { font-weight: 700; }
@@ -704,7 +705,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.6i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2858,7 +2859,7 @@ function windHtsHTML(wx, surf) {
   const shear = surf != null && top[1] >= surf * 1.5 && Math.round(top[1]) >= Math.round(W * 2 / 3);
   const lines = rows.map(r => '<div class="wx-hrow"><span>' + r[0] + '</span><b class="' + windColor(Math.round(r[1]), null) + '">' + fmtSpeed(r[1]) + '</b></div>').join('');
   return '<div class="wx-sub">' + (m ? '120 m' : '400 ft') + ': ' + fmtSpeed(wx.wind120) + ' <button type="button" class="wx-more" aria-expanded="' + windHtsOpen + '" onclick="windHtsToggle(this)">' + (windHtsOpen ? '\u25B4 fewer' : '\u25BE more') + '</button></div>' +
-    '<div class="wx-hts"' + (windHtsOpen ? '' : ' hidden') + '>' + lines + (shear ? '<div class="wx-hshear">Wind builds with height: ' + fmtSpeed(surf) + ' at the surface, ' + fmtSpeed(top[1]) + ' at ' + top[0] + '.</div>' : '') + '</div>';
+    '<div class="wx-hts"' + (windHtsOpen ? '' : ' hidden') + '>' + lines + '<div class="wx-hnote">Sustained wind. Gusts aloft aren\u2019t forecast and are usually higher.</div>' + (shear ? '<div class="wx-hshear">Wind builds with height: ' + fmtSpeed(surf) + ' at the surface, ' + fmtSpeed(top[1]) + ' at ' + top[0] + '.</div>' : '') + '</div>';
 }
 function windColor(mph, gust) {
   const l = windLimits(), W = l.w || WIND_DEF.w, G = l.g || WIND_DEF.g;
