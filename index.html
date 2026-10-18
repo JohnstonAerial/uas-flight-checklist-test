@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.11b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2876,7 +2876,7 @@ function windHtsHTML(wx, surf) {
   const shear = surf != null && top[1] >= surf * 1.5 && Math.round(top[1]) >= Math.round(W * 2 / 3);
   const lines = rows.map(r => '<div class="wx-hrow"><span>' + r[0] + '</span><b class="' + windColor(Math.round(r[1]), null) + '">' + fmtSpeed(r[1]) + '</b></div>').join('');
   return '<div class="wx-sub"><span class="wx-h4"' + (windHtsOpen ? ' hidden' : '') + '>' + (m ? '120 m' : '400 ft') + ': ' + fmtSpeed(wx.wind120) + '</span> <button type="button" class="wx-more" aria-expanded="' + windHtsOpen + '" onclick="windHtsToggle(this)">' + (windHtsOpen ? '\u25B4 fewer' : '\u25BE more') + '</button></div>' +
-    '<div class="wx-hts"' + (windHtsOpen ? '' : ' hidden') + '><div class="wx-hnote">Sustained \u00B7 no gusts aloft</div>' + lines + (shear ? '<div class="wx-hshear">Wind builds with height: ' + fmtSpeed(surf) + ' \u2192 ' + fmtSpeed(top[1]) + ' at ' + top[0] + '</div>' : '') + '</div>';
+    '<div class="wx-hts"' + (windHtsOpen ? '' : ' hidden') + '><div class="wx-hnote">Sustained speeds \u00B7 gusts not forecast aloft</div>' + lines + (shear ? '<div class="wx-hshear">Wind builds with height: ' + fmtSpeed(surf) + ' \u2192 ' + fmtSpeed(top[1]) + ' at ' + top[0] + '</div>' : '') + '</div>';
 }
 function windColor(mph, gust) {
   const l = windLimits(), W = l.w || WIND_DEF.w, G = l.g || WIND_DEF.g;
@@ -2916,27 +2916,18 @@ function calmWindow(om, hIdx, nowBad, obsFine) {
   const day_ = info.filter(x => x.dayHr);
   if (day_.length < 2) return null;
   if (day_.every(x => x.good)) return { kind: 'ok' };
-  let best = null;
-  for (let k = 0; k < n; ) {
-    if (!info[k].good) { k++; continue; }
-    let e = k; while (e + 1 < n && info[e + 1].good) e++;
-    if (e - k + 1 >= 2 && (!best || e - k > best.b - best.a)) best = { a: k, b: e };
-    k = e + 1;
-  }
+  // the earliest run of 2+ hours leads; if a later run is longer it is mentioned as "Longer: ..."
+  const runsOf = (flag) => { const r = []; for (let k = 0; k < n; ) { if (!info[k][flag]) { k++; continue; } let e = k; while (e + 1 < n && info[e + 1][flag]) e++; if (e - k + 1 >= 2) r.push({ a: k, b: e }); k = e + 1; } return r; };
+  const altOf = (r) => { const lg = r.reduce((m, x) => (x.b - x.a > m.b - m.a ? x : m), r[0]); return lg.b - lg.a > r[0].b - r[0].a ? { a: lg.a, b: lg.b } : null; };
+  const gruns = runsOf('good'), best = gruns[0] || null;
   if (best) {
     const run = info.slice(best.a, best.b + 1);
-    return { kind: 'window', night: run.some(x => x.night), lowNow: !!nowBad, a: best.a, b: best.b, maxW: Math.max(...run.map(x => x.w)), maxG: Math.max(...run.map(x => x.g)), wasWet: info[0].wet && best.a > 0 };
+    return { kind: 'window', alt: altOf(gruns), night: run.some(x => x.night), lowNow: !!nowBad, a: best.a, b: best.b, maxW: Math.max(...run.map(x => x.w)), maxG: Math.max(...run.map(x => x.g)), wasWet: info[0].wet && best.a > 0 };
   }
-  let caut = null;
-  for (let k = 0; k < n; ) {
-    if (!info[k].ok) { k++; continue; }
-    let e = k; while (e + 1 < n && info[e + 1].ok) e++;
-    if (e - k + 1 >= 2 && (!caut || e - k > caut.b - caut.a)) caut = { a: k, b: e };
-    k = e + 1;
-  }
+  const cruns = runsOf('ok'), caut = cruns[0] || null;
   if (caut) {
     const run = info.slice(caut.a, caut.b + 1);
-    return { kind: 'caution', night: run.some(x => x.night), lowNow: !!nowBad, a: caut.a, b: caut.b, maxW: Math.max(...run.map(x => x.w)), maxG: Math.max(...run.map(x => x.g)), wasWet: info[0].wet && caut.a > 0, aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3) };
+    return { kind: 'caution', alt: altOf(cruns), night: run.some(x => x.night), lowNow: !!nowBad, a: caut.a, b: caut.b, maxW: Math.max(...run.map(x => x.w)), maxG: Math.max(...run.map(x => x.g)), wasWet: info[0].wet && caut.a > 0, aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3) };
   }
   const cnt = (f) => day_.filter(f).length;
   const cw = cnt(x => x.windRed), cr = cnt(x => x.wet), cv = cnt(x => x.visBad);
@@ -3046,15 +3037,16 @@ function hourStripHtml(om, hIdx) {
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
   const hr = (i) => new Date(H.time[i]).toLocaleTimeString([], { hour: 'numeric' });
+  const altTxt = (cc) => cc.alt ? 'Longer: ' + hr(hIdx + cc.alt.a) + ' – ' + hr(Math.min(hIdx + cc.alt.b + 1, H.time.length - 1)) + ' · ' : '';
   if (c.kind === 'window') {
     const from = c.a === 0 ? 'Now' : hr(hIdx + c.a), to = hr(Math.min(hIdx + c.b + 1, H.time.length - 1));
     return '<div class="wx-window good"><div class="wx-window-t">🕊 Best window <b>' + from + ' – ' + to + '</b>' + siteTag + '</div><div class="wx-window-s">' +
-      (c.wasWet ? 'Rain clears by ' + from + ' · ' : '') + (c.night ? 'Night hours included \u2014 anti-collision lights required · ' : '') + (c.lowNow ? 'Low cloud or visibility reported now \u2014 the forecast can\u2019t see it, so check the airport report before you go · ' : '') + 'Wind up to ' + fmtSpeed(c.maxW) + ', gusts up to ' + fmtSpeed(c.maxG) + '</div></div>';
+      altTxt(c) + (c.wasWet ? 'Rain clears by ' + from + ' · ' : '') + (c.night ? 'Night hours included \u2014 anti-collision lights required · ' : '') + (c.lowNow ? 'Low cloud or visibility reported now \u2014 the forecast can\u2019t see it, so check the airport report before you go · ' : '') + 'Wind up to ' + fmtSpeed(c.maxW) + ', gusts up to ' + fmtSpeed(c.maxG) + '</div></div>';
   }
   if (c.kind === 'caution') {
     const from = c.a === 0 ? 'Now' : hr(hIdx + c.a), to = hr(Math.min(hIdx + c.b + 1, H.time.length - 1));
     return '<div class="wx-window caution"><div class="wx-window-t">🕊 Possible window <b>' + from + ' – ' + to + '</b>' + siteTag + '</div><div class="wx-window-s">' +
-      'Fly with caution — wind is above your orange point (' + fmtSpeedNum(c.aw) + ' / ' + fmtSpeedNum(c.ag) + ' ' + speedUnit() + ') · ' +
+      'Fly with caution — wind is above your orange point (' + fmtSpeedNum(c.aw) + ' / ' + fmtSpeedNum(c.ag) + ' ' + speedUnit() + ') · ' + altTxt(c) +
       (c.wasWet ? 'Rain clears by ' + from + ' · ' : '') + (c.night ? 'Night hours included — anti-collision lights required · ' : '') + (c.lowNow ? 'Low cloud or visibility reported now — the forecast can’t see it, so check the airport report before you go · ' : '') + 'Wind up to ' + fmtSpeed(c.maxW) + ', gusts up to ' + fmtSpeed(c.maxG) + '</div></div>';
   }
   const nt = nightOn(), dl = nt ? 'hours' : 'daylight hours';
