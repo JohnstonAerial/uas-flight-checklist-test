@@ -580,7 +580,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-units { flex-direction: column; line-height: 1.15; white-space: nowrap; flex-shrink: 0; }
   .ws-chip { position: relative; display: inline-block; vertical-align: 1px; margin: 0 1px; }
   .ws-chip::after { content: '\25BE'; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font-size: 9px; color: var(--link); pointer-events: none; }
-  .ws-chip .ws-sel, .ws-chip .hs-sel { -webkit-appearance: none; appearance: none; font-family: inherit; font-size: 10.5px; font-weight: 600; line-height: 1.3; color: var(--link); background: transparent; border: 1px solid var(--border); border-radius: 9px; padding: 2px 15px 2px 6px; margin: 0; cursor: pointer; }
+  .ws-chip .ws-sel { -webkit-appearance: none; appearance: none; font-family: inherit; font-size: 10.5px; font-weight: 600; line-height: 1.3; color: var(--link); background: transparent; border: 1px solid var(--border); border-radius: 9px; padding: 2px 15px 2px 6px; margin: 0; cursor: pointer; }
   .wx-units { font-size: 11px; color: var(--link); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; padding: 2px 9px; margin-left: auto; margin-right: 6px; }
   .wx-refresh { font-size: 11px; color: var(--link); cursor: pointer; background: none; border: none; font-family: inherit; padding: 2px 6px; }
   .wx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -646,8 +646,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .hs-dark .hs-c, .hs-dark .hs-t { opacity: 0.5; }
   .hs-r { margin-top: 3px; font-size: 10px; color: #3d8bfd; min-height: 12px; }
   .hs-key { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
-  .hs-title .hs-chip { margin: 0 3px; }
-  .hs-title .hs-sel { text-transform: none; letter-spacing: 0; }
+  .hs-title .hs-chip { margin: 0 3px; border: 1px solid var(--border); border-radius: 9px; padding: 2px 16px 2px 7px; font-size: 10.5px; font-weight: 600; line-height: 1.3; color: var(--link); text-transform: none; letter-spacing: 0; cursor: pointer; }
+  .hs-chip .hs-sel { position: absolute; left: 0; top: 0; width: 100%; height: 100%; opacity: 0; border: 0; padding: 0; margin: 0; font-size: 16px; cursor: pointer; -webkit-appearance: none; appearance: none; }
+  .hs-cap { font-size: 10.5px; color: var(--text-muted); margin: -2px 0 6px; line-height: 1.3; }
   .hc-none { background: transparent; color: var(--text-muted); border: 1px solid var(--border); font-weight: 400; }
   .hc-cloud { color: var(--text); }
   .wx-window-s { margin-top: 2px; }
@@ -723,7 +724,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.8a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.8b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2984,7 +2985,7 @@ function hourStripHtml(om, hIdx) {
   const cls = { 'wx-good': 'hc-good', 'wx-warn': 'hc-warn', 'wx-alert': 'hc-alert' };
   const altLab = metric ? '120 m' : '400 ft';
   const views = [['wind', 'Wind']];
-  if (H.wind_speed_120m) views.push(['alt', altLab + ' wind']);
+  if (H.wind_speed_120m) views.push(['alt', 'Aloft']);
   if (H.temperature_2m) views.push(['temp', 'Temp']);
   if (H.visibility) views.push(['vis', 'Visibility']);
   if (H.cloud_cover) views.push(['cloud', 'Clouds']);
@@ -3033,18 +3034,26 @@ function hourStripHtml(om, hIdx) {
     }
     cells += '<div class="hs-h' + (dark ? ' hs-dark' : '') + '"><div class="hs-t">' + lab + '</div>' + cell + '<div class="hs-r">' + under + '</div></div>';
   }
-  const cap = { wind: 'ground · ' + speedUnit(), alt: speedUnit(), temp: metric ? '°C' : '°F', vis: metric ? 'km' : 'SM', cloud: '% cover', rain: '% · ' + (metric ? 'mm' : 'in') }[view];
+  const U = speedUnit();
+  const cap = {
+    wind: 'Sustained / gust · ' + U + ' · ground level · blue = chance of rain',
+    alt: 'Wind at ' + altLab + ' · ' + U + ' · no gust figure at height',
+    temp: (metric ? '°C' : '°F') + ' · each hour’s forecast temperature',
+    vis: (metric ? 'km' : 'SM') + ' · “fog” = temperature close to the dew point',
+    cloud: '% cloud cover · darker = cloudier',
+    rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
+  }[view];
   const key = {
-    wind: 'Colours follow your wind limits · blue = chance of rain · dimmed = after sunset',
-    alt: 'Wind at ' + altLab + ' (no gust figure at height) · colours follow your wind limits · dimmed = after sunset',
+    wind: 'Colours follow your wind limits · dimmed = after sunset',
+    alt: 'Colours follow your wind limits · dimmed = after sunset',
     temp: 'Colours follow your temperature limits · dimmed = after sunset',
-    vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + ' · fog = temperature within 2°F (1°C) of the dew point · dimmed = after sunset',
-    cloud: 'Darker = cloudier · forecast cloud cover, a guide only · dimmed = after sunset',
-    rain: 'Chance of rain, amount below · amber 30% or more, red 60% or more · dimmed = after sunset'
+    vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + ' · fog = within 2°F (1°C) of the dew point · dimmed = after sunset',
+    cloud: 'Forecast cloud cover, a guide only · dimmed = after sunset',
+    rain: 'Amber = 30% or more · red = 60% or more · dimmed = after sunset'
   }[view];
   const name = views.find(v => v[0] === view)[1];
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + v[1] + '</option>').join('');
-  return '<div class="wx-strip"><div class="hs-title">Next 12 hours <span class="ws-chip hs-chip"><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + cap + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + key + '</div></div>';
+  return '<div class="wx-strip"><div class="hs-title">Next 12 hours <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span></div><div class="hs-cap">' + cap + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + key + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
