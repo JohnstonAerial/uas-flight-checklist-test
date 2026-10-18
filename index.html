@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.11a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.11b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3992,7 +3992,9 @@ async function renderWeather(lat, lon, attempt = 1) {
         const pb = precipBlock();
         nightUpdate = () => {
           const el = document.getElementById('wx-night'); if (!el) return;
-          const d = isSunDown(); el.hidden = !d; el.classList.toggle('wx-night-on', nightOn()); el.innerHTML = d ? nightTxt() : '';
+          const d = isSunDown();
+          const wb = document.querySelector('.wx-window'), covered = nightOn() && !!wb && /Night hours included/.test(wb.textContent);   // the window box already carries the night reminder
+          el.hidden = !d || covered; el.classList.toggle('wx-night-on', nightOn()); el.innerHTML = d && !covered ? nightTxt() : '';
         };
         const wind120Txt = wx.wind120 != null ? ` · ${isMetric() ? '120 m' : '400 ft'}: ${fmtSpeed(wx.wind120)}` : '';
         // Wind card: the nearest airport's observed wind leads; the model figure for this spot sits under it. Each number is coloured by its own reading against your limits.
