@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1374,9 +1374,9 @@ function nwsRadarUrl(lat, lon) {
 function ageText(ms) {
   const m = Math.floor(ms / 60000);
   if (m < 1) return 'just now';
-  if (m < 60) return m + ' min ago';
+  if (m < 60) return m + '\u00A0min\u00A0ago';
   const h = Math.floor(m / 60);
-  return h + ' hr' + (h > 1 ? 's' : '') + ' ago';
+  return h + '\u00A0hr' + (h > 1 ? 's' : '') + '\u00A0ago';
 }
 
 let lpFired = false;
@@ -2701,12 +2701,12 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '&body=' + encodeURIComponent('What works, what is missing, or what is confusing:\n\n\n\n---\nApp version: ' + fbVer + '\nDevice and browser: ' + navigator.userAgent);
   const wl = document.createElement('div'); wl.className = 'wl-block';
   wl.innerHTML = '<div class="wl-row"><span>🌬 Wind limit</span><span class="wl-ctl"><input type="number" inputmode="decimal" min="1" max="999" step="any" class="wl-w" aria-label="Maximum sustained wind"> / <input type="number" inputmode="decimal" min="1" max="999" step="any" class="wl-g" aria-label="Maximum gust"><span class="wl-unit">mph</span></span></div>' +
-    '<div class="wl-hint">sustained / gusts · orange at about two-thirds, red at the limit.</div>' +
+    '<div class="wl-hint">Sustained / gusts. Orange at about two‑thirds of the limit, red at the limit.</div>' +
     '<div class="wl-row kp-row"><span>🧲 Kp warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-a" aria-label="Kp index where the warning turns orange"> / <input type="number" inputmode="decimal" min="1" max="9" step="0.1" class="kp-r" aria-label="Kp index where the warning turns red"></span></div>' +
-    '<div class="wl-hint">orange at / red at · from 1 to 9, standard 4 / 5. Higher Kp can disturb GPS and the compass.</div>' +
+    '<div class="wl-hint">Orange at / red at, from 1 to 9. Standard is 4 / 5. Higher Kp can disturb GPS and the compass.</div>' +
     '<div class="wl-row tp-row"><span>🥶 Cold warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ca" aria-label="Temperature at or below which the warning turns orange"> / <input type="number" inputmode="decimal" class="tp-cr" aria-label="Temperature at or below which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
     '<div class="wl-row tp-row"><span>🥵 Heat warning</span><span class="wl-ctl"><input type="number" inputmode="decimal" class="tp-ha" aria-label="Temperature at or above which the warning turns orange"> / <input type="number" inputmode="decimal" class="tp-hr" aria-label="Temperature at or above which the warning turns red"><span class="tp-unit">°F</span></span></div>' +
-    '<div class="wl-hint">orange at / red at · standard cold 40 / 14 °F (4 / −10 °C), heat 95 / 104 °F (35 / 40 °C). Check your aircraft\'s operating range.</div>';
+    '<div class="wl-hint">Orange at / red at. Standard: cold 40 / 14 °F (4 / −10 °C), heat 95 / 104 °F (35 / 40 °C). Check your aircraft\'s operating range.</div>';
   const fnb = document.createElement('div'); fnb.className = 'fn-block';
   fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
     '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
@@ -2714,11 +2714,11 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   acb.innerHTML = '<div class="fn-row"><span>👤 Default pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>🚁 Default drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>🪪 Default reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="FA3…" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
-    '<div class="fn-hint">Printed at the top of saved flight records and the checklist PDF. A tab uses these only when its own Pilot, Drone and Reg. # (under Customize) are blank. Saved in this browser only.</div>';
+    '<div class="fn-hint">Printed at the top of saved records and the PDF. A tab uses these only if its own Pilot, Drone and Reg. # (under Customize) are blank.</div>';
   const pdb = document.createElement('div'); pdb.className = 'pdfset';
   pdb.innerHTML = '<div class="pd-row"><span>📄 PDF layout</span><div class="pd-seg" role="radiogroup" aria-label="PDF layout"><button type="button" role="radio" data-k="layout" data-v="compact">Compact</button><button type="button" role="radio" data-k="layout" data-v="large">Large print</button></div></div>' +
     '<div class="pd-row"><span>📏 PDF paper</span><div class="pd-seg" role="radiogroup" aria-label="PDF paper size"><button type="button" role="radio" data-k="paper" data-v="letter">Letter</button><button type="button" role="radio" data-k="paper" data-v="a4">A4</button></div></div>' +
-    '<div class="pd-hint">Compact: 2 columns, fewer pages. Used for the checklist PDF and saved flight records.</div>';
+    '<div class="pd-hint"><b>Compact:</b> two columns, fewer pages. <b>Large print:</b> one column, bigger type. Applies to the checklist PDF and saved flight records. <b>Print</b> is always one column in large type.</div>';
   pdb.addEventListener('click', e => {
     const bt = e.target.closest('button[data-k]'); if (!bt) return;
     pdfPrefSave(bt.dataset.k === 'layout' ? bt.dataset.v : pdfLayout(), bt.dataset.k === 'paper' ? bt.dataset.v : pdfPaper());
