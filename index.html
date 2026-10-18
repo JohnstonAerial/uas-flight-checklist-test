@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4584,8 +4584,9 @@ async function recDeliver(text, name) {
   }
   const blob = new Blob([text], { type: isPdf ? 'application/pdf' : 'text/plain;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  const ios = recIpad() || /iPhone|iPod/.test(navigator.userAgent || '');   // iOS Safari ignores "download" on a blob and would replace this page with the file
+  const a = document.createElement('a'); a.href = url; a.download = name; if (ios) a.target = '_blank'; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), ios ? 120000 : 4000);
   return 'downloaded';
 }
 function recToast(msg, ms) {
@@ -4607,9 +4608,9 @@ function recOffer(text, name) {
   ov.innerHTML = pdfDesk
     ? '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
       '<h2 id="rec-ot">Your PDF is ready</h2>' +
-      '<p style="margin:0 0 8px;font-size:14px;color:var(--text-muted)"><strong>View</strong> opens it in a new tab, where you can read and print it. <strong>Download</strong> saves it to your Downloads folder.</p>' +
-      '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)"><strong>Share\u2026</strong> opens ' + (ipad ? 'the iPad share sheet (Print, Save to Files, Mail, Messages, AirDrop)' : isMac ? 'the Mac share sheet (Mail, Messages, AirDrop, Notes)' : 'your browser\'s share menu') + '.</p>' +
-      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-save">Share\u2026</button><button type="button" class="rec-view">View</button><button type="button" class="rec-dl rec-primary">Download</button></div></div>'
+      '<p style="margin:0 0 8px;font-size:14px;color:var(--text-muted)"><strong>View</strong> opens it in a new tab, where you can read and print it.' + (ipad ? '' : ' <strong>Download</strong> saves it to your Downloads folder.') + '</p>' +
+      '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)"><strong>Share\u2026</strong> opens ' + (ipad ? 'the iPad share sheet (Save to Files, Print, Mail, Messages, AirDrop)' : isMac ? 'the Mac share sheet (Mail, Messages, AirDrop, Notes)' : 'your browser\'s share menu') + '.</p>' +
+      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-save">Share\u2026</button><button type="button" class="rec-view' + (ipad ? ' rec-primary' : '') + '">View</button>' + (ipad ? '' : '<button type="button" class="rec-dl rec-primary">Download</button>') + '</div></div>'
     : '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
       '<h2 id="rec-ot">Your record is ready</h2>' +
       '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
@@ -4626,7 +4627,8 @@ function recOffer(text, name) {
     setTimeout(() => URL.revokeObjectURL(url), 120000);
     done();
   };
-  ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recDraftClear(); recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' saved to your downloads'); };
+  const dlb = ov.querySelector('.rec-dl');
+  if (dlb) dlb.onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recDraftClear(); recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' saved to your downloads'); };
   ov.querySelector('.rec-save').onclick = async () => {
     recForceShare = true; const h = await recDeliver(text, name); recForceShare = false;
     if (h === 'refused') { recToast('Sharing is not available right now — use Download'); return; }
