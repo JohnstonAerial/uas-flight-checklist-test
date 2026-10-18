@@ -395,7 +395,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .rec-actions-2 .rec-primary { order: 1; }
   .rec-actions-2 .rec-alt { order: 2; }
   .rec-actions-2 .rec-cancel { order: 3; }
-  .rec-actions .rec-dl, .rec-actions .rec-alt { color: var(--blue); border-color: var(--blue); }
+  .rec-actions .rec-dl, .rec-actions .rec-alt, .rec-actions .rec-view { color: var(--blue); border-color: var(--blue); }
   .rec-actions .rec-primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
   .xfer { max-width: 600px; margin: 14px auto 6px; padding: 12px 16px 4px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text-light); }
   .body-bak { padding: 0; }
@@ -721,7 +721,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.9d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.10a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4606,9 +4606,9 @@ function recOffer(text, name) {
   ov.innerHTML = pdfDesk
     ? '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
       '<h2 id="rec-ot">Your PDF is ready</h2>' +
-      '<p style="margin:0 0 8px;font-size:14px;color:var(--text-muted)"><strong>Download</strong> saves it to your Downloads folder. Open it there to print or move it.</p>' +
+      '<p style="margin:0 0 8px;font-size:14px;color:var(--text-muted)"><strong>View</strong> opens it in a new tab, where you can read and print it. <strong>Download</strong> saves it to your Downloads folder.</p>' +
       '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)"><strong>Share\u2026</strong> opens ' + (isMac ? 'the Mac share sheet (Mail, Messages, AirDrop, Notes)' : 'your browser\'s share menu') + '.</p>' +
-      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-save">Share\u2026</button><button type="button" class="rec-dl rec-primary">Download</button></div></div>'
+      '<div class="rec-actions"><button type="button" class="rec-cancel">Close</button><button type="button" class="rec-save">Share\u2026</button><button type="button" class="rec-view">View</button><button type="button" class="rec-dl rec-primary">Download</button></div></div>'
     : '<div class="rec-box" role="dialog" aria-modal="true" aria-labelledby="rec-ot">' +
       '<h2 id="rec-ot">Your record is ready</h2>' +
       '<p style="margin:0 0 4px;font-size:14px;color:var(--text-muted)">Your browser didn\'t open the Share sheet this time. Tap Share to try again, or Download to save the file.</p>' +
@@ -4617,6 +4617,14 @@ function recOffer(text, name) {
   const done = () => ov.remove();
   ov.addEventListener('click', e => { if (e.target === ov) done(); });
   ov.querySelector('.rec-cancel').onclick = done;
+  const vb = ov.querySelector('.rec-view');
+  if (vb) vb.onclick = () => {                       // open the PDF in a new tab (called straight from the tap so pop-up blockers allow it)
+    let url = null, w = null;
+    try { url = URL.createObjectURL(new Blob([text], { type: 'application/pdf' })); w = window.open(url, '_blank'); } catch (e) {}
+    if (!w) { if (url) URL.revokeObjectURL(url); recToast('Your browser blocked the new tab. Use Download instead.', 5000); return; }
+    setTimeout(() => URL.revokeObjectURL(url), 120000);
+    done();
+  };
   ov.querySelector('.rec-dl').onclick = async () => { recForceDownload = true; const h = await recDeliver(text, name); recForceDownload = false; done(); recDraftClear(); recToast('✓ ' + (/\.pdf$/i.test(name) ? 'PDF' : 'Record') + ' saved to your downloads'); };
   ov.querySelector('.rec-save').onclick = async () => {
     recForceShare = true; const h = await recDeliver(text, name); recForceShare = false;
