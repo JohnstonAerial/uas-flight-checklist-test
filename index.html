@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3015,7 +3015,7 @@ function hourStripHtml(om, hIdx) {
   }
   const U = speedUnit();
   const cap = {
-    wind: 'Ground wind · sustained / gust · ' + U,
+    wind: 'Ground wind\u00A0· sustained\u00A0/\u00A0gust\u00A0· ' + U,
     alt: 'Wind at ' + altLab + ' · sustained only · ' + U,
     temp: (metric ? '°C' : '°F') + ' · each hour’s forecast temperature',
     vis: (metric ? 'km' : 'SM') + ' · “fog” = temperature close to the dew point',
@@ -3703,7 +3703,7 @@ function showOffline() {
   if (goodDraw && goodKey === key && lastWeatherAt) {
     lastDraw = goodDraw;
     goodDraw();
-    const t = new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const t = tnb(new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
     const msg = '📴 No signal — weather isn\'t updating. Showing data from ' + t + '.';
     body.insertAdjacentHTML('afterbegin', '<div class="wx-status wx-warn">' + msg + '</div>');
     srSay('No signal. Weather isn\'t updating. Showing data from ' + t + '.');
@@ -3853,7 +3853,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         : region === 'intl'
         ? '🌙 Sun is down — check your local rules for night flying'
         : '🌙 Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 SM';
-      const fmtT = (iso) => iso ? new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '—';
+      const fmtT = (iso) => iso ? tnb(new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})) : '—';
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
@@ -3929,7 +3929,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         return 'Precipitation';
       })();
       const precipSub = () => precipNext
-        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? ' · ' + fmtPrecip(precipNext.mm) + ' (forecast)' : ' (forecast)')
+        ? 'Next 6 hrs: ' + precipNext.prob + '% chance' + (precipNext.mm >= 0.05 ? '\u00A0· ' + fmtPrecip(precipNext.mm) + ' (forecast)' : ' (forecast)')
         : 'No forecast data';
       // Best evidence first: the model's current conditions; radar + airport agreeing; radar nearby; an airport report alone
       const precipBlock = () => {
@@ -3949,7 +3949,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         const lines = [];
         if (!rd) lines.push('Radar unavailable');
         else if (!rd.covered) lines.push('No radar coverage here');
-        else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + ' · ' + new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (' + ageText(rd.ageMin * 60000) + ')');
+        else lines.push('Radar: ' + (rd.near ? 'echoes within ' + fmtDist(rd.nearMi) : 'nothing within ' + fmtDist(rd.nearMi)) + '\u00A0· ' + tnb(new Date(rd.frameTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })) + ' (' + ageText(rd.ageMin * 60000) + ')');
         if (radarNear && !pm && !precipLabel) lines.push('No rain reported');
         if (pm) lines.push(pm.station + ' reports ' + pm.text + ' · ' + fmtDist(pm.dist));
         if (hz) lines.push(hz.station + ' reports ' + hz.text + ' · ' + fmtDist(hz.dist));
@@ -3999,13 +3999,13 @@ async function renderWeather(lat, lon, attempt = 1) {
         const windHTML = ow ? `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windColor(owMph, owGust)}">${fmtSpeedNum(owMph) + (owGust ? ' / ' + fmtSpeedNum(owGust) : '') + ' ' + windChipHtml() + owArrow}</div>
-            <div class="wx-sub">${owGust ? 'Sustained / Gusts' : 'No gusts reported'}${owDirTxt ? ' · ' + owDirTxt : ''}</div>
+            <div class="wx-sub">${owGust ? 'Sustained\u00A0/\u00A0Gusts' : 'No gusts reported'}${owDirTxt ? '\u00A0· ' + owDirTxt : ''}</div>
             <div class="wx-sub" data-rec-age="${Date.now() - ow.ageMin * 60000}">${ow.station} · ${fmtDist(ow.dist)} away · ${ageText(ow.ageMin * 60000)}</div>
             ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${modelTxt}</strong></div>` : ''}
             ${windHtsHTML(wx, windOk ? windMph : null)}` : `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windOk ? windColor(windMph, gustMph) : ''}">${windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + windChipHtml() + (dirOk ? ' ' + windDirHtml(wx.wind.deg) : '') : '—'}</div>
-            <div class="wx-sub">${windOk ? (gustMph ? 'Sustained / Gusts' : 'No gusts reported') : 'No wind data'}</div>
+            <div class="wx-sub">${windOk ? (gustMph ? 'Sustained\u00A0/\u00A0Gusts' : 'No gusts reported') : 'No wind data'}</div>
             ${windHtsHTML(wx, windOk ? windMph : null)}`;
         body.innerHTML = `
         <div class="wx-grid">
@@ -4079,7 +4079,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       // Keep the last good reading on screen, with a note
       lastDraw = goodDraw;
       goodDraw();
-      const t = new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const t = tnb(new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
       body.insertAdjacentHTML('afterbegin', `<div class="wx-status wx-warn">Couldn't refresh — showing ${t} data. ${friendlyWxError(e)}</div>`);
       srSay('Couldn\'t refresh. Showing ' + t + ' data. ' + friendlyWxError(e));
     } else {
@@ -4099,7 +4099,7 @@ function refreshAge() {
   const span = document.getElementById('wx-age');
   if (!el || !span || !lastWeatherAt) return;
   const ms = Date.now() - lastWeatherAt;
-  span.textContent = ' · ' + ageText(ms) + (ms >= STALE_MS ? ' — tap Refresh' : '');
+  span.textContent = '\u00A0· ' + ageText(ms) + (ms >= STALE_MS ? ' — tap Refresh' : '');
   el.classList.toggle('wx-stale', ms >= STALE_MS);
 }
 
@@ -4200,6 +4200,7 @@ function recPrefs() {
   const p = recall(REC_KEY, {}) || {};
   return { weather: p.weather !== false, unchecked: p.unchecked !== false, coords: p.coords === true, more: p.more === true, fmt: p.fmt === 'text' ? 'text' : 'pdf' };
 }
+function tnb(s) { return String(s).replace(/\s+([AP]M)\b/i, '\u00A0$1'); }   // keep "11:10 AM" on one line
 function recClean(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
 function recNoEmoji(s) { return recClean(String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu, '')); }
 function recSiteDefault() {
