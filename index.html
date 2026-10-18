@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12g</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3016,7 +3016,7 @@ function hourStripHtml(om, hIdx) {
   const U = speedUnit();
   const cap = {
     wind: 'Ground wind · sustained / gust · ' + U,
-    alt: 'Wind at ' + altLab + ' · ' + U + ' · no gust figure at height',
+    alt: 'Wind at ' + altLab + ' · sustained only · ' + U,
     temp: (metric ? '°C' : '°F') + ' · each hour’s forecast temperature',
     vis: (metric ? 'km' : 'SM') + ' · “fog” = temperature close to the dew point',
     cloud: (cloudTrend(H, hIdx, n) || '% cloud cover · ') + 'more grey = cloudier',
