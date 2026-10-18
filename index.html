@@ -722,7 +722,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v3.9.12e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3015,7 +3015,7 @@ function hourStripHtml(om, hIdx) {
   }
   const U = speedUnit();
   const cap = {
-    wind: 'Ground wind · sustained / gust · ' + U + ' · blue = rain chance',
+    wind: 'Ground wind · sustained / gust · ' + U,
     alt: 'Wind at ' + altLab + ' · ' + U + ' · no gust figure at height',
     temp: (metric ? '°C' : '°F') + ' · each hour’s forecast temperature',
     vis: (metric ? 'km' : 'SM') + ' · “fog” = temperature close to the dew point',
@@ -3023,7 +3023,7 @@ function hourStripHtml(om, hIdx) {
     rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
   }[view];
   const key = {
-    wind: 'Colours follow your wind limits · dimmed = after sunset',
+    wind: 'Blue = rain chance · colours follow your wind limits · dimmed = after sunset',
     alt: 'Colours follow your wind limits · dimmed = after sunset',
     temp: 'Colours follow your temperature limits · dimmed = after sunset',
     vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + ' · fog = within 2°F (1°C) of the dew point · dimmed = after sunset',
