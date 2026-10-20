@@ -731,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.1a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.1b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -783,7 +783,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
     <a class="wx-radar" href="https://radar.weather.gov" target="_blank" rel="noopener">🌧 Radar — NWS</a>
     <a class="wx-facmap" href="https://experience.arcgis.com/experience/e6e8b84c6f1144f69a30f9632ebe4352" target="_blank" rel="noopener">🗺 Facility map — FAA</a>
-    <a class="wx-airmap" href="https://app.autopylot.io" target="_blank" rel="noopener">🛩 Airspace map — B4UFLY</a>
+    <a class="wx-airmap" id="wx-airmap" href="https://airaware.aloft.ai/" target="_blank" rel="noopener">🛩 Airspace map — Aloft</a>
   </div>
 </div>
 
@@ -3996,6 +3996,9 @@ async function renderWeather(lat, lon, attempt = 1) {
       const fmtT = (iso) => iso ? tnb(new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})) : '—';
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
+      // The airspace map button opens at this same spot (the link carries only the coordinates)
+      const amEl = document.getElementById('wx-airmap');
+      if (amEl && isFinite(Number(lat)) && isFinite(Number(lon))) amEl.href = 'https://airaware.aloft.ai/?lat=' + Number(lat).toFixed(5) + '&long=' + Number(lon).toFixed(5);
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
       let goldenLine = '';
       try {
