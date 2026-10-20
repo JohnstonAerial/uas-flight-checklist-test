@@ -731,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.1c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.1d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3998,7 +3998,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
       // The airspace map button opens at this same spot (the link carries only the coordinates)
       const amEl = document.getElementById('wx-airmap');
-      if (amEl && isFinite(Number(lat)) && isFinite(Number(lon))) amEl.href = 'https://skyvector.com/?ll=' + Number(lat).toFixed(4) + ',' + Number(lon).toFixed(4) + '&chart=301&zoom=2';
+      if (amEl && isFinite(Number(lat)) && isFinite(Number(lon))) amEl.href = 'https://skyvector.com/?ll=' + Number(lat).toFixed(4) + ',' + Number(lon).toFixed(4) + '&chart=301&zoom=1';
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
       let goldenLine = '';
       try {
