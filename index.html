@@ -731,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.2c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.2d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4164,12 +4164,12 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${modelTxt}</strong></div>` : ''}
             ${windierHtml}
             ${windHtsHTML(wx, windOk ? windMph : null)}
-            <div class="wx-note wx-windnote">Trees, buildings and terrain can make it windier where you fly.</div>` : `
+            <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>` : `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windOk ? windColor(windMph, gustMph) : ''}">${windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + windChipHtml() + (dirOk ? ' ' + windDirHtml(wx.wind.deg) : '') : '—'}</div>
             <div class="wx-sub">${windOk ? (gustMph ? 'Sustained\u00A0/\u00A0Gusts' : 'No gusts reported') : 'No wind data'}</div>
             ${windHtsHTML(wx, windOk ? windMph : null)}
-            <div class="wx-note wx-windnote">Trees, buildings and terrain can make it windier where you fly.</div>`;
+            <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>`;
         body.innerHTML = `
         <div class="wx-grid">
           <div class="wx-item">
