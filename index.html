@@ -668,6 +668,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-tfr { display: block; width: 100%; padding: 9px; background: #e0301e; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-notam { display: block; width: 100%; padding: 9px; background: #7f3fbf; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-facmap { display: block; width: 100%; padding: 9px; background: #1f6f8b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-airmap { display: block; grid-column: 1 / -1; width: 100%; padding: 9px; background: #3d4a9c; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-radar { display: block; width: 100%; padding: 9px; background: #1a6b3c; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
 
   /* Accessibility: screen-reader text, visible keyboard focus, bigger tap targets, 16px form text (stops iOS zoom-on-focus) */
@@ -730,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.1a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -782,6 +783,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
     <a class="wx-radar" href="https://radar.weather.gov" target="_blank" rel="noopener">🌧 Radar — NWS</a>
     <a class="wx-facmap" href="https://experience.arcgis.com/experience/e6e8b84c6f1144f69a30f9632ebe4352" target="_blank" rel="noopener">🗺 Facility map — FAA</a>
+    <a class="wx-airmap" href="https://app.autopylot.io" target="_blank" rel="noopener">🛩 Airspace map — B4UFLY</a>
   </div>
 </div>
 
@@ -3146,12 +3148,12 @@ function hourStripHtml(om, hIdx) {
     rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
   }[view];
   const key = {
-    wind: 'Blue = rain chance\u00A0· colours follow your wind limits\u00A0· dimmed = after sunset',
-    alt: 'Colours follow your wind limits\u00A0· dimmed = after sunset',
-    temp: 'Colours follow your temperature limits\u00A0· dimmed = after sunset',
-    vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + '\u00A0· fog = within 2°F (1°C) of the dew point\u00A0· dimmed = after sunset',
-    cloud: 'Forecast cloud cover, a guide only\u00A0· dimmed = after sunset',
-    rain: 'Amber = 30% or more\u00A0· red = 60% or more\u00A0· dimmed = after sunset'
+    wind: 'Blue = rain chance\u00A0· colours follow your wind limits\u00A0· dimmed = night',
+    alt: 'Colours follow your wind limits\u00A0· dimmed = night',
+    temp: 'Colours follow your temperature limits\u00A0· dimmed = night',
+    vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + '\u00A0· fog = within 2°F (1°C) of the dew point\u00A0· dimmed = night',
+    cloud: 'Forecast cloud cover, a guide only\u00A0· dimmed = night',
+    rain: 'Amber = 30% or more\u00A0· red = 60% or more\u00A0· dimmed = night'
   }[view];
   const name = views.find(v => v[0] === view)[1];
   let capTxt = cap, keyTxt = key;
