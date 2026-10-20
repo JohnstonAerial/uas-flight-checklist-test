@@ -731,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.3a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.3b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2884,7 +2884,6 @@ function windHtsHTML(wx, surf) {
   if (wx.wind120 == null) return '';
   const m = isMetric();
   const rows = [];
-  if (surf != null) rows.push(['Ground', surf, 0]);
   if (wx.wind80 != null) rows.push([m ? '80 m' : '260 ft', wx.wind80, 1]);
   rows.push([m ? '120 m' : '400 ft', wx.wind120, 1]);
   const top = rows.filter(r => r[2]).reduce((a, r) => r[1] > a[1] ? r : a, ['', -1]);
