@@ -603,6 +603,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-hrow b { font-weight: 700; }
   .wx-hnote { margin-top: 3px; font-size: 10.5px; font-style: italic; color: var(--text-muted); line-height: 1.3; }
   .wx-hshear { margin-top: 4px; padding: 3px 6px; border: 1px solid var(--amber); border-radius: 7px; line-height: 1.3; }
+  .wx-li { margin-top: 1px; }
   .wx-model { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
   .wx-model strong { font-weight: 700; }
   .wx-loc { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: -4px 0 10px; font-size: 13px; color: var(--text); }
@@ -731,7 +732,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.4b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.5a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4069,8 +4070,8 @@ async function renderWeather(lat, lon, attempt = 1) {
       const visTxt = () => ov ? fmtVisObs(ov) : fmtVis(wx.visibility);
       const visSrc = () => ov ? ' · ' + ov.station : (wx.visibility != null ? ' · forecast model' : '');
       const visNote = () => metarData2 && metarData2.lowVis && metarData2.lowVis.length ? '☁️ Lower nearby: ' + metarData2.lowVis.map(v => v.station + ' ' + fmtVisObs({ mi: v.mi, plus: false }) + ' (' + fmtDist(v.dist) + ')').join(' · ') : '';
-      const alsoTxt = () => metarData2 && metarData2.also && metarData2.also.length ? 'Also reporting: ' + metarData2.also.map(a => a.station + ' ' + NB(a.ft != null ? fmtAlt(a.ft) : a.kind === 'none' ? 'No ceiling' : 'Clear') + ' ' + NB('(' + fmtDist(a.dist) + ')')).join('\u00A0\u00B7 ') : '';
-      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby: ' + metarData2.lower.map(l => l.station + ' ' + NB(fmtAlt(l.ft)) + ' ' + NB('(' + fmtDist(l.dist) + ')')).join('\u00A0\u00B7 ') : '';
+      const alsoTxt = () => metarData2 && metarData2.also && metarData2.also.length ? 'Also reporting:' + metarData2.also.map(a => '<div class="wx-li">' + a.station + ' ' + NB(a.ft != null ? fmtAlt(a.ft) : a.kind === 'none' ? 'No ceiling' : 'Clear') + ' ' + NB('(' + fmtDist(a.dist) + ')') + '</div>').join('') : '';
+      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby:' + metarData2.lower.map(l => '<div class="wx-li">' + l.station + ' ' + NB(fmtAlt(l.ft)) + ' ' + NB('(' + fmtDist(l.dist) + ')') + '</div>').join('') : '';
       // US only: visibility under 3 statute miles (14 CFR 107.51) is shown in red with a short note
       const visBelowMin = () => region !== 'intl' && typeof visM === 'number' && visM < 4828;
 
@@ -4160,7 +4161,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         const owArrow = ow && owMph > 0 && !ow.variable && ow.deg != null ? ' ' + windDirHtml(ow.deg) : '';
         const modelTxt = windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + speedUnit() : '';
         const wiList = ow && metarData2.windier ? metarData2.windier : [];
-        const windierHtml = wiList.length ? '<div class="wx-sub wx-windier">Windier nearby: ' + wiList.map(s => s.station + ' <strong class="' + s.col + '">' + NB(fmtSpeedNum(s.mph) + (s.gust !== null && Math.round(s.gust) > Math.round(s.mph) ? ' / ' + fmtSpeedNum(s.gust) : '') + ' ' + speedUnit()) + '</strong> ' + NB('(' + fmtDist(s.dist) + ')')).join('\u00A0\u00B7 ') + '</div>' : '';
+        const windierHtml = wiList.length ? '<div class="wx-sub wx-windier">Windier nearby:' + wiList.map(s => '<div class="wx-li">' + s.station + ' <strong class="' + s.col + '">' + NB(fmtSpeedNum(s.mph) + (s.gust !== null && Math.round(s.gust) > Math.round(s.mph) ? ' / ' + fmtSpeedNum(s.gust) : '') + ' ' + speedUnit()) + '</strong> ' + NB('(' + fmtDist(s.dist) + ')') + '</div>').join('') + '</div>' : '';
         const windHTML = ow ? `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windColor(owMph, owGust)}">${fmtSpeedNum(owMph) + (owGust ? ' / ' + fmtSpeedNum(owGust) : '') + ' ' + windChipHtml() + owArrow}</div>
