@@ -731,7 +731,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.3b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.4a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2873,6 +2873,8 @@ function windLimits() {
   return { w: ok(o && o.w), g: ok(o && o.g) };
 }
 // Wind by height (Wind tile, tap "more"): surface, 260 ft and 400 ft (10, 80 and 120 m)
+// Keep a list entry together on one line (a plain space becomes a no-break space) so lists wrap between entries, not inside them
+const NB = (t) => String(t).replace(/ /g, '\u00A0');
 let windHtsOpen = false;
 function windHtsToggle(btn) {
   windHtsOpen = !windHtsOpen;
@@ -4067,8 +4069,8 @@ async function renderWeather(lat, lon, attempt = 1) {
       const visTxt = () => ov ? fmtVisObs(ov) : fmtVis(wx.visibility);
       const visSrc = () => ov ? ' · ' + ov.station : (wx.visibility != null ? ' · forecast model' : '');
       const visNote = () => metarData2 && metarData2.lowVis && metarData2.lowVis.length ? '☁️ Lower nearby: ' + metarData2.lowVis.map(v => v.station + ' ' + fmtVisObs({ mi: v.mi, plus: false }) + ' (' + fmtDist(v.dist) + ')').join(' · ') : '';
-      const alsoTxt = () => metarData2 && metarData2.also && metarData2.also.length ? 'Also reporting: ' + metarData2.also.map(a => a.station + ' ' + (a.ft != null ? fmtAlt(a.ft) : a.kind === 'none' ? 'No ceiling' : 'Clear') + ' (' + fmtDist(a.dist) + ')').join(' \u00B7 ') : '';
-      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby: ' + metarData2.lower.map(l => l.station + ' ' + fmtAlt(l.ft) + ' (' + fmtDist(l.dist) + ')').join(' · ') : '';
+      const alsoTxt = () => metarData2 && metarData2.also && metarData2.also.length ? 'Also reporting: ' + metarData2.also.map(a => NB(a.station + ' ' + (a.ft != null ? fmtAlt(a.ft) : a.kind === 'none' ? 'No ceiling' : 'Clear') + ' (' + fmtDist(a.dist) + ')')).join('\u00A0\u00B7 ') : '';
+      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby: ' + metarData2.lower.map(l => NB(l.station + ' ' + fmtAlt(l.ft) + ' (' + fmtDist(l.dist) + ')')).join('\u00A0\u00B7 ') : '';
       // US only: visibility under 3 statute miles (14 CFR 107.51) is shown in red with a short note
       const visBelowMin = () => region !== 'intl' && typeof visM === 'number' && visM < 4828;
 
@@ -4158,13 +4160,13 @@ async function renderWeather(lat, lon, attempt = 1) {
         const owArrow = ow && owMph > 0 && !ow.variable && ow.deg != null ? ' ' + windDirHtml(ow.deg) : '';
         const modelTxt = windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + speedUnit() : '';
         const wiList = ow && metarData2.windier ? metarData2.windier : [];
-        const windierHtml = wiList.length ? '<div class="wx-sub wx-windier">Windier nearby: ' + wiList.map(s => s.station + ' <strong class="' + s.col + '">' + fmtSpeedNum(s.mph) + (s.gust !== null && Math.round(s.gust) > Math.round(s.mph) ? ' / ' + fmtSpeedNum(s.gust) : '') + ' ' + speedUnit() + '</strong> (' + fmtDist(s.dist) + ')').join(' \u00B7 ') + '</div>' : '';
+        const windierHtml = wiList.length ? '<div class="wx-sub wx-windier">Windier nearby: ' + wiList.map(s => s.station + '\u00A0<strong class="' + s.col + '">' + NB(fmtSpeedNum(s.mph) + (s.gust !== null && Math.round(s.gust) > Math.round(s.mph) ? ' / ' + fmtSpeedNum(s.gust) : '') + ' ' + speedUnit()) + '</strong>\u00A0(' + NB(fmtDist(s.dist)) + ')').join('\u00A0\u00B7 ') + '</div>' : '';
         const windHTML = ow ? `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windColor(owMph, owGust)}">${fmtSpeedNum(owMph) + (owGust ? ' / ' + fmtSpeedNum(owGust) : '') + ' ' + windChipHtml() + owArrow}</div>
             <div class="wx-sub">${owGust ? 'Sustained\u00A0/\u00A0Gusts' : 'No gusts reported'}${owDirTxt ? '\u00A0· ' + owDirTxt : ''}</div>
             <div class="wx-sub" data-rec-age="${Date.now() - ow.ageMin * 60000}">${ow.station} · ${fmtDist(ow.dist)} away · ${ageText(ow.ageMin * 60000)}</div>
-            ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${modelTxt}</strong></div>` : ''}
+            ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${NB(modelTxt)}</strong></div>` : ''}
             ${windierHtml}
             ${windHtsHTML(wx, windOk ? windMph : null)}
             <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>` : `
