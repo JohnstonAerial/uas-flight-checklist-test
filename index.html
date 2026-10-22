@@ -733,7 +733,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.7a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.8a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1599,6 +1599,27 @@ function nightSet(v) {
   document.querySelectorAll('.region-row').forEach(r => r.classList.toggle('night-on', !!v));
   if (lastDraw) lastDraw();
 }
+// Keep screen on (Settings, off by default, saved on this device and in Back up & restore): asks the phone to keep the screen awake while the app is open and in view
+const WAKE_KEY = 'uasKeepAwake';
+let wakeSentinel = null;
+function wakeSupported() { try { return !!(navigator.wakeLock && navigator.wakeLock.request); } catch (e) { return false; } }
+function wakeOn() { try { return localStorage.getItem(WAKE_KEY) === '1'; } catch (e) { return false; } }
+async function wakeAcquire() {
+  if (!wakeOn() || !wakeSupported() || document.visibilityState !== 'visible' || wakeSentinel) return;
+  try {
+    const sn = await navigator.wakeLock.request('screen');
+    wakeSentinel = sn;
+    sn.addEventListener('release', () => { if (wakeSentinel === sn) wakeSentinel = null; });   // the phone can drop it (low battery, app hidden); it is requested again when the app is back in view
+  } catch (e) { wakeSentinel = null; }
+}
+function wakeRelease() { const sn = wakeSentinel; wakeSentinel = null; if (sn) { try { sn.release(); } catch (e) {} } }
+function wakeSet(v) {
+  try { if (v) localStorage.setItem(WAKE_KEY, '1'); else localStorage.removeItem(WAKE_KEY); } catch (e) {}
+  document.querySelectorAll('.wake-sel').forEach(x => { x.value = v ? '1' : '0'; });
+  if (v) wakeAcquire(); else wakeRelease();
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') wakeAcquire(); });
+document.addEventListener('pointerdown', () => { if (wakeOn() && !wakeSentinel) wakeAcquire(); }, { passive: true });   // some browsers only allow it after a tap
 const REGION_KEY = 'uasRegion';
 let region = (function () { try { const v = localStorage.getItem(REGION_KEY); return v === 'us' || v === 'intl' ? v : null; } catch (e) { return null; } })();
 const US_ONLY_ITEMS = [/^Check TFRs \(US\) at tfr\.faa\.gov$/, /^LAANC \(US\) —/, /^Recheck TFRs \(US\)/];   // hidden outside the USA
@@ -2284,9 +2305,13 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const row = document.createElement('div');
   row.className = 'keep-row region-row';
   row.innerHTML = '<span>🌍 Where you fly</span><select class="region-sel" aria-label="Where you fly" onchange="applyRegion(this.value, true)"><option value="us">USA</option><option value="intl">Outside USA</option></select><div class="region-hint">Changes the checklist items, weather units and airspace links to match your country.</div>' +
-    '<div class="rbreak"></div><span>🌙 I fly at night</span><select class="night-sel" aria-label="I fly at night" onchange="nightSet(this.value === \'1\')"><option value="0">No</option><option value="1">Yes</option></select><div class="region-hint nh">Best window will include night hours. Check your lights and training requirements first.</div>';
+    '<div class="rbreak"></div><span>🌙 I fly at night</span><select class="night-sel" aria-label="I fly at night" onchange="nightSet(this.value === \'1\')"><option value="0">No</option><option value="1">Yes</option></select><div class="region-hint nh">Best window will include night hours. Check your lights and training requirements first.</div>' +
+    '<div class="rbreak"></div><span>🔆 Keep screen on</span><select class="wake-sel" aria-label="Keep screen on" onchange="wakeSet(this.value === \'1\')"><option value="0">No</option><option value="1">Yes</option></select><div class="region-hint wh"></div>';
   row.querySelector('select').value = region || 'us';
   row.querySelector('.night-sel').value = nightOn() ? '1' : '0';
+  row.querySelector('.wake-sel').value = wakeOn() ? '1' : '0';
+  if (wakeSupported()) row.querySelector('.wh').textContent = 'Stops the screen from locking while this app is open and in view. Uses more battery, so it is off unless you turn it on.';
+  else { row.querySelector('.wake-sel').disabled = true; row.querySelector('.wh').textContent = 'This phone or browser can\u2019t keep the screen on from a web page.'; }
   row.classList.toggle('night-on', nightOn());
   panelEl.querySelector('.keep-row').after(row);
 });
@@ -2424,7 +2449,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'wxStripView', 'wxStripSpan', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
+const XFER_KEYS = ['uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasKeepAwake', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'wxStripView', 'wxStripSpan', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -2451,7 +2476,7 @@ function xferWarm(el) {
   xferEncode(snap).then(code => { xferPre = { key, code }; }).catch(() => {});
 }
 // Back-up reminder: shown under the Settings / Back up & restore buttons after anything that a backup carries is changed
-const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'uasHideHints', 'wxUnits', 'uasWindUnit', 'uasTheme'];
+const BK_WATCH = ['uasTabs', 'uasCustomItems', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasProgressHours', 'uasRegion', 'uasNight', 'uasKeepAwake', 'uasHideHints', 'wxUnits', 'uasWindUnit', 'uasTheme'];
 let bkReady = false;
 setTimeout(() => { bkReady = true; }, 2000);
 // ?notrack on the address turns off the back-up reminder (and, on the public site, Cloudflare counting); ?track turns both back on
