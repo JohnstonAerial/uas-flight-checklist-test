@@ -769,7 +769,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1432,6 +1432,8 @@ async function gridLookup(lat, lon) {
   const key = Number(lat).toFixed(4) + ',' + Number(lon).toFixed(4);
   if (key === gridKey && btn.dataset.done) return;
   gridKey = key; delete btn.dataset.done;
+  // The tap opens the FAA's map (grids included) centered on this spot
+  btn.href = 'https://www.arcgis.com/apps/mapviewer/index.html?webmap=3b4034c30d8e4e0d8d4b7967dcde8cce&center=' + Number(lon).toFixed(5) + ',' + Number(lat).toFixed(5) + '&level=12';
   const line = btn.querySelector('span');
   if (line) line.textContent = 'Checking…';
   row.classList.remove('gridok');
