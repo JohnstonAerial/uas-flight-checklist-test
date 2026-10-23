@@ -700,6 +700,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
   .wx-tfr { display: block; width: 100%; padding: 9px; background: #e0301e; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-notam { display: block; width: 100%; padding: 9px; background: #7f3fbf; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-tfr .gl { display: block; white-space: nowrap; font-weight: 600; font-size: 12px; margin-top: 1px; color: #ffe3de; }
   .wx-facmap .gl { display: block; font-weight: 600; font-size: 12px; margin-top: 1px; }
   .wx-facmap .gl.ok { color: #b9f3c8; } .wx-facmap .gl.zero { color: #ffd98a; }
   .wx-gridnote { display: none; grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.35; }
@@ -768,7 +769,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -826,9 +827,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-cabtn" id="wx-cabtn" href="https://nrc.canada.ca/en/drone-tool/" target="_blank" rel="noopener">🇨🇦 Drone map — NRC</a>
     <a class="wx-wwbtn" id="wx-wwbtn" href="https://en.wikipedia.org/wiki/Civil_aviation_authority" target="_blank" rel="noopener">🌍 Find your aviation authority</a>
     <div class="wx-ccnote" id="wx-ccnote">No button for your country yet. <a id="wx-ccmail" href="#">Tell us which country</a> and we will look at adding it.</div>
-    <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov</a>
+    <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov<span class="gl" id="wx-tfrline"></span></a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
-    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC before you fly.</div>
+    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly.</div>
   </div>
 </div>
 
@@ -1450,6 +1451,30 @@ async function gridLookup(lat, lon) {
     clearTimeout(tm);
     if (key === gridKey) { show('', ''); gridKey = ''; }
   }
+}
+// How many TFRs the FAA lists for the state of this spot (and nationwide). A count only: it does not say whether one is near you, so the button still opens the FAA's own list. The list comes through our proxy (the FAA's server does not allow direct browser requests); if the proxy has no answer, the button stays as it was.
+let tfrList = null, tfrAt = 0, tfrKey = '';
+async function tfrLookup(lat, lon) {
+  const line = document.getElementById('wx-tfrline');
+  if (!line) return;
+  const key = Number(lat).toFixed(2) + ',' + Number(lon).toFixed(2);
+  if (key === tfrKey && line.textContent) return;
+  tfrKey = key; line.textContent = '';
+  try {
+    const su = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Counties_Generalized_Boundaries/FeatureServer/0/query?geometry=' + Number(lon).toFixed(4) + '%2C' + Number(lat).toFixed(4) + '&geometryType=esriGeometryPoint&inSR=4326&spatialRel=esriSpatialRelIntersects&outFields=STATE_ABBR&returnGeometry=false&f=json';
+    const [sr, lr] = await Promise.all([
+      fetchT(su, 9000),
+      (tfrList && Date.now() - tfrAt < 300000) ? null : fetchT(METAR_PROXY + '/tfr', 9000)
+    ]);
+    if (!sr.ok || (lr && !lr.ok)) throw new Error('tfr');
+    const sd = await sr.json();
+    if (lr) { const l = await lr.json(); if (!Array.isArray(l)) throw new Error('tfr list'); tfrList = l; tfrAt = Date.now(); }
+    const st = sd && sd.features && sd.features[0] && String(sd.features[0].attributes.STATE_ABBR || '').toUpperCase();
+    if (!st || !/^[A-Z]{2}$/.test(st) || !tfrList || key !== tfrKey) return;
+    const inSt = tfrList.filter(t => String(t.state).toUpperCase() === st).length;
+    const wide = tfrList.filter(t => String(t.state).toUpperCase() === 'USA').length;
+    line.textContent = st + ': ' + inSt + (wide ? ' · US: ' + wide : '');
+  } catch (e) { if (key === tfrKey) line.textContent = ''; }
 }
 function nwsRadarUrl(lat, lon) {
   // NWS radar page opens centered on the chosen location (settings are base64 JSON)
@@ -4145,6 +4170,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         auRow.classList.toggle('none', !which && (cc ? cc !== 'US' : region === 'intl'));
         const wantGrid = !which && !(cc ? cc !== 'US' : region === 'intl');
         if (wantGrid) gridLookup(lat, lon);
+        if (wantGrid) tfrLookup(lat, lon);
         const cm = document.getElementById('wx-ccmail');
         if (cm) { const v = appVer(); cm.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist: please add my country ' + v) + '&body=' + encodeURIComponent('My country is:\n\nThe official drone map or aviation authority website, if you know it:\n\n\n---\nApp version: ' + v); }
       }
