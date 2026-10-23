@@ -526,7 +526,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .panel.editing .section.collapsed .add-row { display: flex; }
   .cust-row .sec-all { margin: 0 4px; }
   .item.region-hidden, .panel.editing .item.region-hidden { display: none !important; }
-  body.intl .wx-tfr-row { display: none; }
+  body.intl .wx-tfr-row .wx-facmap, body.intl .wx-tfr-row .wx-tfr, body.intl .wx-tfr-row .wx-notam { display: none; }
+  body.intl .wx-tfr-row .wx-airmap { grid-column: 1 / -1; }
   .region-card { text-align: center; }
   .region-card .rc-title { font-size: 15px; font-weight: 700; color: var(--text); }
   .region-card .rc-sub { font-size: 12px; color: var(--text-muted); margin: 4px 0 10px; }
@@ -735,7 +736,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.9a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.10a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
