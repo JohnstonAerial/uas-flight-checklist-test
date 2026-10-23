@@ -776,7 +776,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4196,18 +4196,18 @@ async function renderWeather(lat, lon, attempt = 1) {
           nl.textContent = use; nl.dataset.icao = use;
           const cd = document.getElementById('wx-codes');
           if (cd) {
-            cd.innerHTML = list.length > 1 ? 'Nearby: ' + list.map(x => '<button type="button" data-c="' + x.station + '"' + (keep !== 'ALL' && x.station === use ? ' class="sel"' : '') + '>' + x.station + ' <small>' + fmtDist(x.dist) + '</small></button>').join('') + '<button type="button" data-c="ALL"' + (keep === 'ALL' ? ' class="sel"' : '') + '>All ' + list.length + ' <small>comma</small></button>' : '';
+            cd.innerHTML = list.length > 1 ? 'Nearby: ' + list.map(x => '<button type="button" data-c="' + x.station + '"' + (keep !== 'ALL' && x.station === use ? ' class="sel"' : '') + '>' + x.station + ' <small>' + fmtDist(x.dist) + '</small></button>').join('') + '<button type="button" data-c="ALL"' + (keep === 'ALL' ? ' class="sel"' : '') + '>All ' + list.length + '</button>' : '';
             cd.classList.toggle('has', list.length > 1);
             if (!cd.dataset.bound) {
               cd.dataset.bound = '1';
               cd.addEventListener('click', (e) => {
                 const bt = e.target.closest('button[data-c]'); if (!bt) return;
-                const pick = bt.dataset.c, sm = bt.querySelector('small'), was = sm ? sm.textContent : '';
+                const pick = bt.dataset.c, sm = bt.querySelector('small'), was = sm ? sm.textContent : '', wasAll = bt.textContent;
                 const cur = (metarData2Latest && metarData2Latest.nearby || []).filter(x => /^[A-Z0-9]{3,4}$/.test(x.station));
                 const code = pick === 'ALL' ? cur.map(x => x.station).join(',') : pick;
                 nl.dataset.sel = pick; nl.dataset.icao = code; nl.textContent = code;
                 cd.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === bt));
-                try { navigator.clipboard.writeText(code).then(() => { if (sm) { sm.textContent = 'copied'; setTimeout(() => { sm.textContent = was; }, 3000); } }, () => {}); } catch (er) {}
+                try { navigator.clipboard.writeText(code).then(() => { if (sm) { sm.textContent = 'copied'; setTimeout(() => { sm.textContent = was; }, 3000); } else { bt.textContent = wasAll + ' · copied'; setTimeout(() => { bt.textContent = wasAll; }, 3000); } }, () => {}); } catch (er) {}
               });
             }
           }
