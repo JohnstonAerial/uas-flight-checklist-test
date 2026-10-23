@@ -527,7 +527,10 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .cust-row .sec-all { margin: 0 4px; }
   .item.region-hidden, .panel.editing .item.region-hidden { display: none !important; }
   body.intl .wx-tfr-row .wx-facmap, body.intl .wx-tfr-row .wx-tfr, body.intl .wx-tfr-row .wx-notam { display: none; }
-  body.intl .wx-tfr-row .wx-airmap { grid-column: 1 / -1; }
+  body.intl .wx-tfr-row:not(.au) .wx-airmap { grid-column: 1 / -1; }
+  .wx-aubtn { display: none; width: 100%; padding: 9px; background: #00843d; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-tfr-row.au .wx-aubtn { display: block; }
+  body:not(.intl) .wx-tfr-row.au .wx-aubtn { grid-column: 1 / -1; order: 9; }
   .region-card { text-align: center; }
   .region-card .rc-title { font-size: 15px; font-weight: 700; color: var(--text); }
   .region-card .rc-sub { font-size: 12px; color: var(--text-muted); margin: 4px 0 10px; }
@@ -736,7 +739,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.10a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.11a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -786,6 +789,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="wx-tfr-row" style="margin-top:10px;">
     <a class="wx-facmap" href="https://experience.arcgis.com/experience/e6e8b84c6f1144f69a30f9632ebe4352" target="_blank" rel="noopener">🗺 Facility map — FAA</a>
     <a class="wx-airmap" id="wx-airmap" href="https://skyvector.com/" target="_blank" rel="noopener">🛩 Airspace chart — SkyVector</a>
+    <a class="wx-aubtn" id="wx-aubtn" href="https://www.casa.gov.au/drones/safety-apps" target="_blank" rel="noopener">🇦🇺 Drone safety apps — CASA</a>
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov</a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
   </div>
@@ -4061,6 +4065,8 @@ async function renderWeather(lat, lon, attempt = 1) {
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
       // The airspace map button opens at this same spot (the link carries only the coordinates)
+      // Australia (from the forecast's time zone name): the CASA page that lists the drone safety apps verified for Australia
+      const auRow = document.querySelector('.wx-tfr-row'); if (auRow) auRow.classList.toggle('au', /^Australia\//.test(String(om.timezone || '')));
       const amEl = document.getElementById('wx-airmap');
       if (amEl && isFinite(Number(lat)) && isFinite(Number(lon))) amEl.href = 'https://skyvector.com/?ll=' + Number(lat).toFixed(4) + ',' + Number(lon).toFixed(4) + '&chart=301&zoom=1';
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
