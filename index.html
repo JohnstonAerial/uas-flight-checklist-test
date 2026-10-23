@@ -709,6 +709,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-codes { display: none; grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 2; }
   .wx-tfr-row.gridok .wx-codes.has { display: block; }
   .wx-codes button { font: inherit; font-weight: 700; color: var(--text); background: var(--card-bg, rgba(127,127,127,.15)); border: 1px solid rgba(127,127,127,.4); border-radius: 8px; padding: 2px 8px; margin: 0 3px; cursor: pointer; white-space: nowrap; }
+  .wx-codes button.sel { background: #7a3fc0; color: #fff; border-color: #7a3fc0; }
+  .wx-codes button.sel small { color: #e9dcff; }
   .wx-codes button small { font-weight: 500; color: var(--text-muted); }
   .wx-tfr-row.cc .wx-gridnote, .wx-tfr-row.none .wx-gridnote, body.intl .wx-tfr-row .wx-gridnote, .wx-tfr-row.cc .wx-codes, .wx-tfr-row.none .wx-codes, body.intl .wx-tfr-row .wx-codes { display: none !important; }
   .wx-facmap { display: block; width: 100%; padding: 9px; background: #1f6f8b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
@@ -774,7 +776,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12g</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -834,7 +836,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="wx-ccnote" id="wx-ccnote">No button for your country yet. <a id="wx-ccmail" href="#">Tell us which country</a> and we will look at adding it.</div>
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov<span class="gl" id="wx-tfrline"></span></a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM<span class="gl" id="wx-notamline"></span></a>
-    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly. NOTAMs copies the nearest airport code, or tap a code below to copy another.</div>
+    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly. NOTAMs copies the airport shown on it. Tap a code below to switch to another.</div>
     <div class="wx-codes" id="wx-codes"></div>
   </div>
 </div>
@@ -4183,17 +4185,23 @@ async function renderWeather(lat, lon, attempt = 1) {
         const nl = document.getElementById('wx-notamline');
         if (nl) {
           const stn = metarData2 && metarData2.station && /^[A-Z0-9]{3,4}$/.test(metarData2.station) ? metarData2.station : '';
-          nl.textContent = stn; nl.dataset.icao = stn;
+          const nearList = (metarData2 && metarData2.nearby || []).map(x => x.station);
+          const keep = nl.dataset.sel && nearList.includes(nl.dataset.sel) ? nl.dataset.sel : '';
+          if (!keep) delete nl.dataset.sel;
+          const use = keep || stn;
+          nl.textContent = use; nl.dataset.icao = use;
           const cd = document.getElementById('wx-codes');
           if (cd) {
             const list = (metarData2 && metarData2.nearby || []).filter(x => /^[A-Z0-9]{3,4}$/.test(x.station));
-            cd.innerHTML = list.length > 1 ? 'Nearby: ' + list.map(x => '<button type="button" data-c="' + x.station + '">' + x.station + ' <small>' + fmtDist(x.dist) + '</small></button>').join('') : '';
+            cd.innerHTML = list.length > 1 ? 'Nearby: ' + list.map(x => '<button type="button" data-c="' + x.station + '"' + (x.station === use ? ' class="sel"' : '') + '>' + x.station + ' <small>' + fmtDist(x.dist) + '</small></button>').join('') : '';
             cd.classList.toggle('has', list.length > 1);
             if (!cd.dataset.bound) {
               cd.dataset.bound = '1';
               cd.addEventListener('click', (e) => {
                 const bt = e.target.closest('button[data-c]'); if (!bt) return;
                 const code = bt.dataset.c, sm = bt.querySelector('small'), was = sm ? sm.textContent : '';
+                nl.dataset.sel = code; nl.dataset.icao = code; nl.textContent = code;
+                cd.querySelectorAll('button').forEach(x => x.classList.toggle('sel', x === bt));
                 try { navigator.clipboard.writeText(code).then(() => { if (sm) { sm.textContent = 'copied'; setTimeout(() => { sm.textContent = was; }, 3000); } }, () => {}); } catch (er) {}
               });
             }
