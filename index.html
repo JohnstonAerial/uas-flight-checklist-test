@@ -792,7 +792,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3991,7 +3991,7 @@ function chooseSite(s) {
   site = s;
   store('wxSite', site);
   if (s) {
-    recentSites = [s, ...recentSites.filter(r => Math.abs(r.lat - s.lat) > 0.01 || Math.abs(r.lon - s.lon) > 0.01)].slice(0, 5);
+    recentSites = [s, ...recentSites.filter(r => Math.abs(r.lat - s.lat) > 0.01 || Math.abs(r.lon - s.lon) > 0.01)].slice(0, 10);
     store('wxRecent', recentSites);
   }
   document.getElementById('wx-picker').hidden = true;
