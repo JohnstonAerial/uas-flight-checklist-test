@@ -527,9 +527,21 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .cust-row .sec-all { margin: 0 4px; }
   .item.region-hidden, .panel.editing .item.region-hidden { display: none !important; }
   body.intl .wx-tfr-row .wx-facmap, body.intl .wx-tfr-row .wx-tfr, body.intl .wx-tfr-row .wx-notam { display: none; }
-  body.intl .wx-tfr-row:not(.au):not(.ar) .wx-airmap { grid-column: 1 / -1; }
+  body.intl .wx-tfr-row:not(.au):not(.ar):not(.fr):not(.be):not(.uk):not(.ca) .wx-airmap { grid-column: 1 / -1; }
   .wx-aubtn { display: none; width: 100%; padding: 9px; background: #00843d; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-arbtn { display: none; width: 100%; padding: 9px; background: #2f7fb8; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-frbtn { display: none; width: 100%; padding: 9px; background: #a14b1f; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-bebtn { display: none; width: 100%; padding: 9px; background: #8a6d00; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-ukbtn { display: none; width: 100%; padding: 9px; background: #a02c4b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-cabtn { display: none; width: 100%; padding: 9px; background: #c4281f; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-tfr-row.ca .wx-cabtn { display: block; }
+  body:not(.intl) .wx-tfr-row.ca .wx-cabtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.uk .wx-ukbtn { display: block; }
+  body:not(.intl) .wx-tfr-row.uk .wx-ukbtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.be .wx-bebtn { display: block; }
+  body:not(.intl) .wx-tfr-row.be .wx-bebtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.fr .wx-frbtn { display: block; }
+  body:not(.intl) .wx-tfr-row.fr .wx-frbtn { grid-column: 1 / -1; order: 9; }
   .wx-tfr-row.ar .wx-arbtn { display: block; }
   body:not(.intl) .wx-tfr-row.ar .wx-arbtn { grid-column: 1 / -1; order: 9; }
   .wx-tfr-row.au .wx-aubtn { display: block; }
@@ -742,7 +754,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.11b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.11f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -794,6 +806,10 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-airmap" id="wx-airmap" href="https://skyvector.com/" target="_blank" rel="noopener">🛩 Airspace chart — SkyVector</a>
     <a class="wx-aubtn" id="wx-aubtn" href="https://www.casa.gov.au/drones/safety-apps" target="_blank" rel="noopener">🇦🇺 Drone safety apps — CASA</a>
     <a class="wx-arbtn" id="wx-arbtn" href="https://www.argentina.gob.ar/anac/rpa-rpas" target="_blank" rel="noopener">🇦🇷 Drones — ANAC</a>
+    <a class="wx-frbtn" id="wx-frbtn" href="https://www.ecologie.gouv.fr/exploitation-drones-en-categorie-ouverte" target="_blank" rel="noopener">🇫🇷 Drones — DGAC</a>
+    <a class="wx-bebtn" id="wx-bebtn" href="https://map.droneguide.be/" target="_blank" rel="noopener">🇧🇪 Drone map — Droneguide</a>
+    <a class="wx-ukbtn" id="wx-ukbtn" href="https://nats-uk.ead-it.com/cms-nats/opencms/en/uas-restriction-zones/" target="_blank" rel="noopener">🇬🇧 Drone map — NATS</a>
+    <a class="wx-cabtn" id="wx-cabtn" href="https://nrc.canada.ca/en/drone-tool/" target="_blank" rel="noopener">🇨🇦 Drone map — NRC</a>
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov</a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
   </div>
@@ -4069,8 +4085,8 @@ async function renderWeather(lat, lon, attempt = 1) {
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
       // The airspace map button opens at this same spot (the link carries only the coordinates)
-      // Australia and Argentina (from the forecast's time zone name): CASA's list of verified drone safety apps; ANAC's drone rules and registration page
-      const auRow = document.querySelector('.wx-tfr-row'); if (auRow) auRow.classList.toggle('au', /^Australia\//.test(String(om.timezone || ''))); if (auRow) auRow.classList.toggle('ar', /^America\/Argentina\//.test(String(om.timezone || '')));
+      // Australia, Argentina, France, Belgium, the UK and Canada (from the forecast's time zone name): CASA's list of verified drone safety apps; ANAC's drone rules and registration page; the French government's open-category drone page; Belgium's Droneguide map; the UK's NATS restriction zones map; Canada's NRC drone site selection tool
+      const auRow = document.querySelector('.wx-tfr-row'); if (auRow) auRow.classList.toggle('au', /^Australia\//.test(String(om.timezone || ''))); if (auRow) auRow.classList.toggle('ar', /^America\/Argentina\//.test(String(om.timezone || ''))); if (auRow) auRow.classList.toggle('fr', om.timezone === 'Europe/Paris'); if (auRow) auRow.classList.toggle('be', om.timezone === 'Europe/Brussels'); if (auRow) auRow.classList.toggle('uk', om.timezone === 'Europe/London'); if (auRow) auRow.classList.toggle('ca', /^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Moncton|Glace_Bay|Goose_Bay|Whitehorse|Yellowknife|Iqaluit|Rankin_Inlet|Resolute|Cambridge_Bay|Inuvik|Dawson|Dawson_Creek|Fort_Nelson|Swift_Current|Atikokan|Blanc-Sablon|Creston|Nipigon|Thunder_Bay|Rainy_River|Pangnirtung|Coral_Harbour)$/.test(String(om.timezone || '')));
       const amEl = document.getElementById('wx-airmap');
       if (amEl && isFinite(Number(lat)) && isFinite(Number(lon))) amEl.href = 'https://skyvector.com/?ll=' + Number(lat).toFixed(4) + ',' + Number(lon).toFixed(4) + '&chart=301&zoom=1';
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
