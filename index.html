@@ -791,7 +791,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -1661,6 +1661,10 @@ function setView(v, noSave) {
   document.body.classList.add('view-' + v);
   document.querySelectorAll('#mainnav .nv').forEach(b => { const on = b.dataset.v === v; b.setAttribute('aria-selected', String(on)); });
   if (!noSave) { try { localStorage.setItem(VIEW_KEY, v); } catch (e) {} }
+  if (v !== 'set') {
+    // Leaving Settings: close its sections, otherwise they hide the checklist
+    document.querySelectorAll('.panel .settings').forEach(st => { st.classList.remove('open', 'open-bak'); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); });
+  }
   if (v === 'set') {
     // Settings opens ready to use: show the Settings section unless Settings or Back up & restore is already open
     const st = document.querySelector('.panel.active .settings');
@@ -1695,6 +1699,7 @@ function showPanel(panel, tab) {
   tab.classList.add('active');
   tab.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   updateProgress(panel);
+  if (document.body.classList.contains('view-set')) setView('set', true);
   window.scrollTo(0, 0);
 }
 
