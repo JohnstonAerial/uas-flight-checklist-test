@@ -706,7 +706,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-facmap .gl.ok { color: #b9f3c8; } .wx-facmap .gl.zero { color: #ffd98a; }
   .wx-gridnote { display: none; grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.35; }
   .wx-tfr-row.gridok .wx-gridnote { display: block; }
-  .wx-tfr-row.cc .wx-gridnote, .wx-tfr-row.none .wx-gridnote, body.intl .wx-tfr-row .wx-gridnote { display: none; }
+  .wx-codes { display: none; grid-column: 1 / -1; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 2; }
+  .wx-tfr-row.gridok .wx-codes.has { display: block; }
+  .wx-codes button { font: inherit; font-weight: 700; color: var(--text); background: var(--card-bg, rgba(127,127,127,.15)); border: 1px solid rgba(127,127,127,.4); border-radius: 8px; padding: 2px 8px; margin: 0 3px; cursor: pointer; white-space: nowrap; }
+  .wx-codes button small { font-weight: 500; color: var(--text-muted); }
+  .wx-tfr-row.cc .wx-gridnote, .wx-tfr-row.none .wx-gridnote, body.intl .wx-tfr-row .wx-gridnote, .wx-tfr-row.cc .wx-codes, .wx-tfr-row.none .wx-codes, body.intl .wx-tfr-row .wx-codes { display: none !important; }
   .wx-facmap { display: block; width: 100%; padding: 9px; background: #1f6f8b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-airmap { display: block; width: 100%; padding: 9px; background: #3d4a9c; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
 
@@ -770,7 +774,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -830,7 +834,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="wx-ccnote" id="wx-ccnote">No button for your country yet. <a id="wx-ccmail" href="#">Tell us which country</a> and we will look at adding it.</div>
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov<span class="gl" id="wx-tfrline"></span></a>
     <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM<span class="gl" id="wx-notamline"></span></a>
-    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly. Tapping NOTAMs copies the airport code to paste into Location.</div>
+    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly. NOTAMs copies the nearest airport code, or tap a code below to copy another.</div>
+    <div class="wx-codes" id="wx-codes"></div>
   </div>
 </div>
 
@@ -3658,7 +3663,9 @@ async function fetchMetar(lat, lon) {
     let obs = null;
     const tsrc = all.find(x => x.d <= METAR_RADIUS_MI && x.age !== null && x.age <= WIND_OBS_MAX_AGE_MIN && typeof x.st.temp === 'number' && isFinite(x.st.temp) && typeof x.st.dewp === 'number' && isFinite(x.st.dewp));
     if (tsrc) obs = { station: tsrc.st.icaoId || '?', dist: tsrc.d, ageMin: tsrc.age, tempC: tsrc.st.temp, dewC: Math.min(tsrc.st.dewp, tsrc.st.temp) };
-    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, count: pool.length, ageMin: best.age, lowCloud, lower, also, vis, lowVis, precipReport, wind, windier, obs, obsc, hazard };
+    // The nearest few reporting airports (for the NOTAM code picker)
+    const nearby = pool.slice(0, 3).map(x => ({ station: x.st.icaoId || '', dist: x.d }));
+    return { metar: best.st, station: best.st.icaoId || '?', dist: best.d, nearby, count: pool.length, ageMin: best.age, lowCloud, lower, also, vis, lowVis, precipReport, wind, windier, obs, obsc, hazard };
   } catch (e) {
     console.warn('METAR fetch failed:', e.message);
     throw e;   // the caller tells "service failed" apart from "no station nearby"
@@ -4177,6 +4184,20 @@ async function renderWeather(lat, lon, attempt = 1) {
         if (nl) {
           const stn = metarData2 && metarData2.station && /^[A-Z0-9]{3,4}$/.test(metarData2.station) ? metarData2.station : '';
           nl.textContent = stn; nl.dataset.icao = stn;
+          const cd = document.getElementById('wx-codes');
+          if (cd) {
+            const list = (metarData2 && metarData2.nearby || []).filter(x => /^[A-Z0-9]{3,4}$/.test(x.station));
+            cd.innerHTML = list.length > 1 ? 'Nearby: ' + list.map(x => '<button type="button" data-c="' + x.station + '">' + x.station + ' <small>' + fmtDist(x.dist) + '</small></button>').join('') : '';
+            cd.classList.toggle('has', list.length > 1);
+            if (!cd.dataset.bound) {
+              cd.dataset.bound = '1';
+              cd.addEventListener('click', (e) => {
+                const bt = e.target.closest('button[data-c]'); if (!bt) return;
+                const code = bt.dataset.c, sm = bt.querySelector('small'), was = sm ? sm.textContent : '';
+                try { navigator.clipboard.writeText(code).then(() => { if (sm) { sm.textContent = 'copied'; setTimeout(() => { sm.textContent = was; }, 3000); } }, () => {}); } catch (er) {}
+              });
+            }
+          }
           const nb = nl.parentElement;
           if (nb && !nb.dataset.copy) {
             nb.dataset.copy = '1';
