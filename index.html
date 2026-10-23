@@ -618,6 +618,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-result { display: block; width: 100%; text-align: left; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 6px; cursor: pointer; }
   .wx-result small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 1px; }
   .wx-note { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .wx-grid > .wx-windnote { grid-column: 1 / -1; margin-top: 0; font-size: 11px; }
   .wx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .wx-chip { font-family: inherit; font-size: 12px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
   .wx-status { font-size: 12px; color: var(--text-muted); text-align: center; padding: 6px 0 2px; }
@@ -735,7 +736,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.8b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.8c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3955,7 +3956,7 @@ async function renderWeather(lat, lon, attempt = 1) {
   lastDraw = null;
   try {
       const [wxRes, kpData, metarData, radarRes] = await Promise.allSettled([
-        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m,surface_pressure&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,cloud_cover,precipitation_probability,precipitation,weather_code,cape,temperature_2m,dew_point_2m&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=10`),
+        fetchT(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,relative_humidity_2m,dew_point_2m,surface_pressure&hourly=visibility,wind_speed_10m,wind_gusts_10m,wind_speed_80m,wind_speed_120m,cloud_cover,cloud_cover_low,precipitation_probability,precipitation,weather_code,cape,temperature_2m,dew_point_2m&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=10`),
         fetchKP(),
         fetchMetar(lat, lon),
         fetchRadar(lat, lon)
@@ -4213,13 +4214,11 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-sub" data-rec-age="${Date.now() - ow.ageMin * 60000}">${ow.station} · ${fmtDist(ow.dist)} away · ${ageText(ow.ageMin * 60000)}</div>
             ${windOk ? `<div class="wx-sub wx-model">Model for your spot: <strong class="${windColor(windMph, gustMph)}">${NB(modelTxt)}</strong></div>` : ''}
             ${windierHtml}
-            ${windHtsHTML(wx, windOk ? windMph : null)}
-            <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>` : `
+            ${windHtsHTML(wx, windOk ? windMph : null)}` : `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windOk ? windColor(windMph, gustMph) : ''}">${windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + windChipHtml() + (dirOk ? ' ' + windDirHtml(wx.wind.deg) : '') : '—'}</div>
             <div class="wx-sub">${windOk ? (gustMph ? 'Sustained\u00A0/\u00A0Gusts' : 'No gusts reported') : 'No wind data'}</div>
-            ${windHtsHTML(wx, windOk ? windMph : null)}
-            <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>`;
+            ${windHtsHTML(wx, windOk ? windMph : null)}`;
         body.innerHTML = `
         <div class="wx-grid">
           <div class="wx-item">
@@ -4234,8 +4233,10 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${alsoTxt() ? `<div class="wx-sub wx-also">${alsoTxt()}</div>` : ''}
             ${lowCloudTxt() ? `<div class="wx-sub">${lowCloudTxt()}</div>` : ''}
             ${maxAltTxt() ? `<div class="wx-sub"><strong>${maxAltTxt()}</strong></div>` : ''}
+            ${(() => { const H = om && om.hourly; if (!H || !H.cloud_cover || hIdx < 0) return ''; const c = H.cloud_cover[hIdx], lo = H.cloud_cover_low ? H.cloud_cover_low[hIdx] : null; if (c == null || !isFinite(c)) return ''; return `<div class="wx-sub wx-model">Model for your spot: <strong>${Math.round(c)}%\u00A0cloud${lo != null && isFinite(lo) ? '<br>' + Math.round(lo) + '%\u00A0low' : ''}</strong></div>`; })()}
             ${metarData2 ? cloudHtml(m, ceilFt, om, hIdx) : ''}
           </div>
+          <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>
           <div class="wx-item">
             <div class="wx-label">Temperature</div>
             <div class="wx-value ${tempOk ? tempColor(wx.main.temp) : ''}">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
