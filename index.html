@@ -650,6 +650,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-grid > .wx-windnote.wx-warn { font-weight: 700; }
   .wx-grid > .wx-windnote { grid-column: 1 / -1; margin-top: 0; font-size: 11px; }
   .wx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .wx-saved { width: 100%; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; }
   .wx-chip { font-family: inherit; font-size: 12px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
   .wx-status { font-size: 12px; color: var(--text-muted); text-align: center; padding: 6px 0 2px; }
   .wx-alert { color: #e0301e; } .wx-warn { color: var(--amber); } .wx-good { color: var(--green); }
@@ -791,7 +792,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3972,13 +3973,18 @@ function toggleLocPicker() {
 function renderChips() {
   const box = document.getElementById('wx-chips');
   box.innerHTML = '';
-  const add = (label, fn) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.className = 'wx-chip'; b.textContent = label; b.onclick = fn;
-    box.appendChild(b);
-  };
-  if (site) add('📍 Use my location', () => chooseSite(null));
-  recentSites.forEach(r => add(r.name, () => chooseSite(r)));
+  const acts = [];
+  if (site) acts.push(['📍 Use my location', () => chooseSite(null)]);
+  recentSites.forEach(r => acts.push([r.name, () => chooseSite(r)]));
+  if (!acts.length) return;
+  const sel = document.createElement('select');
+  sel.className = 'wx-saved'; sel.setAttribute('aria-label', 'Saved places');
+  const ph = document.createElement('option');
+  ph.value = ''; ph.textContent = 'Saved places (' + recentSites.length + ')…'; ph.selected = true;
+  sel.appendChild(ph);
+  acts.forEach((x, i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = x[0]; sel.appendChild(o); });
+  sel.onchange = () => { const i = sel.value; if (i !== '') acts[+i][1](); };
+  box.appendChild(sel);
 }
 
 function chooseSite(s) {
