@@ -646,6 +646,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-result { display: block; width: 100%; text-align: left; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; margin-top: 6px; cursor: pointer; }
   .wx-result small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 1px; }
   .wx-note { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+  .wx-grid > .wx-windnote.wx-warn { font-weight: 700; }
   .wx-grid > .wx-windnote { grid-column: 1 / -1; margin-top: 0; font-size: 11px; }
   .wx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .wx-chip { font-family: inherit; font-size: 12px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
@@ -776,7 +777,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.14a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.14b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4370,6 +4371,8 @@ async function renderWeather(lat, lon, attempt = 1) {
         const modelTxt = windOk ? fmtSpeedNum(windMph) + (gustMph ? ' / ' + fmtSpeedNum(gustMph) : '') + ' ' + speedUnit() : '';
         const wiList = ow && metarData2.windier ? metarData2.windier : [];
         const windierHtml = wiList.length ? '<div class="wx-sub wx-windier">Windier nearby:' + wiList.map(s => '<div class="wx-li">' + s.station + ' <strong class="' + s.col + '">' + NB(fmtSpeedNum(s.mph) + (s.gust !== null && Math.round(s.gust) > Math.round(s.mph) ? ' / ' + fmtSpeedNum(s.gust) : '') + ' ' + speedUnit()) + '</strong> ' + NB('(' + fmtDist(s.dist) + ')') + '</div>').join('') + '</div>' : '';
+        // The terrain/obstruction note turns amber when wind needs attention: the airport reading or the model is at caution or above, or a nearby station is windier
+        const windCaution = (ow && windColor(owMph, owGust) !== 'wx-good') || (windOk && windColor(windMph, gustMph) !== 'wx-good') || wiList.length > 0;
         const windHTML = ow ? `
             <div class="wx-label">Wind</div>
             <div class="wx-value ${windColor(owMph, owGust)}">${fmtSpeedNum(owMph) + (owGust ? ' / ' + fmtSpeedNum(owGust) : '') + ' ' + windChipHtml() + owArrow}</div>
@@ -4384,7 +4387,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${windHtsHTML(wx, windOk ? windMph : null)}`;
         body.innerHTML = `
         <div class="wx-grid">
-          <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>
+          <div class="wx-note wx-windnote${windCaution ? ' wx-warn' : ''}">${windCaution ? '⚠️ ' : ''}Obstructions/terrain can make it windier where you fly.</div>
           <div class="wx-item">
             ${windHTML}
           </div>
