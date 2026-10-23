@@ -776,7 +776,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.13</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.14a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4384,6 +4384,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${windHtsHTML(wx, windOk ? windMph : null)}`;
         body.innerHTML = `
         <div class="wx-grid">
+          <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>
           <div class="wx-item">
             ${windHTML}
           </div>
@@ -4399,7 +4400,6 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${(() => { const H = om && om.hourly; if (!H || !H.cloud_cover || hIdx < 0) return ''; const c = H.cloud_cover[hIdx], lo = H.cloud_cover_low ? H.cloud_cover_low[hIdx] : null; if (c == null || !isFinite(c)) return ''; return `<div class="wx-sub wx-model">Model for your spot: <strong>${Math.round(c)}%\u00A0cloud${lo != null && isFinite(lo) ? '<br>' + Math.round(lo) + '%\u00A0low' : ''}</strong></div>`; })()}
             ${metarData2 ? cloudHtml(m, ceilFt, om, hIdx) : ''}
           </div>
-          <div class="wx-note wx-windnote">Obstructions/terrain can make it windier where you fly.</div>
           <div class="wx-item">
             <div class="wx-label">Temperature</div>
             <div class="wx-value ${tempOk ? tempColor(wx.main.temp) : ''}">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
