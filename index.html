@@ -700,6 +700,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-tfr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
   .wx-tfr { display: block; width: 100%; padding: 9px; background: #e0301e; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-notam { display: block; width: 100%; padding: 9px; background: #7f3fbf; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-notam .gl { display: block; white-space: nowrap; font-weight: 600; font-size: 12px; margin-top: 1px; color: #efe3ff; }
   .wx-tfr .gl { display: block; white-space: nowrap; font-weight: 600; font-size: 12px; margin-top: 1px; color: #ffe3de; }
   .wx-facmap .gl { display: block; font-weight: 600; font-size: 12px; margin-top: 1px; }
   .wx-facmap .gl.ok { color: #b9f3c8; } .wx-facmap .gl.zero { color: #ffd98a; }
@@ -769,7 +770,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.0.12e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -828,8 +829,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-wwbtn" id="wx-wwbtn" href="https://en.wikipedia.org/wiki/Civil_aviation_authority" target="_blank" rel="noopener">🌍 Find your aviation authority</a>
     <div class="wx-ccnote" id="wx-ccnote">No button for your country yet. <a id="wx-ccmail" href="#">Tell us which country</a> and we will look at adding it.</div>
     <a class="wx-tfr" href="https://tfr.faa.gov/tfr2/list.html" target="_blank" rel="noopener">⚠️ TFRs — FAA.gov<span class="gl" id="wx-tfrline"></span></a>
-    <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM</a>
-    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly.</div>
+    <a class="wx-notam" href="https://notams.aim.faa.gov/notamSearch/" target="_blank" rel="noopener">📋 NOTAMs — AIM<span class="gl" id="wx-notamline"></span></a>
+    <div class="wx-gridnote" id="wx-gridnote">Guide only. Check LAANC and the TFR list before you fly. Tapping NOTAMs copies the airport code to paste into Location.</div>
   </div>
 </div>
 
@@ -4171,6 +4172,21 @@ async function renderWeather(lat, lon, attempt = 1) {
         const wantGrid = !which && !(cc ? cc !== 'US' : region === 'intl');
         if (wantGrid) gridLookup(lat, lon);
         if (wantGrid) tfrLookup(lat, lon);
+        // NOTAM Search opens with an empty Location box: show the nearest weather-station airport and copy it when the button is tapped, to paste there
+        const nl = document.getElementById('wx-notamline');
+        if (nl) {
+          const stn = metarData2 && metarData2.station && /^[A-Z0-9]{3,4}$/.test(metarData2.station) ? metarData2.station : '';
+          nl.textContent = stn; nl.dataset.icao = stn;
+          const nb = nl.parentElement;
+          if (nb && !nb.dataset.copy) {
+            nb.dataset.copy = '1';
+            nb.addEventListener('click', () => {
+              const code = nl.dataset.icao;
+              if (!code) return;
+              try { navigator.clipboard.writeText(code).then(() => { nl.textContent = code + ' · copied'; setTimeout(() => { nl.textContent = nl.dataset.icao; }, 4000); }, () => {}); } catch (e) {}
+            });
+          }
+        }
         const cm = document.getElementById('wx-ccmail');
         if (cm) { const v = appVer(); cm.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist: please add my country ' + v) + '&body=' + encodeURIComponent('My country is:\n\nThe official drone map or aviation authority website, if you know it:\n\n\n---\nApp version: ' + v); }
       }
