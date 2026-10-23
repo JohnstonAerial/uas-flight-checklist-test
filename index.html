@@ -650,7 +650,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-grid > .wx-windnote.wx-warn { font-weight: 700; }
   .wx-grid > .wx-windnote { grid-column: 1 / -1; margin-top: 0; font-size: 11px; }
   .wx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .wx-saved { width: 100%; font-family: inherit; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 10px; }
+  .wx-sug { margin-top: 6px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); overflow: hidden; max-height: 260px; overflow-y: auto; }
+  .wx-sug button { display: block; width: 100%; text-align: left; font-family: inherit; font-size: 14px; color: var(--text); background: none; border: 0; border-bottom: 1px solid var(--border); padding: 10px 12px; cursor: pointer; }
+  .wx-sug button:last-child { border-bottom: 0; }
   .wx-chip { font-family: inherit; font-size: 12px; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 5px 10px; cursor: pointer; }
   .wx-status { font-size: 12px; color: var(--text-muted); text-align: center; padding: 6px 0 2px; }
   .wx-alert { color: #e0301e; } .wx-warn { color: var(--amber); } .wx-good { color: var(--green); }
@@ -792,7 +794,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.0e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3971,20 +3973,32 @@ function toggleLocPicker() {
 }
 
 function renderChips() {
-  const box = document.getElementById('wx-chips');
+  // Saved places drop down under the search box when you tap it; typing filters them
+  const box = document.getElementById('wx-chips'), q = document.getElementById('wx-q');
   box.innerHTML = '';
   const acts = [];
   if (site) acts.push(['📍 Use my location', () => chooseSite(null)]);
   recentSites.forEach(r => acts.push([r.name, () => chooseSite(r)]));
   if (!acts.length) return;
-  const sel = document.createElement('select');
-  sel.className = 'wx-saved'; sel.setAttribute('aria-label', 'Saved places');
-  const ph = document.createElement('option');
-  ph.value = ''; ph.textContent = 'Saved places (' + recentSites.length + ')…'; ph.selected = true;
-  sel.appendChild(ph);
-  acts.forEach((x, i) => { const o = document.createElement('option'); o.value = String(i); o.textContent = x[0]; sel.appendChild(o); });
-  sel.onchange = () => { const i = sel.value; if (i !== '') acts[+i][1](); };
-  box.appendChild(sel);
+  const list = document.createElement('div');
+  list.className = 'wx-sug'; list.setAttribute('role', 'listbox'); list.hidden = true;
+  box.appendChild(list);
+  const draw = () => {
+    const t = q.value.trim().toLowerCase();
+    list.innerHTML = '';
+    const shown = acts.filter(x => !t || x[0].toLowerCase().includes(t));
+    shown.forEach(x => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.setAttribute('role', 'option'); b.textContent = x[0];
+      b.onmousedown = ev => ev.preventDefault();
+      b.onclick = () => x[1]();
+      list.appendChild(b);
+    });
+    list.hidden = !shown.length;
+  };
+  q.onfocus = q.onclick = q.oninput = draw;
+  q.onblur = () => setTimeout(() => { list.hidden = true; }, 150);
+  draw();
 }
 
 function chooseSite(s) {
@@ -4006,6 +4020,7 @@ async function searchSite(e) {
   const out = document.getElementById('wx-results');
   if (!q) return;
   out.innerHTML = '';
+  { const sg = document.querySelector('.wx-sug'); if (sg) sg.hidden = true; }
   const note = (t) => { const d = document.createElement('div'); d.className = 'wx-note'; d.textContent = t; out.appendChild(d); };
 
   // "35.59, -78.50" style coordinates
