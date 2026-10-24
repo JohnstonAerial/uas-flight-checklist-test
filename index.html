@@ -886,7 +886,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.2c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.3a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4191,10 +4191,23 @@ async function searchSite(e) {
 
   note('Searching…');
   try {
-    const res = await fetchT('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(name) + '&count=10&language=en&format=json' + (ccode ? '&countryCode=' + ccode : ''));
-    if (!res.ok) throw new Error('search ' + res.status);
-    const data = await res.json();
-    let list = data.results || [];
+    // 4.2.3a: the place database spells it out ("Saint Paul"), so "St Paul" / "St. Louis" / "Ste Genevieve" also search the long spelling
+    name = name.replace(/^(ste?)\.(?=\s|$)/i, '$1');
+    const geo = async (n) => {
+      const r = await fetchT('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(n) + '&count=10&language=en&format=json' + (ccode ? '&countryCode=' + ccode : ''));
+      if (!r.ok) throw new Error('search ' + r.status);
+      return (await r.json()).results || [];
+    };
+    const sm0 = name.match(/^(ste?)\s+(.+)$/i);
+    let list;
+    if (sm0) {
+      const alt = (sm0[1].toLowerCase() === 'ste' ? 'Sainte ' : 'Saint ') + sm0[2];
+      const [a, b] = await Promise.all([geo(name), geo(alt).catch(() => [])]);
+      const seen = new Set(); list = [];
+      for (let i = 0; i < Math.max(a.length, b.length); i++) {
+        [b[i], a[i]].forEach(r => { if (r && !seen.has(r.id)) { seen.add(r.id); list.push(r); } });
+      }
+    } else list = await geo(name);
     if (state) { const f = list.filter(r => r.admin1 === state); if (f.length) list = f; }
     list = list.slice(0, 6);
     out.innerHTML = '';
