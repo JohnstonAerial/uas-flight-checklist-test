@@ -817,7 +817,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.2a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.2b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4073,9 +4073,21 @@ async function searchSite(e) {
     }
   }
 
+  // "Munich, Germany" / "Berlin Germany" / "Dublin IE" -> search the city, restrict to that country
+  let ccode = '';
+  if (!state) {
+    const CN = { germany:'DE', deutschland:'DE', netherlands:'NL', holland:'NL', 'the netherlands':'NL', ireland:'IE', belgium:'BE', belgique:'BE', france:'FR', 'united kingdom':'GB', uk:'GB', england:'GB', scotland:'GB', wales:'GB', canada:'CA', australia:'AU', austria:'AT', switzerland:'CH', italy:'IT', spain:'ES', portugal:'PT', denmark:'DK', sweden:'SE', norway:'NO', finland:'FI', poland:'PL', 'new zealand':'NZ', mexico:'MX', japan:'JP', argentina:'AR', brazil:'BR', de:'DE', nl:'NL', ie:'IE', be:'BE', fr:'FR', gb:'GB', ca:'CA', au:'AU', at:'AT', ch:'CH', it:'IT', es:'ES' };
+    const cm = qq.match(/^(.+?)[,\s]+((?:the\s+)?[A-Za-z]+(?:\s[A-Za-z]+)?)$/);
+    if (cm) {
+      const key = cm[2].toLowerCase();
+      if (CN[key]) { ccode = CN[key]; name = cm[1].trim().replace(/,$/, ''); }
+      else { const mm = qq.match(/^(.+?)[,\s]+([A-Za-z]+)$/); if (mm && CN[mm[2].toLowerCase()] && !STATES[mm[2].toUpperCase()]) { ccode = CN[mm[2].toLowerCase()]; name = mm[1].trim().replace(/,$/, ''); } }
+    }
+  }
+
   note('Searching…');
   try {
-    const res = await fetchT('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(name) + '&count=10&language=en&format=json');
+    const res = await fetchT('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(name) + '&count=10&language=en&format=json' + (ccode ? '&countryCode=' + ccode : ''));
     if (!res.ok) throw new Error('search ' + res.status);
     const data = await res.json();
     let list = data.results || [];
