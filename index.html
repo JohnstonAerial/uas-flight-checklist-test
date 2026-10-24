@@ -546,6 +546,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-arbtn { display: none; width: 100%; padding: 9px; background: #2f7fb8; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-frbtn { display: none; width: 100%; padding: 9px; background: #a14b1f; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-bebtn { display: none; width: 100%; padding: 9px; background: #8a6d00; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-nlbtn { display: none; width: 100%; padding: 9px; background: #b35900; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-debtn { display: none; width: 100%; padding: 9px; background: #3d3d3d; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
+  .wx-iebtn { display: none; width: 100%; padding: 9px; background: #0f766e; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-ukbtn { display: none; width: 100%; padding: 9px; background: #a02c4b; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-cabtn { display: none; width: 100%; padding: 9px; background: #c4281f; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-tfr-row.ca .wx-cabtn { display: block; }
@@ -554,6 +557,12 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   body:not(.intl) .wx-tfr-row.uk .wx-ukbtn { grid-column: 1 / -1; order: 9; }
   .wx-tfr-row.be .wx-bebtn { display: block; }
   body:not(.intl) .wx-tfr-row.be .wx-bebtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.nl .wx-nlbtn { display: block; }
+  body:not(.intl) .wx-tfr-row.nl .wx-nlbtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.de .wx-debtn { display: block; }
+  body:not(.intl) .wx-tfr-row.de .wx-debtn { grid-column: 1 / -1; order: 9; }
+  .wx-tfr-row.ie .wx-iebtn { display: block; }
+  body:not(.intl) .wx-tfr-row.ie .wx-iebtn { grid-column: 1 / -1; order: 9; }
   .wx-tfr-row.fr .wx-frbtn { display: block; }
   body:not(.intl) .wx-tfr-row.fr .wx-frbtn { grid-column: 1 / -1; order: 9; }
   .wx-tfr-row.ar .wx-arbtn { display: block; }
@@ -562,7 +571,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   body:not(.intl) .wx-tfr-row.au .wx-aubtn { grid-column: 1 / -1; order: 9; }
   /* A place in a country that has its own button: the FAA buttons mean nothing there, so they go, and SkyVector and the country button sit side by side */
   .wx-tfr-row.cc .wx-facmap, .wx-tfr-row.cc .wx-tfr, .wx-tfr-row.cc .wx-notam, .wx-tfr-row.none .wx-facmap, .wx-tfr-row.none .wx-tfr, .wx-tfr-row.none .wx-notam { display: none; }
-  body:not(.intl) .wx-tfr-row.cc .wx-aubtn, body:not(.intl) .wx-tfr-row.cc .wx-arbtn, body:not(.intl) .wx-tfr-row.cc .wx-frbtn, body:not(.intl) .wx-tfr-row.cc .wx-bebtn, body:not(.intl) .wx-tfr-row.cc .wx-ukbtn, body:not(.intl) .wx-tfr-row.cc .wx-cabtn { grid-column: auto; order: 0; }
+  body:not(.intl) .wx-tfr-row.cc .wx-aubtn, body:not(.intl) .wx-tfr-row.cc .wx-arbtn, body:not(.intl) .wx-tfr-row.cc .wx-frbtn, body:not(.intl) .wx-tfr-row.cc .wx-bebtn, body:not(.intl) .wx-tfr-row.cc .wx-ukbtn, body:not(.intl) .wx-tfr-row.cc .wx-cabtn, body:not(.intl) .wx-tfr-row.cc .wx-nlbtn, body:not(.intl) .wx-tfr-row.cc .wx-debtn, body:not(.intl) .wx-tfr-row.cc .wx-iebtn { grid-column: auto; order: 0; }
   body:not(.intl) .wx-tfr-row.cc .wx-airmap { order: 0; }
   .wx-wwbtn { display: none; width: 100%; padding: 9px; background: #4d5560; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; letter-spacing: 0.3px; cursor: pointer; box-sizing: border-box; }
   .wx-ccnote { display: none; grid-column: 1 / -1; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.35; }
@@ -808,7 +817,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.1b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.1.2a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -868,6 +877,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <a class="wx-arbtn" id="wx-arbtn" href="https://www.argentina.gob.ar/anac/rpa-rpas" target="_blank" rel="noopener">🇦🇷 Drones — ANAC</a>
     <a class="wx-frbtn" id="wx-frbtn" href="https://www.ecologie.gouv.fr/exploitation-drones-en-categorie-ouverte" target="_blank" rel="noopener">🇫🇷 Drones — DGAC</a>
     <a class="wx-bebtn" id="wx-bebtn" href="https://map.droneguide.be/" target="_blank" rel="noopener">🇧🇪 Drone map — Droneguide</a>
+    <a class="wx-nlbtn" id="wx-nlbtn" href="https://map.godrone.nl/" target="_blank" rel="noopener">🇳🇱 Drone map — GoDrone</a>
+    <a class="wx-debtn" id="wx-debtn" href="https://maptool-dipul.dfs.de/" target="_blank" rel="noopener">🇩🇪 Drone map — dipul</a>
+    <a class="wx-iebtn" id="wx-iebtn" href="https://www.iaa.ie/general-aviation/drones/uas-geographic-zones" target="_blank" rel="noopener">🇮🇪 Drone map — IAA</a>
     <a class="wx-ukbtn" id="wx-ukbtn" href="https://nats-uk.ead-it.com/cms-nats/opencms/en/uas-restriction-zones/" target="_blank" rel="noopener">🇬🇧 Drone map — NATS</a>
     <a class="wx-cabtn" id="wx-cabtn" href="https://nrc.canada.ca/en/drone-tool/" target="_blank" rel="noopener">🇨🇦 Drone map — NRC</a>
     <a class="wx-wwbtn" id="wx-wwbtn" href="https://en.wikipedia.org/wiki/Civil_aviation_authority" target="_blank" rel="noopener">🌍 Find your aviation authority</a>
@@ -4251,15 +4263,15 @@ async function renderWeather(lat, lon, attempt = 1) {
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
       // The airspace map button opens at this same spot (the link carries only the coordinates)
-      // Australia, Argentina, France, Belgium, the UK and Canada (from the forecast's time zone name): CASA's list of verified drone safety apps; ANAC's drone rules and registration page; the French government's open-category drone page; Belgium's Droneguide map; the UK's NATS restriction zones map; Canada's NRC drone site selection tool
+      // Australia, Argentina, France, Belgium, the Netherlands (GoDrone), Germany (dipul), Ireland (IAA), the UK and Canada (from the forecast's time zone name): CASA's list of verified drone safety apps; ANAC's drone rules and registration page; the French government's open-category drone page; Belgium's Droneguide map; the UK's NATS restriction zones map; Canada's NRC drone site selection tool
       const auRow = document.querySelector('.wx-tfr-row');
       if (auRow) {
         // Which country: the country code saved when you searched for the place, else the forecast's time zone name (GPS and typed coordinates have no code)
         const cc = site && site.cc ? String(site.cc).toUpperCase() : '', tzn = String(om.timezone || '');
-        const known = { AU: 'au', AR: 'ar', FR: 'fr', BE: 'be', GB: 'uk', CA: 'ca' };
-        const byTz = /^Australia\//.test(tzn) ? 'au' : /^America\/Argentina\//.test(tzn) ? 'ar' : tzn === 'Europe/Paris' ? 'fr' : tzn === 'Europe/Brussels' ? 'be' : tzn === 'Europe/London' ? 'uk' : /^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Moncton|Glace_Bay|Goose_Bay|Whitehorse|Yellowknife|Iqaluit|Rankin_Inlet|Resolute|Cambridge_Bay|Inuvik|Dawson|Dawson_Creek|Fort_Nelson|Swift_Current|Atikokan|Blanc-Sablon|Creston|Nipigon|Thunder_Bay|Rainy_River|Pangnirtung|Coral_Harbour)$/.test(tzn) ? 'ca' : '';
+        const known = { AU: 'au', AR: 'ar', FR: 'fr', BE: 'be', NL: 'nl', DE: 'de', IE: 'ie', GB: 'uk', CA: 'ca' };
+        const byTz = /^Australia\//.test(tzn) ? 'au' : /^America\/Argentina\//.test(tzn) ? 'ar' : tzn === 'Europe/Paris' ? 'fr' : tzn === 'Europe/Brussels' ? 'be' : tzn === 'Europe/Amsterdam' ? 'nl' : (tzn === 'Europe/Berlin' || tzn === 'Europe/Busingen') ? 'de' : tzn === 'Europe/Dublin' ? 'ie' : tzn === 'Europe/London' ? 'uk' : /^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Moncton|Glace_Bay|Goose_Bay|Whitehorse|Yellowknife|Iqaluit|Rankin_Inlet|Resolute|Cambridge_Bay|Inuvik|Dawson|Dawson_Creek|Fort_Nelson|Swift_Current|Atikokan|Blanc-Sablon|Creston|Nipigon|Thunder_Bay|Rainy_River|Pangnirtung|Coral_Harbour)$/.test(tzn) ? 'ca' : '';
         const which = cc ? (known[cc] || '') : byTz;
-        ['au', 'ar', 'fr', 'be', 'uk', 'ca'].forEach(c => auRow.classList.toggle(c, c === which));
+        ['au', 'ar', 'fr', 'be', 'nl', 'de', 'ie', 'uk', 'ca'].forEach(c => auRow.classList.toggle(c, c === which));
         auRow.classList.toggle('cc', !!which);
         // A place with no button of its own: outside the USA by its search country code, or the Outside USA setting for GPS and typed places
         auRow.classList.toggle('none', !which && (cc ? cc !== 'US' : region === 'intl'));
