@@ -888,7 +888,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.3b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.4a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4193,21 +4193,39 @@ async function searchSite(e) {
 
   note('Searching…');
   try {
-    // 4.2.3a: the place database spells it out ("Saint Paul"), so "St Paul" / "St. Louis" / "Ste Genevieve" also search the long spelling
-    name = name.replace(/^(ste?)\.(?=\s|$)/i, '$1');
+    // 4.2.4a: the place database spells words out ("Saint Paul", "Fort Worth", "Mount Airy") but some towns are filed short ("Mt Pleasant"),
+    // so a search also tries the other spelling: St/Ste/Ft/Pt/Mt/Lk and N/S/E/W up front, Spgs/Hts/Bch... at the end, "Mc Kinney", "O Fallon"
+    name = name.replace(/\b(st|ste|ft|pt|mt|mtn|lk|spgs|spg|hts|bch|hbr|vly|jct)\./gi, '$1');
+    const LEAD = { st: 'Saint', ste: 'Sainte', ft: 'Fort', pt: 'Point', mt: 'Mount', mtn: 'Mountain', lk: 'Lake', n: 'North', s: 'South', e: 'East', w: 'West' };
+    const BACK = { saint: 'St', sainte: 'Ste', fort: 'Ft', point: 'Pt', mount: 'Mt' };
+    const TAIL = { spgs: 'Springs', spg: 'Spring', hts: 'Heights', bch: 'Beach', hbr: 'Harbor', vly: 'Valley', jct: 'Junction' };
+    const variants = (n) => {
+      const out = [], back = [], add = (v, to) => { if (v && v.toLowerCase() !== n.toLowerCase() && ![...out, ...back].some(o => o.toLowerCase() === v.toLowerCase())) (to || out).push(v); };
+      const w = n.split(/\s+/);
+      if (w.length > 1) {
+        const f = w[0].toLowerCase(), rest = w.slice(1).join(' ');
+        if (LEAD[f]) add(LEAD[f] + ' ' + rest);
+        if (BACK[f]) add(BACK[f] + ' ' + rest, back);
+        const l = w[w.length - 1].toLowerCase();
+        if (TAIL[l]) add(w.slice(0, -1).join(' ') + ' ' + TAIL[l]);
+        if ((f === 'mc' || f === 'mac') && w.length === 2) add(w[0] + w[1]);
+        if (f === 'o' && w.length === 2) add("O'" + w[1]);
+      }
+      return [...out, n, ...back].slice(0, 3);
+    };
     const geo = async (n) => {
       const r = await fetchT('https://geocoding-api.open-meteo.com/v1/search?name=' + encodeURIComponent(n) + '&count=10&language=en&format=json' + (ccode ? '&countryCode=' + ccode : ''));
       if (!r.ok) throw new Error('search ' + r.status);
       return (await r.json()).results || [];
     };
-    const sm0 = name.match(/^(ste?)\s+(.+)$/i);
+    const vs = variants(name);
     let list;
-    if (sm0) {
-      const alt = (sm0[1].toLowerCase() === 'ste' ? 'Sainte ' : 'Saint ') + sm0[2];
-      const [a, b] = await Promise.all([geo(name), geo(alt).catch(() => [])]);
+    if (vs.length > 1) {
+      const res = await Promise.all(vs.map((v, k) => k ? geo(v).catch(() => []) : geo(v)));
       const seen = new Set(); list = [];
-      for (let i = 0; i < Math.max(a.length, b.length); i++) {
-        [b[i], a[i]].forEach(r => { if (r && !seen.has(r.id)) { seen.add(r.id); list.push(r); } });
+      for (let i = 0; i < 10; i++) {
+        // the long spelling first (it is how most places are filed), then what was typed, then the short spelling
+        res.forEach(a => { const r = a && a[i]; if (r && !seen.has(r.id)) { seen.add(r.id); list.push(r); } });
       }
     } else list = await geo(name);
     if (state) { const f = list.filter(r => r.admin1 === state); if (f.length) list = f; }
