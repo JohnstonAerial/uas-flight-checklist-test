@@ -889,7 +889,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.7c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.7d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4619,7 +4619,7 @@ async function renderWeather(lat, lon, attempt = 1) {
 
       const kp = kpData2;
       const kpVal = kp !== null ? kp.toFixed(1) : '—';
-      const kpNoteFn = () => { const l = kpLimits(); return kp === null ? 'Unavailable — check another source before flying' : kp >= l.r ? '⛔ High — GPS/compass risk' : kp >= l.a ? '⚠️ Elevated — monitor' : 'Normal — good to fly'; };
+      const kpNoteFn = () => { const l = kpLimits(); return kp === null ? 'Unavailable' : kp >= l.r ? '⛔ High — GPS and compass can be affected' : kp >= l.a ? '⚠️ Elevated — monitor' : 'Normal'; };
 
       const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
