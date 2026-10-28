@@ -892,7 +892,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3467,10 +3467,10 @@ function hourStripHtml(om, hIdx) {
   }
   const U = speedUnit();
   const cap = {
-    wind: 'Ground wind\u00A0· sustained\u00A0/\u00A0gust\u00A0· ' + U,
-    alt: 'Wind at ' + altLab + ' · sustained only · ' + U,
+    wind: 'Ground wind\u00A0· sustained\u00A0/\u00A0gust',
+    alt: 'Wind at ' + altLab + ' · sustained only',
     temp: 'Each hour’s forecast temperature',
-    vis: (metric ? 'km' : 'SM') + ' · “fog” = temperature close to the dew point',
+    vis: '“fog” = temperature close to the dew point',
     cloud: (cloudTrend(H, hIdx, n) || '% cloud cover · ') + 'more grey = cloudier',
     rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
   }[view];
@@ -3483,13 +3483,15 @@ function hourStripHtml(om, hIdx) {
     rain: 'Amber = 30% or more\u00A0· red = 60% or more\u00A0· dimmed = night'
   }[view];
   const name = views.find(v => v[0] === view)[1];
+  // The unit sits beside the view chip for the views that have one (Clouds and Rain show % on the tiles)
+  const unitLab = { wind: U, alt: U, temp: metric ? '°C' : '°F', vis: metric ? 'km' : 'SM' }[view] || '';
   let capTxt = cap, keyTxt = key;
   if (dayMode) {
     const dcap = {
-      wind: 'Daytime peak wind\u00A0· sustained\u00A0/\u00A0gust\u00A0· ' + U,
-      alt: 'Daytime peak wind at ' + altLab + ' · sustained only · ' + U,
-      temp: '',   // the tiles show high over low; the unit sits in the note line below
-      vis: (metric ? 'km' : 'SM') + ' · lowest daytime visibility',
+      wind: 'Daytime peak wind\u00A0· sustained\u00A0/\u00A0gust',
+      alt: 'Daytime peak wind at ' + altLab + ' · sustained only',
+      temp: '',   // the tiles show high over low; the unit sits beside the view chip
+      vis: 'Lowest daytime visibility',
       cloud: '% cloud cover · daytime average · more grey = cloudier',
       rain: 'Highest chance of rain in the day · amount below (' + (metric ? 'mm' : 'in') + ')'
     }[view];
@@ -3500,7 +3502,7 @@ function hourStripHtml(om, hIdx) {
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + v[1] + '</option>').join('');
   const noRain = !/class="hs-r">[^<]/.test(cells);
-  return '<div class="wx-strip' + (noRain ? ' hs-nor' : '') + '"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (view === 'temp' ? '<span class="hs-unit">in ' + (metric ? '°C' : '°F') + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
+  return '<div class="wx-strip' + (noRain ? ' hs-nor' : '') + '"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + unitLab + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
