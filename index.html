@@ -894,7 +894,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.9d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.9e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -5629,7 +5629,7 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
   // Settings > Limits: the list, rename, delete, add
   document.querySelectorAll('.wl-block').forEach(wl => {
     const b = document.createElement('div'); b.className = 'dr-block';
-    b.innerHTML = '<div class="dr-list"></div><div class="dr-edit" hidden><input type="text" class="dr-name" maxlength="40" aria-label="Drone name" placeholder="Drone name"><button type="button" class="dr-del">Delete this drone</button></div><div style="margin-top:8px"><button type="button" class="dr-btn dr-add">＋ Add a drone</button></div><div class="dr-for"></div>';
+    b.innerHTML = '<div class="dr-list"></div><div class="dr-edit" hidden><input type="text" class="dr-name" maxlength="40" aria-label="Drone name" placeholder="Drone name"><button type="button" class="dr-del">Delete this drone</button></div><div style="margin-top:8px"><button type="button" class="dr-btn dr-add">' + DRONE_IMG + ' Add a drone</button></div><div class="dr-for"></div>';
     wl.before(b);
     b.querySelector('.dr-name').addEventListener('input', ev => {
       const o = drData(), d = o.list.find(x => x.id === o.sel); if (!d) return;
