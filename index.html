@@ -891,7 +891,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.9b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.9c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -4684,7 +4684,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${(() => { const H = om && om.hourly; if (!H || !H.cloud_cover || hIdx < 0) return ''; const c = H.cloud_cover[hIdx], lo = H.cloud_cover_low ? H.cloud_cover_low[hIdx] : null; if (c == null || !isFinite(c)) return ''; return `<div class="wx-sub wx-model">Model for your spot: <strong>${Math.round(c)}%\u00A0cloud${lo != null && isFinite(lo) ? '<br>' + Math.round(lo) + '%\u00A0low' : ''}</strong></div>`; })()}
           </div>
           <div class="wx-item">
-            <div class="wx-label"><button type="button" class="wx-gear" data-lim="temp" aria-label="Edit your temperature limits in Settings">⚙</button>🌡 Temperature</div>
+            <div class="wx-label"><button type="button" class="wx-gear" data-lim="temp" aria-label="Edit your temperature limits in Settings">⚙</button>🌡 Temp</div>
             <div class="wx-value ${tempOk ? tempColor(wx.main.temp) : ''}">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
             ${obsT ? `<div class="wx-sub" data-rec-age="${Date.now() - obsT.ageMin * 60000}">${obsT.station} · ${fmtDist(obsT.dist)} away · ${ageText(obsT.ageMin * 60000)}</div>` : ''}
             <div class="wx-label wx-vislab">👁 Visibility</div>
