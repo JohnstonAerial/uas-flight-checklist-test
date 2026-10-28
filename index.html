@@ -773,8 +773,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .hs-c small { display: block; font-size: 9px; font-weight: 600; opacity: 0.8; }
   .hc-good { background: var(--green); } .hc-warn { background: var(--amber); } .hc-alert { background: #e0301e; color: #fff; }
   .hs-dark .hs-c, .hs-dark .hs-t { opacity: 0.5; }
-  .wx-strip.hs-nor .hs-r { display: none; }   /* no rain-chance figures in this view: don't keep the empty row */
-  .hs-r { margin-top: 3px; font-size: 10px; color: #3d8bfd; min-height: 12px; }
   .hs-key { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
   .hs-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; vertical-align: middle; text-transform: none; letter-spacing: 0; }
   .hs-seg button { font: inherit; font-size: 10.5px; font-weight: 600; line-height: 1.3; padding: 2px 8px; margin: 0; border: 0; border-radius: 0; background: transparent; color: var(--link); cursor: pointer; min-height: 0; min-width: 0; }
@@ -893,7 +891,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8g</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3275,7 +3273,7 @@ function calmWindow(om, hIdx, nowBad, obsFine) {
   const cw = cnt(x => x.windRed), cr = cnt(x => x.wet), cv = cnt(x => x.visBad);
   return { kind: 'none', lowNow: !!nowBad, cause: cw >= cr && cw >= cv ? 'wind' : cr >= cv ? 'wet' : 'vis', aw: Math.round(W * 2 / 3), ag: Math.round(G * 2 / 3), W, G };
 }
-// Next 24 hours strip (under Best window): wind with gust beneath, coloured by your limits; rain chance where it is 30% or more; hours after sunset dimmed
+// Next 24 hours strip (under Best window): wind with gust beneath, coloured by your limits; hours after sunset dimmed
 // Cloud ceiling tile: layers from the airport report, and (behind "more") how forecast cloud cover changes over the next hours
 function cloudHtml(metar, ceilFt, om, hIdx) {
   const COV = { FEW: 'Few', SCT: 'Scattered', BKN: 'Broken', OVC: 'Overcast', OVX: 'Sky obscured', VV: 'Sky obscured' };
@@ -3384,7 +3382,7 @@ function dayChip(H, idx, view, ctx) {
       html = '<div class="hs-c ' + cls[c] + '">' + Math.round(ppMax) + '%' + (mm >= (metric ? 0.1 : 0.13) ? '<small>' + (metric ? mm.toFixed(1) : (mm / 25.4).toFixed(2)) + '</small>' : nb) + '</div>';
     }
   }
-  return { html, rain: view === 'wind' && ppMax !== null && ppMax >= 30 ? Math.round(ppMax) + '%' : '' };
+  return { html };
 }
 function dayCaption(H, d, ctx) {
   const hrf = (s) => new Date(s).toLocaleTimeString([], { hour: 'numeric' }).replace(/\s*([AP])M$/i, (m, a) => a.toLowerCase());
@@ -3422,7 +3420,7 @@ function hourStripHtml(om, hIdx) {
     const ctx = { metric, intl, cls };
     cells = days.filter(d => d.idx.length).map(d => {   // today drops out once its daytime hours are over, instead of showing an empty dash
       const c = dayChip(H, d.idx, view, ctx), sel = stripDay === d.dd;
-      return '<div class="hs-h hs-dy' + (sel ? ' sel' : '') + (d.dd >= 5 ? ' hs-f' + (d.dd - 4) : '') + '" data-k="' + d.dd + '" role="button" tabindex="0" aria-pressed="' + sel + '" aria-label="' + d.label + '" onclick="stripDayPick(' + d.dd + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();stripDayPick(' + d.dd + ')}"><div class="hs-t">' + d.label + '</div>' + c.html + '<div class="hs-r">' + c.rain + '</div></div>';
+      return '<div class="hs-h hs-dy' + (sel ? ' sel' : '') + (d.dd >= 5 ? ' hs-f' + (d.dd - 4) : '') + '" data-k="' + d.dd + '" role="button" tabindex="0" aria-pressed="' + sel + '" aria-label="' + d.label + '" onclick="stripDayPick(' + d.dd + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();stripDayPick(' + d.dd + ')}"><div class="hs-t">' + d.label + '</div>' + c.html + '</div>';
     }).join('');
   }
   for (let k = 0; k < n && !dayMode; k++) {
@@ -3432,14 +3430,13 @@ function hourStripHtml(om, hIdx) {
     const pp = H.precipitation_probability ? H.precipitation_probability[i] : null;
     const lab = k === 0 ? 'Now' : new Date(t).toLocaleTimeString([], { hour: 'numeric' }).replace(/\s*([AP])M$/i, (m, a) => a.toLowerCase());
     const ok = (v) => v != null && isFinite(v);
-    let cell = '<div class="hs-c hc-none">—' + nb + '</div>', under = '';
+    let cell = '<div class="hs-c hc-none">—' + nb + '</div>';
     if (view === 'wind') {
       const w = H.wind_speed_10m[i], g = H.wind_gusts_10m[i];
       if (ok(w)) {
         const gOk = ok(g), wr = Math.round(w), gr = gOk ? Math.round(g) : null;
         cell = '<div class="hs-c ' + cls[windColor(wr, gr)] + '">' + fmtSpeedNum(w) + (gOk && gr > wr ? '<small>' + fmtSpeedNum(g) + '</small>' : nb) + '</div>';
       }
-      under = ok(pp) && pp >= 30 ? Math.round(pp) + '%' : '';
     } else if (view === 'alt') {
       const w = H.wind_speed_120m[i];
       if (ok(w)) cell = '<div class="hs-c ' + cls[windColor(Math.round(w), null)] + '">' + fmtSpeedNum(w) + nb + '</div>';
@@ -3464,7 +3461,7 @@ function hourStripHtml(om, hIdx) {
         cell = '<div class="hs-c ' + cls[c] + '">' + Math.round(pp) + '%' + (ok(mm) && mm >= (metric ? 0.1 : 0.13) ? '<small>' + (metric ? mm.toFixed(1) : (mm / 25.4).toFixed(2)) + '</small>' : nb) + '</div>';
       }
     }
-    cells += '<div class="hs-h' + (dark ? ' hs-dark' : '') + '"><div class="hs-t">' + lab + '</div>' + cell + '<div class="hs-r">' + under + '</div></div>';
+    cells += '<div class="hs-h' + (dark ? ' hs-dark' : '') + '"><div class="hs-t">' + lab + '</div>' + cell + '</div>';
   }
   const U = speedUnit();
   const cap = {
@@ -3473,10 +3470,10 @@ function hourStripHtml(om, hIdx) {
     temp: 'Each hour’s forecast temperature',
     vis: '“fog” = temperature close to the dew point',
     cloud: (cloudTrend(H, hIdx, n) || 'Hourly cloud cover · ').replace(/ · $/, ''),
-    rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
+    rain: 'Chance of rain · amount below'
   }[view];
   const key = {
-    wind: 'Blue = rain chance\u00A0· dimmed = night',
+    wind: 'Dimmed = night',
     alt: 'Colors follow your limits\u00A0· dimmed = night',
     temp: 'Colors follow your limits\u00A0· dimmed = night',
     vis: (intl ? 'Amber' : 'Red') + ' = under ' + (metric ? '4.8 km' : '3 SM'),   // the caption above already explains "fog"
@@ -3485,7 +3482,7 @@ function hourStripHtml(om, hIdx) {
   }[view];
   const name = views.find(v => v[0] === view)[1];
   // The unit sits beside the view chip for the views that have one (Clouds and Rain show % on the tiles)
-  const unitLab = { wind: U, alt: U, temp: metric ? '°C' : '°F', vis: metric ? 'km' : 'SM' }[view] || '';
+  const unitLab = { wind: U, alt: U, temp: metric ? '°C' : '°F', vis: metric ? 'km' : 'SM', rain: metric ? 'mm' : 'inches' }[view] || '';
   let capTxt = cap, keyTxt = key;
   if (dayMode) {
     const dcap = {
@@ -3494,7 +3491,7 @@ function hourStripHtml(om, hIdx) {
       temp: '',   // the tiles show high over low; the unit sits beside the view chip
       vis: 'Lowest daytime visibility',
       cloud: 'Daytime average cloud cover',
-      rain: 'Highest chance of rain in the day · amount below (' + (metric ? 'mm' : 'in') + ')'
+      rain: 'Highest chance of rain in the day · amount below'
     }[view];
     const sd = days.find(d => d.dd === stripDay);
     capTxt = sd ? dayCaption(H, sd, null) : dcap;
@@ -3502,8 +3499,7 @@ function hourStripHtml(om, hIdx) {
   }
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + v[1] + '</option>').join('');
-  const noRain = !/class="hs-r">[^<]/.test(cells);
-  return '<div class="wx-strip' + (noRain ? ' hs-nor' : '') + '"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
+  return '<div class="wx-strip"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
