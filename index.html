@@ -902,12 +902,13 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 </style>
 </head>
 <body>
+<script>/* 4.2.13a: set the opening view before anything draws, so the page does not jump when the main script runs */(function(){var v='wx';try{v=localStorage.getItem('uasView')||'wx';}catch(e){}if(v!=='wx'&&v!=='ck'&&v!=='set')v='wx';document.body.classList.add('view-'+v);})();</script>
 
 <div class="header" role="banner">
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.11b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
