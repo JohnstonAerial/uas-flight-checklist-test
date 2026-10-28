@@ -773,6 +773,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .hs-c small { display: block; font-size: 9px; font-weight: 600; opacity: 0.8; }
   .hc-good { background: var(--green); } .hc-warn { background: var(--amber); } .hc-alert { background: #e0301e; color: #fff; }
   .hs-dark .hs-c, .hs-dark .hs-t { opacity: 0.5; }
+  .wx-strip.hs-nor .hs-r { display: none; }   /* no rain-chance figures in this view: don't keep the empty row */
   .hs-r { margin-top: 3px; font-size: 10px; color: #3d8bfd; min-height: 12px; }
   .hs-key { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
   .hs-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; vertical-align: middle; text-transform: none; letter-spacing: 0; }
@@ -890,7 +891,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3473,7 +3474,7 @@ function hourStripHtml(om, hIdx) {
   const key = {
     wind: 'Blue = rain chance\u00A0· colours follow your wind limits\u00A0· dimmed = night',
     alt: 'Colours follow your wind limits\u00A0· dimmed = night',
-    temp: 'Colours follow your temperature limits\u00A0· dimmed = night',
+    temp: 'Colours follow your limits\u00A0· dimmed = night',
     vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + '\u00A0· fog = within 2°F (1°C) of the dew point\u00A0· dimmed = night',
     cloud: 'Forecast cloud cover, a guide only\u00A0· dimmed = night',
     rain: 'Amber = 30% or more\u00A0· red = 60% or more\u00A0· dimmed = night'
@@ -3491,11 +3492,12 @@ function hourStripHtml(om, hIdx) {
     }[view];
     const sd = days.find(d => d.dd === stripDay);
     capTxt = sd ? dayCaption(H, sd, null) : dcap;
-    keyTxt = (view === 'temp' ? (metric ? '°C' : '°F') + '\u00A0· ' : '') + 'Tap a day for a summary\u00A0· later days are a rough guide';
+    keyTxt = (view === 'temp' ? (metric ? '°C' : '°F') + '\u00A0· ' : '') + 'Tap a day\u00A0· later days are a rough guide';
   }
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + v[1] + '</option>').join('');
-  return '<div class="wx-strip"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
+  const noRain = !/class="hs-r">[^<]/.test(cells);
+  return '<div class="wx-strip' + (noRain ? ' hs-nor' : '') + '"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
