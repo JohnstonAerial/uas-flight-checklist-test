@@ -891,7 +891,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3395,7 +3395,7 @@ function dayCaption(H, d, ctx) {
   if (pps.length) s += ' · rain ' + Math.round(Math.max(...pps)) + '%';
   // The selected tile above already shows the day, so the line starts at the useful part
   s = s.indexOf(d.label + ' · ') === 0 ? s.slice(d.label.length + 3) : s;
-  return (d.dd >= 5 ? 'Rough guide · ' : '') + s;
+  return s;   // later days are marked by the note below the tiles and their lighter colour, so no "Rough guide" prefix (it made the line wrap)
 }
 function hourStripHtml(om, hIdx) {
   const H = om && om.hourly;
