@@ -891,7 +891,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.9a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3279,7 +3279,7 @@ function cloudHtml(metar, ceilFt, om, hIdx) {
   const COV = { FEW: 'Few', SCT: 'Scattered', BKN: 'Broken', OVC: 'Overcast', OVX: 'Sky obscured', VV: 'Sky obscured' };
   const layers = ((metar && metar.clouds) || []).map(c => ({ cov: COV[c.code || c.cover], base: c.base_feet_agl })).filter(x => x.cov && x.base != null && isFinite(x.base)).sort((a, b) => a.base - b.base).slice(0, 4);
   let top = '';
-  if (ceilFt !== null && layers.length) top = '<div class="wx-lay">' + layers.map((x, i) => '<span>' + ({ Few: 'Few', Scattered: 'Sct', Broken: 'Bkn', Overcast: 'Ovc', 'Sky obscured': 'Obscd' }[x.cov] || x.cov) + ' <b>' + (i < layers.length - 1 ? fmtAlt(x.base).replace(/\s*[A-Za-z]+$/, '') : fmtAlt(x.base)) + '</b></span>').join(' \u00B7 ') + '</div>';   // with no ceiling the note above already lists the layers
+  if (ceilFt !== null && layers.length > 1) top = '<div class="wx-lay">' + layers.map((x, i) => '<span>' + ({ Few: 'Few', Scattered: 'Sct', Broken: 'Bkn', Overcast: 'Ovc', 'Sky obscured': 'Obscd' }[x.cov] || x.cov) + ' <b>' + (i < layers.length - 1 ? fmtAlt(x.base).replace(/\s*[A-Za-z]+$/, '') : fmtAlt(x.base)) + '</b></span>').join(' \u00B7 ') + '</div>';   // with no ceiling the note above already lists the layers
   if (!top) return '';
   return '<div class="wx-cl">' + top + '</div>';
 }
@@ -4675,12 +4675,12 @@ async function renderWeather(lat, lon, attempt = 1) {
             <div class="wx-value ${ceilClass}">${ceilTxt}</div>
             <div class="wx-sub">${ceilNote}</div>
             ${metarData2 ? `<div class="wx-sub"${metarData2.ageMin != null ? ' data-rec-age="' + (Date.now() - metarData2.ageMin * 60000) + '"' : ''}>${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}</div>` : ''}
+            ${metarData2 ? cloudHtml(m, ceilFt, om, hIdx) : ''}
             ${lowerTxt() ? `<div class="wx-sub">${lowerTxt()}</div>` : ''}
             ${alsoTxt() ? `<div class="wx-sub wx-also">${alsoTxt()}</div>` : ''}
             ${lowCloudTxt() ? `<div class="wx-sub">${lowCloudTxt()}</div>` : ''}
             ${maxAltTxt() ? `<div class="wx-sub"><strong>${maxAltTxt()}</strong></div>` : ''}
             ${(() => { const H = om && om.hourly; if (!H || !H.cloud_cover || hIdx < 0) return ''; const c = H.cloud_cover[hIdx], lo = H.cloud_cover_low ? H.cloud_cover_low[hIdx] : null; if (c == null || !isFinite(c)) return ''; return `<div class="wx-sub wx-model">Model for your spot: <strong>${Math.round(c)}%\u00A0cloud${lo != null && isFinite(lo) ? '<br>' + Math.round(lo) + '%\u00A0low' : ''}</strong></div>`; })()}
-            ${metarData2 ? cloudHtml(m, ceilFt, om, hIdx) : ''}
           </div>
           <div class="wx-item">
             <div class="wx-label"><button type="button" class="wx-gear" data-lim="temp" aria-label="Edit your temperature limits in Settings">⚙</button>Temperature</div>
