@@ -894,7 +894,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.10a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.10b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3503,7 +3503,7 @@ function hourStripHtml(om, hIdx) {
   }
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + vIcon[v[0]] + ' ' + v[1] + '</option>').join('');
-  return '<div class="wx-strip"><div class="hs-title">Next ' + (dayMode ? '10 days' : '24 hours') + ' <span class="ws-chip hs-chip"><span class="hs-lab">' + vIcon[view] + '\u00A0' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
+  return '<div class="wx-strip"><div class="hs-title">Forecast <span class="ws-chip hs-chip"><span class="hs-lab">' + vIcon[view] + '\u00A0' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
