@@ -893,7 +893,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.8f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -3472,16 +3472,16 @@ function hourStripHtml(om, hIdx) {
     alt: 'Wind at ' + altLab + ' · sustained only',
     temp: 'Each hour’s forecast temperature',
     vis: '“fog” = temperature close to the dew point',
-    cloud: (cloudTrend(H, hIdx, n) || '% cloud cover · ') + 'more grey = cloudier',
+    cloud: (cloudTrend(H, hIdx, n) || 'Hourly cloud cover · ').replace(/ · $/, ''),
     rain: 'Chance of rain · amount below (' + (metric ? 'mm' : 'in') + ')'
   }[view];
   const key = {
-    wind: 'Blue = rain chance\u00A0· colours follow your wind limits\u00A0· dimmed = night',
-    alt: 'Colours follow your wind limits\u00A0· dimmed = night',
-    temp: 'Colours follow your limits\u00A0· dimmed = night',
-    vis: (intl ? 'Amber = under ' + (metric ? '4.8 km' : '3 SM') : 'Red = under the ' + (metric ? '4.8 km (3 SM)' : '3 SM') + ' minimum') + '\u00A0· fog = within 2°F (1°C) of the dew point\u00A0· dimmed = night',
-    cloud: 'Forecast cloud cover, a guide only\u00A0· dimmed = night',
-    rain: 'Amber = 30% or more\u00A0· red = 60% or more\u00A0· dimmed = night'
+    wind: 'Blue = rain chance\u00A0· dimmed = night',
+    alt: 'Colors follow your limits\u00A0· dimmed = night',
+    temp: 'Colors follow your limits\u00A0· dimmed = night',
+    vis: (intl ? 'Amber' : 'Red') + ' = under ' + (metric ? '4.8 km' : '3 SM'),   // the caption above already explains "fog"
+    cloud: 'A guide only\u00A0· dimmed = night',
+    rain: 'Amber 30%+\u00A0· red 60%+\u00A0· dimmed = night'
   }[view];
   const name = views.find(v => v[0] === view)[1];
   // The unit sits beside the view chip for the views that have one (Clouds and Rain show % on the tiles)
@@ -3493,7 +3493,7 @@ function hourStripHtml(om, hIdx) {
       alt: 'Daytime peak wind at ' + altLab + ' · sustained only',
       temp: '',   // the tiles show high over low; the unit sits beside the view chip
       vis: 'Lowest daytime visibility',
-      cloud: '% cloud cover · daytime average · more grey = cloudier',
+      cloud: 'Daytime average cloud cover',
       rain: 'Highest chance of rain in the day · amount below (' + (metric ? 'mm' : 'in') + ')'
     }[view];
     const sd = days.find(d => d.dd === stripDay);
