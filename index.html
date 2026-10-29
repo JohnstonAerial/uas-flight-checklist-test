@@ -722,6 +722,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
+  /* 4.2.13r: floating Top button once you have scrolled down */
+  .to-top { position: fixed; right: 14px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 45; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #2563EB; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 9px 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.35); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s; }
+  .to-top.show { opacity: 1; visibility: visible; transform: none; }
+  body:has(.panel.editing) .to-top { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  @media print { .to-top { display: none !important; } }
   /* 4.2.13n: the strip under the title is the same height on Conditions, Checklist and Settings so the buttons below never move */
   .tabs, .tabs-cond, .tabs-set { box-sizing: border-box; height: 68px; overflow-y: hidden; }
   .tabs-cond .tc, .ts { height: 100%; box-sizing: border-box; }
@@ -960,7 +965,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13q</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13r</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -978,6 +983,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="progress-bar-fill" id="header-bar" style="width:0%"></div>
   </div>
 </div>
+
+<button type="button" class="to-top" id="to-top" aria-label="Back to the top" onclick="window.scrollTo({ top: 0, behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' })">↑ Top</button>
 
 <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
   <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small>Weather<span class="nv-opt"> &amp; airspace</span></small></span></button>
@@ -1893,20 +1900,22 @@ function syncSetStrip() {
 // 4.2.13q: the header strip on the Conditions view jumps between Weather and Airspace; the underline follows the scroll
 var condLock = 0;
 function condMark(air) { [['.tabs-cond .ts-wx', !air], ['.tabs-cond .ts-air', air]].forEach(function (p) { const b = document.querySelector(p[0]); if (b) { b.classList.toggle('on', p[1]); b.setAttribute('aria-selected', String(p[1])); } }); }
+// the header only stays put when neither <html> nor <body> clips its overflow (it does not today), so the jump leaves room for it only then
+function hdrOffset() { const hdr = document.querySelector('.header'); if (!hdr) return 0; const ok = v => v === 'visible' || v === 'clip'; return (ok(getComputedStyle(document.documentElement).overflowY) && ok(getComputedStyle(document.body).overflowY)) ? hdr.getBoundingClientRect().height : 0; }
 function condGo(w) {
   condMark(w === 'air'); condLock = Date.now() + 900;
-  const hdr = document.querySelector('.header'), hb = hdr ? hdr.getBoundingClientRect().height : 0;
+  const hb = hdrOffset();
   if (w === 'air') { const el = document.querySelector('.wx-tfr-row'); if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hb - 10), behavior: 'smooth' }); }
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function syncCondStrip() {
   if (!document.body.classList.contains('view-wx') || Date.now() < condLock) return;
   const el = document.querySelector('.wx-tfr-row'), hdr = document.querySelector('.header'); if (!el || !hdr) return;
-  const hb = hdr.getBoundingClientRect().height, atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-  const air = el.getBoundingClientRect().top <= hb + 40 || (atBottom && window.scrollY > 40);
+  const hb = hdrOffset(), atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  const air = el.getBoundingClientRect().top <= hb + 160 || (atBottom && window.scrollY > 40);
   condMark(air);
 }
-(function () { let t = 0; window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); }); }, { passive: true }); window.addEventListener('resize', syncCondStrip); })();
+(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); topBtn(); }); })();
 
 function showPanel(panel, tab) {
   closeItemMenu();
