@@ -17,6 +17,7 @@
 // Wind picture (three flowing streams) used on the Wind tile, strip chip and Settings row
 const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22h34a8 8 0 1 0-8-8" stroke="#4FC3F7" stroke-width="5"/><path d="M6 34h46a9 9 0 1 1-9 9" stroke="#2196F3" stroke-width="5"/><path d="M12 46h18a6 6 0 1 1-6 6" stroke="#64B5F6" stroke-width="5"/></svg>';
 const OK_IMG = '<svg class="wind-ico ok-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22a455"/><path d="M7 12.4l3.6 3.6 6.6-7.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const PILOT_IMG = '<svg class="wind-ico pilot-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="6.4" y1="16" x2="2.4" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><line x1="17.6" y1="16" x2="21.6" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="5.6" r="3.3" fill="#f2c28c"/><path d="M5 13.6c0-3.2 3.2-5 7-5s7 1.8 7 5z" fill="#3b82c4"/><rect x="4" y="14.2" width="16" height="7.4" rx="2.6" fill="#334155"/><circle cx="8.6" cy="17.9" r="1.9" fill="#9ca3af"/><circle cx="15.4" cy="17.9" r="1.9" fill="#9ca3af"/></svg>';
 const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
 const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -698,6 +699,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .foot-links .foot-bak { white-space: nowrap; }
   /* 4.2.13i: Settings sections live in the header on the Settings view */
   .gear-ico, .bak-ico { width: 1.2em; height: 1.2em; vertical-align: -0.22em; }
+  .pilot-ico { width: 1.55em; height: 1.55em; vertical-align: -0.38em; margin: -0.2em 0; }
   .nv .gear-ico { margin: -0.2em 0; }
   .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
   .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; text-wrap: balance; }
@@ -950,7 +952,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13n</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13o</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2504,7 +2506,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     '<div class="ti-more"><input class="tab-icon-in" type="text" maxlength="12" autocomplete="off" placeholder="or type your own" oninput="setTabIcon(this, firstIcon(this.value))">' +
     '<button type="button" class="cust-btn" onclick="setTabIcon(this, \'\')">No icon</button><button type="button" class="cust-btn" onclick="setTabIcon(this, null)">Original icon</button></div></div></div>' +
     '<div class="tab-ac-wrap"><div class="tab-ac-lbl">For records and PDFs saved from this tab</div><div class="ac-block tab-ac">' +
-    '<div class="fn-row"><span>\uD83D\uDC64 Pilot</span><input type="text" class="tab-pilot" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
+    '<div class="fn-row"><span>' + PILOT_IMG + ' Pilot</span><input type="text" class="tab-pilot" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
     '<div class="fn-row"><span>\uD83D\uDE81 Drone</span><input type="text" class="tab-drone" maxlength="40" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div>' +
     '<div class="fn-row"><span>\uD83E\uDEAA Reg. #</span><input type="text" class="tab-reg" maxlength="30" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" oninput="saveTabAc(this)"></div></div>' +
     '<div class="tab-note">Leave any box blank to use the default from Settings.</div></div>' +
@@ -3109,7 +3111,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   fnb.innerHTML = '<div class="fn-row"><span>📋 Record file name starts with</span><input type="text" class="fn-in" maxlength="40" placeholder="flight-record" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Saved flight record file names start with" oninput="fnSave(this)"></div>' +
     '<div class="fn-hint"><div class="fn-ex"></div>Date, time and customer are added for you.</div>';
   const acb = document.createElement('div'); acb.className = 'fn-block ac-block';
-  acb.innerHTML = '<div class="fn-row"><span>👤 Default pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
+  acb.innerHTML = '<div class="fn-row"><span>' + PILOT_IMG + ' Default pilot</span><input type="text" class="fn-in ac-in" data-k="uasPilot" maxlength="40" placeholder="Your name" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Pilot name" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>' + DRONE_IMG + ' Default drone</span><input type="text" class="fn-in ac-in" data-k="uasDrone" maxlength="40" placeholder="e.g. Mavic 4 Pro" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" aria-label="Drone name or model" oninput="acSave(this)"></div>' +
     '<div class="fn-row"><span>🪪 Default reg. #</span><input type="text" class="fn-in ac-in" data-k="uasRegNo" maxlength="30" placeholder="FA3…" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" aria-label="Drone registration number" oninput="acSave(this)"></div>' +
     '<div class="fn-hint">Printed at the top of saved records and the PDF. A tab uses these only if its own Pilot, Drone and Reg. # (under Customize) are blank.</div>';
