@@ -349,6 +349,10 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-top .progress-info { flex: 1 1 0; min-width: 0; }
   .pc-cust { font-family: inherit; font-size: 12px; font-weight: 600; color: var(--blue); background: transparent; border: 1px solid var(--blue); border-radius: 20px; padding: 6px 12px; min-height: 34px; white-space: nowrap; cursor: pointer; flex: 0 0 auto; }
   .pc-cust:active { background: var(--blue-light); }
+  /* 4.2.14b: Record sits under Customize in the progress card and jumps to Print, PDF and Save flight record */
+  .pc-acts { display: flex; flex-direction: column; align-items: stretch; gap: 6px; flex: 0 0 auto; }
+  .pc-cust .rec-ico { width: 1.3em; height: 1.3em; vertical-align: -0.32em; margin-right: 2px; }
+  .panel.editing .pc-rec { display: none; }
   .pc-bottom { background: var(--card); border-radius: 14px; padding: 12px 14px; margin: 14px 0 6px; box-shadow: var(--shadow); display: flex; }
   .pc-bottom .pc-btns { flex: 1 1 100%; margin-bottom: 0; }
   .pc-jump { display: block; width: 100%; font-family: inherit; font-size: 12.5px; color: var(--link); background: none; border: 0; text-align: center; text-decoration: underline; padding: 2px 12px 8px; cursor: pointer; line-height: 1.35; }
@@ -723,13 +727,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
-  /* 4.2.14a: a Record button stays at the right end of the tab strip and jumps to Print, PDF and Save flight record */
-  .rec-jump { position: sticky; right: 0; flex: 0 0 auto; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; color: rgba(255,255,255,0.9); background: var(--blue); border: 0; border-left: 1px solid rgba(255,255,255,0.22); border-bottom: 3px solid transparent; padding: 8px 12px 9px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; box-shadow: -8px 0 8px -6px rgba(0,0,0,0.25); }
-  .rec-jump.on { color: #fff; border-bottom-color: #fff; }
-  .rec-jump .tab-lbl { line-height: 1.2; }
-  .rec-jump .rec-ico { display: block; width: 28px; height: 28px; }
-  body:has(.panel.editing) .rec-jump { display: none; }
-  @media print { .rec-jump { display: none !important; } }
   /* 4.2.13r: floating Top button once you have scrolled down */
   .to-top { position: fixed; right: 14px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 45; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #2563EB; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 9px 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.35); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s; }
   .to-top.show { opacity: 1; visibility: visible; transform: none; }
@@ -973,7 +970,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14a</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -984,7 +981,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="tab active" onclick="showPanel('general',this)">🏞 General</div>
     <div class="tab" onclick="showPanel('mapping',this)">🗺 Mapping</div>
     <div class="tab" onclick="showPanel('zeitview',this)">📋 Commercial</div>
-    <button type="button" class="rec-jump" id="rec-jump" onclick="recGo()" aria-label="Jump to Print, PDF and Save flight record"><span class="tab-ico" id="rj-ico">📋</span><span class="tab-lbl">Record</span></button>
   </div>
   <div class="tabs-set" role="tablist" aria-label="Settings sections"><button type="button" class="ts ts-pref" role="tab" onclick="setSection('tg-set')"><span id="ts-ico-pref">⚙</span><span class="tab-lbl">Preferences</span></button><button type="button" class="ts ts-bak" role="tab" onclick="setSection('tg-bak')"><span id="ts-ico-bak">💾</span><span class="tab-lbl">Back up &amp; restore</span></button></div>
   <div class="tabs-cond" role="tablist" aria-label="Conditions sections"><button type="button" class="ts ts-wx on" role="tab" aria-selected="true" onclick="condGo('wx')"><span class="ts-i" id="tc-ico">🌤</span><span class="tab-lbl">Weather</span></button><button type="button" class="ts ts-air" role="tab" aria-selected="false" onclick="condGo('air')"><span class="ts-i" id="tc-air">🛩</span><span class="tab-lbl">Airspace</span></button></div>
@@ -1460,7 +1456,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
 (function () { [['nv-ok-ico', OK_IMG], ['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
-(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); const ea = document.getElementById('tc-air'); if (ea) ea.innerHTML = AIR_IMG; const er = document.getElementById('rj-ico'); if (er) er.innerHTML = REC_IMG; })();
+(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); const ea = document.getElementById('tc-air'); if (ea) ea.innerHTML = AIR_IMG; })();
 let current = 'general';
 
 // ── Save progress on this device so a reload or phone lock doesn't wipe the checklist ──
@@ -1885,7 +1881,6 @@ function setView(v, noSave) {
   if (!noSave) window.scrollTo(0, 0);
   if (typeof syncSetStrip === 'function') syncSetStrip();
   if (typeof syncCondStrip === 'function') syncCondStrip();
-  if (typeof syncRecJump === 'function') syncRecJump();
 }
 (function () {
   let v = 'wx'; try { v = localStorage.getItem(VIEW_KEY) || 'wx'; } catch (e) {}
@@ -1925,21 +1920,7 @@ function syncCondStrip() {
   const air = el.getBoundingClientRect().top <= hb + 160 || (atBottom && window.scrollY > 40);
   condMark(air);
 }
-(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); syncRecJump(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); syncRecJump(); topBtn(); }); })();
-
-// 4.2.14a: the Record button at the end of the tab strip
-function recGo() {
-  const el = document.querySelector('.panel.active .pc-bottom'); if (!el) return;
-  const rb = document.getElementById('rec-jump'); if (rb) rb.classList.add('on');
-  recLock = Date.now() + 900;
-  window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hdrOffset() - 10), behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' });
-}
-var recLock = 0;
-function syncRecJump() {
-  const rb = document.getElementById('rec-jump'); if (!rb || Date.now() < recLock) return;
-  const el = document.querySelector('.panel.active .pc-bottom');
-  rb.classList.toggle('on', !!el && document.body.classList.contains('view-ck') && el.getBoundingClientRect().top <= window.innerHeight * 0.8);
-}
+(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); topBtn(); }); })();
 
 function showPanel(panel, tab) {
   closeItemMenu();
@@ -5614,10 +5595,14 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
     const cust = document.createElement('button'); cust.type = 'button'; cust.className = 'pc-cust';
     cust.textContent = '\u270E Customize'; cust.setAttribute('aria-label', 'Customize this checklist');
     cust.onclick = () => toggleEdit(cust);
-    top.append(info, cust);
+    const acts = document.createElement('div'); acts.className = 'pc-acts';
+    const rec = document.createElement('button'); rec.type = 'button'; rec.className = 'pc-cust pc-rec';
+    rec.innerHTML = REC_IMG + ' Record'; rec.setAttribute('aria-label', 'Jump to Print, PDF and Save flight record');
+    acts.append(cust, rec);
+    top.append(info, acts);
     const goBottom = () => { try { bottom.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { bottom.scrollIntoView(); } };
     const jump = document.createElement('button'); jump.type = 'button'; jump.className = 'pc-jump';
-    jump.textContent = '\u2193 Print, PDF and Save flight record are at the bottom'; jump.onclick = goBottom;
+    jump.textContent = '\u2193 Print, PDF and Save flight record are at the bottom'; jump.onclick = goBottom; rec.onclick = goBottom;
     card.after(jump);
     if (!movedOff()) {
       const n = document.createElement('div'); n.className = 'pc-moved'; n.setAttribute('role', 'note');
