@@ -911,6 +911,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     .mainnav .nv { position: relative; flex: 1; font-family: inherit; font-size: 13px; font-weight: 700; padding: 10px 4px; border-radius: 10px; border: 1px solid var(--border, rgba(127,127,127,.35)); background: var(--card-bg, rgba(127,127,127,.12)); color: var(--text-muted); cursor: pointer; }
     body.view-wx .mainnav .nv-wx, body.view-ck .mainnav .nv-ck, body.view-set .mainnav .nv-set { background: #2563EB; border-color: #2563EB; color: #fff; }
     body.bk-dirty .mainnav .nv-set::after { content: ''; position: absolute; top: 5px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: #e0301e; box-shadow: 0 0 0 2px var(--bg); }
+    /* 4.3.0a: the three main buttons sit at the top of the header, above the strip for the section you are in */
+    .header .mainnav { padding: 0 0 10px; background: none; }
+    .header .mainnav .nv { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.4); color: #fff; }
+    body.view-wx .header .mainnav .nv-wx, body.view-ck .header .mainnav .nv-ck, body.view-set .header .mainnav .nv-set { background: #fff; border-color: #fff; color: var(--blue); }
+    body.bk-dirty .header .mainnav .nv-set::after { box-shadow: 0 0 0 2px var(--blue); }
     body.view-wx .panel, body.view-wx .tabs { display: none !important; }
     body.view-wx .tabs-cond { display: flex; }
     body.view-set .tabs { display: none !important; }
@@ -970,12 +975,17 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
       <a class="hdr-help" href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener" aria-label="Help and guides (opens in a new tab)">📘 Help</a>
     </div>
+  </div>
+  <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
+    <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small><span class="nv-wide">Weather &amp; airspace</span><span class="nv-short">Wx &amp; airspace</span></small></span></button>
+    <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small>Checks &amp; log</small></span></button>
+    <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
     <div class="tab active" onclick="showPanel('general',this)">🏞 General</div>
@@ -991,11 +1001,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 
 <button type="button" class="to-top" id="to-top" aria-label="Back to the top" onclick="window.scrollTo({ top: 0, behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' })">↑ Top</button>
 
-<div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
-  <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small><span class="nv-wide">Weather &amp; airspace</span><span class="nv-short">Wx &amp; airspace</span></small></span></button>
-  <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small>Checks &amp; log</small></span></button>
-  <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
-</div>
 
 <div class="print-fields" aria-hidden="true">
   <div class="pf-row"><div class="pf-f pf-short">Date<span></span></div><div class="pf-f">Time<span></span></div></div>
