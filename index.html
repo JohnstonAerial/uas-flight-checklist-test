@@ -698,6 +698,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   /* 4.2.13i: Settings sections live in the header on the Settings view */
   .gear-ico, .bak-ico { width: 1.2em; height: 1.2em; vertical-align: -0.22em; }
   .nv .gear-ico { margin: -0.2em 0; }
+  .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
+  .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
+  .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .tabs-set { display: none; }
   .ts { flex: 1 1 0; min-width: 0; font-family: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 8px 9px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; color: rgba(255,255,255,0.85); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; }
   .ts .gear-ico, .ts .bak-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
@@ -933,7 +936,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13j</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13k</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -955,7 +958,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
   <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> Conditions</button>
   <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> Checklist</button>
-  <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> Settings</button>
+  <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
 </div>
 
 <div class="print-fields" aria-hidden="true">
@@ -1416,7 +1419,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pc-ico'); if (e) e.innerHTML = PC_IMG; })();
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
-(function () { [['set-ico', GEAR_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
+(function () { [['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
 (function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); })();
 let current = 'general';
 
