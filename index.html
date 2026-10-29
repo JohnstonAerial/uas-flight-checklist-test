@@ -33,6 +33,7 @@ const ALOFT_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-
 // Magnet picture for the Kp (geomagnetic) tile and its Settings row
 const KP_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 20v14a18 18 0 0 0 36 0V20" stroke="#B0BEC5" stroke-width="10"/><path d="M9 6h10v14H9z" fill="#EF5350" stroke="none"/><path d="M45 6h10v14H45z" fill="#42A5F5" stroke="none"/></svg>';
 const DRONE_IMG = '<img class="dr-ico" alt="" src="data:image/png;base64,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">';
+const HELP_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F5B83D"/><path d="M8.6 9.3a3.5 3.5 0 1 1 5.2 3c-1 .6-1.6 1.2-1.6 2.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><circle cx="12.2" cy="17.9" r="1.4" fill="#fff"/></svg>', COFFEE_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
 try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
 <style>
@@ -119,6 +120,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .header h1 { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
   .header p { font-size: 11px; opacity: 0.8; margin-top: 2px; }
   .hdr-help { color: #fff; font-size: 13px; font-weight: 600; text-decoration: none; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.55); border-radius: 999px; white-space: nowrap; align-self: flex-start; }
+  .hlp-ico { width: 1.3em; height: 1.3em; vertical-align: -0.28em; }
+  .hdr-help .hlp-ico { width: 20px; height: 20px; vertical-align: -5px; margin-right: 2px; }
   .hdr-help:active { background: rgba(255,255,255,0.18); }
   .hdr-actions { display: flex; gap: 8px; align-self: flex-start; }
   .hdr-coffee { display: none; }
@@ -987,11 +990,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0f</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0g</p>
     </div>
     <div class="hdr-actions">
-      <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
-      <a class="hdr-help" href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener" aria-label="Help and guides (opens in a new tab)">📘 Help</a>
+      <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
+      <a class="hdr-help" href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener" aria-label="Help and guides (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F5B83D"/><path d="M8.6 9.3a3.5 3.5 0 1 1 5.2 3c-1 .6-1.6 1.2-1.6 2.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><circle cx="12.2" cy="17.9" r="1.4" fill="#fff"/></svg> Help</a>
     </div>
   </div>
   <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
@@ -3152,7 +3155,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and settings are saved on this device only and don\'t sync. Each browser, and each Home Screen app, keeps its own copy. To move them to another device or browser, use Back up & restore.';
   const help = document.createElement('div'); help.className = 'settings-help foot-links';
-  help.innerHTML = '<a class="foot-bak" href="#">' + BAK_IMG + ' Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">✉ Send feedback</a>';
+  help.innerHTML = '<a class="foot-bak" href="#">' + BAK_IMG + ' Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">' + HELP_IMG + ' Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">✉ Send feedback</a>';
   const fbl = help.querySelector('.fb-link');
   const fbVer = appVer();
   fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
@@ -3233,7 +3236,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   bar.innerHTML = '<span class="eb-title">✎ Editing: <b class="eb-name"></b></span><button type="button" class="cust-btn primary" onclick="toggleEdit(this)">✓ Done</button><div class="eb-chips"></div>';
   panelEl.prepend(bar);
   const coffee = document.createElement('div'); coffee.className = 'coffee-note';
-  coffee.innerHTML = 'Built by a Part 107 pilot, for pilots. Free to use. If it helped you fly smarter, <a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">buy me a coffee ☕</a>';
+  coffee.innerHTML = 'Built by a Part 107 pilot, for pilots. Free to use. If it helped you fly smarter, <a href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener">buy me a coffee</a> ' + COFFEE_IMG + '';
   panelEl.appendChild(coffee);
   panelEl.appendChild(help);
 });
