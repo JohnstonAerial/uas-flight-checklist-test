@@ -19,7 +19,6 @@ const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-l
 const OK_IMG = '<svg class="wind-ico ok-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22a455"/><path d="M7 12.4l3.6 3.6 6.6-7.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const PILOT_IMG = '<svg class="wind-ico pilot-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="6.4" y1="16" x2="2.4" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><line x1="17.6" y1="16" x2="21.6" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="5.6" r="3.3" fill="#f2c28c"/><path d="M5 13.6c0-3.2 3.2-5 7-5s7 1.8 7 5z" fill="#3b82c4"/><rect x="4" y="14.2" width="16" height="7.4" rx="2.6" fill="#334155"/><circle cx="8.6" cy="17.9" r="1.9" fill="#9ca3af"/><circle cx="15.4" cy="17.9" r="1.9" fill="#9ca3af"/></svg>';
 const AIR_IMG = '<svg class="wind-ico air-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2" fill="none" stroke="#f5b301" stroke-width="1.7" stroke-dasharray="3.2 2.6" stroke-linecap="round"/><path d="M12 5.2c.7 0 1.1.7 1.1 1.6v3.6l5.6 2.9v1.6l-5.6-1.5v2.9l1.7 1.3v1.2L12 17.6l-2.8.6V17l1.7-1.3v-2.9l-5.6 1.5v-1.6l5.6-2.9V6.8c0-.9.4-1.6 1.1-1.6z" fill="#f1f5f9"/></svg>';
-const REC_IMG = '<svg class="wind-ico rec-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 2.5h9.2l4.3 4.3v14.2a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 21V4a1.5 1.5 0 0 1 1.5-1.5z" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.1"/><path d="M14.7 2.5v3.3a1 1 0 0 0 1 1H19" fill="#d8d2c2"/><line x1="7" y1="10.2" x2="16.5" y2="10.2" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"/><line x1="7" y1="13.4" x2="13.5" y2="13.4" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"/><circle cx="16.4" cy="17.6" r="4.6" fill="#22a455"/><path d="M14.2 17.7l1.6 1.6 2.9-3.3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
 const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -349,10 +348,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-top .progress-info { flex: 1 1 0; min-width: 0; }
   .pc-cust { font-family: inherit; font-size: 12px; font-weight: 600; color: var(--blue); background: transparent; border: 1px solid var(--blue); border-radius: 20px; padding: 6px 12px; min-height: 34px; white-space: nowrap; cursor: pointer; flex: 0 0 auto; }
   .pc-cust:active { background: var(--blue-light); }
-  /* 4.2.14b: Record sits under Customize in the progress card and jumps to Print, PDF and Save flight record */
-  .pc-acts { display: flex; flex-direction: column; align-items: stretch; gap: 6px; flex: 0 0 auto; }
-  .pc-cust .rec-ico { width: 1.3em; height: 1.3em; vertical-align: -0.32em; margin-right: 2px; }
-  .panel.editing .pc-rec { display: none; }
   .pc-bottom { background: var(--card); border-radius: 14px; padding: 12px 14px; margin: 14px 0 6px; box-shadow: var(--shadow); display: flex; }
   .pc-bottom .pc-btns { flex: 1 1 100%; margin-bottom: 0; }
   .pc-jump { display: block; width: 100%; font-family: inherit; font-size: 12.5px; color: var(--link); background: none; border: 0; text-align: center; text-decoration: underline; padding: 2px 12px 8px; cursor: pointer; line-height: 1.35; }
@@ -970,7 +965,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -5595,15 +5590,10 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
     const cust = document.createElement('button'); cust.type = 'button'; cust.className = 'pc-cust';
     cust.textContent = '\u270E Customize'; cust.setAttribute('aria-label', 'Customize this checklist');
     cust.onclick = () => toggleEdit(cust);
-    const acts = document.createElement('div'); acts.className = 'pc-acts';
-    const rec = document.createElement('button'); rec.type = 'button'; rec.className = 'pc-cust pc-rec';
-    rec.innerHTML = REC_IMG + ' Record'; rec.setAttribute('aria-label', 'Jump to Print, PDF and Save flight record');
-    acts.append(cust, rec);
-    top.append(info, acts);
+    top.append(info, cust);
     const goBottom = () => { try { bottom.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { bottom.scrollIntoView(); } };
     const jump = document.createElement('button'); jump.type = 'button'; jump.className = 'pc-jump';
-    jump.textContent = '\u2193 Print, PDF and Save flight record are at the bottom'; jump.onclick = goBottom; rec.onclick = goBottom;
-    card.after(jump);
+    jump.textContent = '\u2193 Print, PDF and Save flight record are at the bottom'; jump.onclick = goBottom;
     if (!movedOff()) {
       const n = document.createElement('div'); n.className = 'pc-moved'; n.setAttribute('role', 'note');
       n.innerHTML = '<span aria-hidden="true">\u2139\uFE0F</span><div><b>Moved: Print, PDF and Save flight record</b>They are now at the bottom of the checklist.<br><button type="button" class="pm-go">Jump there \u2193</button></div><button type="button" class="pm-x" aria-label="Dismiss this notice">\u00D7</button>';
@@ -5611,6 +5601,7 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
       n.querySelector('.pm-x').onclick = () => { try { localStorage.setItem('uasMovedOff', '1'); } catch (e) {} document.querySelectorAll('.pc-moved').forEach(x => x.remove()); };
       card.before(n);
     }
+    card.before(jump);   // 4.2.14c: the jump link sits above the progress card, so it shows right under the three buttons
   });
 })();
 // 4.1.1b: one footer for every tab (Buy me a coffee, Help & guides, Send feedback, and on the live site the version line)
