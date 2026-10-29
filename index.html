@@ -701,8 +701,15 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv .gear-ico { margin: -0.2em 0; }
   .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
   .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; white-space: nowrap; }
-  @media (max-width: 400px) { .nv-two small { font-size: 9.5px; } }
-  @media (max-width: 400px) { .nv-opt { display: none; } }
+  @media (max-width: 340px) { .nv-opt { display: none; } }
+  /* 4.2.13m: on phones all three nav buttons stack: icon, name, small line */
+  @media (max-width: 600px) {
+    .mainnav .nv { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 3px; }
+    .mainnav .nv > span:first-child { display: block; line-height: 1; font-size: 18px; }
+    .mainnav .nv > span:first-child svg { width: 24px; height: 24px; margin: 0; vertical-align: top; display: block; }
+    .nv-two { text-align: center; }
+    .nv-two small { font-size: 10px; }
+  }
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
@@ -940,7 +947,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13l</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13m</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
