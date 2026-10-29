@@ -359,7 +359,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-join { display: flex; border: 1px solid var(--blue); border-radius: 20px; overflow: hidden; }
   .pc-btns .pc-join .rec-btn { flex: 1 1 0; width: auto; border: 0; border-radius: 0; flex-direction: row; gap: 6px; min-height: 40px; padding: 6px 4px; }
   .pc-btns .pc-join .rec-btn + .rec-btn { border-left: 1px solid var(--blue); }
-  .pc-btns .rec-btn.rec-record small { font-size: 10px; font-weight: 400; opacity: .85; }
+  .pc-btns .rec-btn.rec-record small { font-size: 10px; font-weight: 400; opacity: .85; text-wrap: balance; }
   .pc-btns .reset-inline, .pc-btns .sec-all { width: 100%; text-align: center; border-radius: 20px; padding: 6px 12px; font-size: 12px; margin: 0; color: var(--text-muted); background: transparent; border: 1px solid var(--border); font-family: inherit; cursor: pointer; }
   .saved-note .saved-chg { color: var(--link); text-decoration: underline; white-space: nowrap; }
   .keep-row.lim-flash { animation: limflash 1.6s ease-out 1; }
@@ -700,8 +700,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .gear-ico, .bak-ico { width: 1.2em; height: 1.2em; vertical-align: -0.22em; }
   .nv .gear-ico { margin: -0.2em 0; }
   .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
-  .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; white-space: nowrap; }
-  @media (max-width: 340px) { .nv-opt { display: none; } }
+  .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; text-wrap: balance; }
   /* 4.2.13m: on phones all three nav buttons stack: icon, name, small line */
   @media (max-width: 600px) {
     .mainnav .nv { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 7px 3px; }
@@ -713,6 +712,10 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
+  /* 4.2.13n: the strip under the title is the same height on Conditions, Checklist and Settings so the buttons below never move */
+  .tabs, .tabs-cond, .tabs-set { box-sizing: border-box; height: 68px; overflow-y: hidden; }
+  .tabs-cond .tc, .ts { height: 100%; box-sizing: border-box; }
+  .ts .tab-lbl { white-space: nowrap; }
   .ts { flex: 1 1 0; min-width: 0; font-family: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 8px 9px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; color: rgba(255,255,255,0.85); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; }
   .ts .gear-ico, .ts .bak-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
   .ts .tab-lbl { line-height: 1.2; }
@@ -908,7 +911,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     .header h1 { font-size: 16pt; }
     .header p { font-size: 9pt; opacity: 1; color: #000; }
     .hdr-help { display: none !important; }
-    .tabs { display: block; overflow: visible; }
+    .tabs { display: block; overflow: visible; height: auto; }
     .tab:not(.active) { display: none !important; }
     .tab-ico { display: inline; font-size: inherit; }
     .tab-ico svg { display: inline; width: 1em; height: 1em; vertical-align: -0.12em; }
@@ -947,7 +950,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13m</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13n</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -968,7 +971,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 
 <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
   <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small>Weather<span class="nv-opt"> &amp; airspace</span></small></span></button>
-  <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small><span id="nv-ok-ico">✔</span> Pre-flight</small></span></button>
+  <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small><span id="nv-ok-ico">✔</span> Checks &amp; log</small></span></button>
   <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
 </div>
 
