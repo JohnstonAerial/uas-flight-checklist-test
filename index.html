@@ -18,6 +18,7 @@
 const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22h34a8 8 0 1 0-8-8" stroke="#4FC3F7" stroke-width="5"/><path d="M6 34h46a9 9 0 1 1-9 9" stroke="#2196F3" stroke-width="5"/><path d="M12 46h18a6 6 0 1 1-6 6" stroke="#64B5F6" stroke-width="5"/></svg>';
 const OK_IMG = '<svg class="wind-ico ok-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22a455"/><path d="M7 12.4l3.6 3.6 6.6-7.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const PILOT_IMG = '<svg class="wind-ico pilot-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="6.4" y1="16" x2="2.4" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><line x1="17.6" y1="16" x2="21.6" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="5.6" r="3.3" fill="#f2c28c"/><path d="M5 13.6c0-3.2 3.2-5 7-5s7 1.8 7 5z" fill="#3b82c4"/><rect x="4" y="14.2" width="16" height="7.4" rx="2.6" fill="#334155"/><circle cx="8.6" cy="17.9" r="1.9" fill="#9ca3af"/><circle cx="15.4" cy="17.9" r="1.9" fill="#9ca3af"/></svg>';
+const AIR_IMG = '<svg class="wind-ico air-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2" fill="none" stroke="#f5b301" stroke-width="1.7" stroke-dasharray="3.2 2.6" stroke-linecap="round"/><path d="M12 5.2c.7 0 1.1.7 1.1 1.6v3.6l5.6 2.9v1.6l-5.6-1.5v2.9l1.7 1.3v1.2L12 17.6l-2.8.6V17l1.7-1.3v-2.9l-5.6 1.5v-1.6l5.6-2.9V6.8c0-.9.4-1.6 1.1-1.6z" fill="#f1f5f9"/></svg>';
 const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
 const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -726,7 +727,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .tabs-cond .tc, .ts { height: 100%; box-sizing: border-box; }
   .ts .tab-lbl { white-space: nowrap; }
   .ts { flex: 1 1 0; min-width: 0; font-family: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 8px 9px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; color: rgba(255,255,255,0.85); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; }
-  .ts .gear-ico, .ts .bak-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
+  .ts .gear-ico, .ts .bak-ico, .ts .pc-ico, .ts .air-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
   .ts .tab-lbl { line-height: 1.2; }
   .ts.on { color: #fff; border-bottom-color: #fff; }
   /* 4.2.0a: drones, each with its own limits */
@@ -959,7 +960,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13p</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13q</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -972,7 +973,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="tab" onclick="showPanel('zeitview',this)">📋 Commercial</div>
   </div>
   <div class="tabs-set" role="tablist" aria-label="Settings sections"><button type="button" class="ts ts-pref" role="tab" onclick="setSection('tg-set')"><span id="ts-ico-pref">⚙</span><span class="tab-lbl">Preferences</span></button><button type="button" class="ts ts-bak" role="tab" onclick="setSection('tg-bak')"><span id="ts-ico-bak">💾</span><span class="tab-lbl">Back up &amp; restore</span></button></div>
-  <div class="tabs-cond" aria-hidden="true"><div class="tc"><span class="tab-ico" id="tc-ico">🌤</span><span class="tab-lbl">Conditions</span></div></div>
+  <div class="tabs-cond" role="tablist" aria-label="Conditions sections"><button type="button" class="ts ts-wx on" role="tab" aria-selected="true" onclick="condGo('wx')"><span class="ts-i" id="tc-ico">🌤</span><span class="tab-lbl">Weather</span></button><button type="button" class="ts ts-air" role="tab" aria-selected="false" onclick="condGo('air')"><span class="ts-i" id="tc-air">🛩</span><span class="tab-lbl">Airspace</span></button></div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="header-bar" style="width:0%"></div>
   </div>
@@ -1443,7 +1444,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
 (function () { [['nv-ok-ico', OK_IMG], ['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
-(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); })();
+(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); const ea = document.getElementById('tc-air'); if (ea) ea.innerHTML = AIR_IMG; })();
 let current = 'general';
 
 // ── Save progress on this device so a reload or phone lock doesn't wipe the checklist ──
@@ -1867,6 +1868,7 @@ function setView(v, noSave) {
   }
   if (!noSave) window.scrollTo(0, 0);
   if (typeof syncSetStrip === 'function') syncSetStrip();
+  if (typeof syncCondStrip === 'function') syncCondStrip();
 }
 (function () {
   let v = 'wx'; try { v = localStorage.getItem(VIEW_KEY) || 'wx'; } catch (e) {}
@@ -1887,6 +1889,24 @@ function syncSetStrip() {
   document.querySelectorAll('.cust-row').forEach(function (r) { r.dataset.tab = ''; });
   const cr = document.querySelector('.panel.active .cust-row'); if (cr && name) cr.dataset.tab = ': ' + name;
 }
+
+// 4.2.13q: the header strip on the Conditions view jumps between Weather and Airspace; the underline follows the scroll
+var condLock = 0;
+function condMark(air) { [['.tabs-cond .ts-wx', !air], ['.tabs-cond .ts-air', air]].forEach(function (p) { const b = document.querySelector(p[0]); if (b) { b.classList.toggle('on', p[1]); b.setAttribute('aria-selected', String(p[1])); } }); }
+function condGo(w) {
+  condMark(w === 'air'); condLock = Date.now() + 900;
+  const hdr = document.querySelector('.header'), hb = hdr ? hdr.getBoundingClientRect().height : 0;
+  if (w === 'air') { const el = document.querySelector('.wx-tfr-row'); if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hb - 10), behavior: 'smooth' }); }
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function syncCondStrip() {
+  if (!document.body.classList.contains('view-wx') || Date.now() < condLock) return;
+  const el = document.querySelector('.wx-tfr-row'), hdr = document.querySelector('.header'); if (!el || !hdr) return;
+  const hb = hdr.getBoundingClientRect().height, atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  const air = el.getBoundingClientRect().top <= hb + 40 || (atBottom && window.scrollY > 40);
+  condMark(air);
+}
+(function () { let t = 0; window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); }); }, { passive: true }); window.addEventListener('resize', syncCondStrip); })();
 
 function showPanel(panel, tab) {
   closeItemMenu();
