@@ -19,6 +19,7 @@ const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-l
 const OK_IMG = '<svg class="wind-ico ok-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22a455"/><path d="M7 12.4l3.6 3.6 6.6-7.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const PILOT_IMG = '<svg class="wind-ico pilot-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="6.4" y1="16" x2="2.4" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><line x1="17.6" y1="16" x2="21.6" y2="7.6" stroke="#475569" stroke-width="1.7" stroke-linecap="round"/><circle cx="12" cy="5.6" r="3.3" fill="#f2c28c"/><path d="M5 13.6c0-3.2 3.2-5 7-5s7 1.8 7 5z" fill="#3b82c4"/><rect x="4" y="14.2" width="16" height="7.4" rx="2.6" fill="#334155"/><circle cx="8.6" cy="17.9" r="1.9" fill="#9ca3af"/><circle cx="15.4" cy="17.9" r="1.9" fill="#9ca3af"/></svg>';
 const AIR_IMG = '<svg class="wind-ico air-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.2" fill="none" stroke="#f5b301" stroke-width="1.7" stroke-dasharray="3.2 2.6" stroke-linecap="round"/><path d="M12 5.2c.7 0 1.1.7 1.1 1.6v3.6l5.6 2.9v1.6l-5.6-1.5v2.9l1.7 1.3v1.2L12 17.6l-2.8.6V17l1.7-1.3v-2.9l-5.6 1.5v-1.6l5.6-2.9V6.8c0-.9.4-1.6 1.1-1.6z" fill="#f1f5f9"/></svg>';
+const REC_IMG = '<svg class="wind-ico rec-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 2.5h9.2l4.3 4.3v14.2a1.5 1.5 0 0 1-1.5 1.5H5.5A1.5 1.5 0 0 1 4 21V4a1.5 1.5 0 0 1 1.5-1.5z" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.1"/><path d="M14.7 2.5v3.3a1 1 0 0 0 1 1H19" fill="#d8d2c2"/><line x1="7" y1="10.2" x2="16.5" y2="10.2" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"/><line x1="7" y1="13.4" x2="13.5" y2="13.4" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"/><circle cx="16.4" cy="17.6" r="4.6" fill="#22a455"/><path d="M14.2 17.7l1.6 1.6 2.9-3.3" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
 const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -722,6 +723,13 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
+  /* 4.2.14a: a Record button stays at the right end of the tab strip and jumps to Print, PDF and Save flight record */
+  .rec-jump { position: sticky; right: 0; flex: 0 0 auto; font-family: inherit; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; white-space: nowrap; color: rgba(255,255,255,0.9); background: var(--blue); border: 0; border-left: 1px solid rgba(255,255,255,0.22); border-bottom: 3px solid transparent; padding: 8px 12px 9px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; box-shadow: -8px 0 8px -6px rgba(0,0,0,0.25); }
+  .rec-jump.on { color: #fff; border-bottom-color: #fff; }
+  .rec-jump .tab-lbl { line-height: 1.2; }
+  .rec-jump .rec-ico { display: block; width: 28px; height: 28px; }
+  body:has(.panel.editing) .rec-jump { display: none; }
+  @media print { .rec-jump { display: none !important; } }
   /* 4.2.13r: floating Top button once you have scrolled down */
   .to-top { position: fixed; right: 14px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 45; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #2563EB; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 9px 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.35); cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .2s, transform .2s, visibility .2s; }
   .to-top.show { opacity: 1; visibility: visible; transform: none; }
@@ -965,7 +973,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13r</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.14a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -976,6 +984,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="tab active" onclick="showPanel('general',this)">🏞 General</div>
     <div class="tab" onclick="showPanel('mapping',this)">🗺 Mapping</div>
     <div class="tab" onclick="showPanel('zeitview',this)">📋 Commercial</div>
+    <button type="button" class="rec-jump" id="rec-jump" onclick="recGo()" aria-label="Jump to Print, PDF and Save flight record"><span class="tab-ico" id="rj-ico">📋</span><span class="tab-lbl">Record</span></button>
   </div>
   <div class="tabs-set" role="tablist" aria-label="Settings sections"><button type="button" class="ts ts-pref" role="tab" onclick="setSection('tg-set')"><span id="ts-ico-pref">⚙</span><span class="tab-lbl">Preferences</span></button><button type="button" class="ts ts-bak" role="tab" onclick="setSection('tg-bak')"><span id="ts-ico-bak">💾</span><span class="tab-lbl">Back up &amp; restore</span></button></div>
   <div class="tabs-cond" role="tablist" aria-label="Conditions sections"><button type="button" class="ts ts-wx on" role="tab" aria-selected="true" onclick="condGo('wx')"><span class="ts-i" id="tc-ico">🌤</span><span class="tab-lbl">Weather</span></button><button type="button" class="ts ts-air" role="tab" aria-selected="false" onclick="condGo('air')"><span class="ts-i" id="tc-air">🛩</span><span class="tab-lbl">Airspace</span></button></div>
@@ -1451,7 +1460,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
 (function () { [['nv-ok-ico', OK_IMG], ['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
-(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); const ea = document.getElementById('tc-air'); if (ea) ea.innerHTML = AIR_IMG; })();
+(function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); const ea = document.getElementById('tc-air'); if (ea) ea.innerHTML = AIR_IMG; const er = document.getElementById('rj-ico'); if (er) er.innerHTML = REC_IMG; })();
 let current = 'general';
 
 // ── Save progress on this device so a reload or phone lock doesn't wipe the checklist ──
@@ -1876,6 +1885,7 @@ function setView(v, noSave) {
   if (!noSave) window.scrollTo(0, 0);
   if (typeof syncSetStrip === 'function') syncSetStrip();
   if (typeof syncCondStrip === 'function') syncCondStrip();
+  if (typeof syncRecJump === 'function') syncRecJump();
 }
 (function () {
   let v = 'wx'; try { v = localStorage.getItem(VIEW_KEY) || 'wx'; } catch (e) {}
@@ -1915,7 +1925,21 @@ function syncCondStrip() {
   const air = el.getBoundingClientRect().top <= hb + 160 || (atBottom && window.scrollY > 40);
   condMark(air);
 }
-(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); topBtn(); }); })();
+(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); syncRecJump(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); syncRecJump(); topBtn(); }); })();
+
+// 4.2.14a: the Record button at the end of the tab strip
+function recGo() {
+  const el = document.querySelector('.panel.active .pc-bottom'); if (!el) return;
+  const rb = document.getElementById('rec-jump'); if (rb) rb.classList.add('on');
+  recLock = Date.now() + 900;
+  window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hdrOffset() - 10), behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' });
+}
+var recLock = 0;
+function syncRecJump() {
+  const rb = document.getElementById('rec-jump'); if (!rb || Date.now() < recLock) return;
+  const el = document.querySelector('.panel.active .pc-bottom');
+  rb.classList.toggle('on', !!el && document.body.classList.contains('view-ck') && el.getBoundingClientRect().top <= window.innerHeight * 0.8);
+}
 
 function showPanel(panel, tab) {
   closeItemMenu();
