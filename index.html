@@ -361,12 +361,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   :root[data-theme="dark"] .pc-jump { color: var(--blue); background: #fff; border-color: #fff; }
   .pc-jump b { font-weight: 700; }
   .pc-jump small { font-size: 12px; font-weight: 500; opacity: .85; }
-  .pc-moved { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 10px; padding: 10px 12px; border: 1px solid var(--blue); border-radius: 12px; background: var(--blue-light); font-size: 13px; line-height: 1.35; color: var(--text); }
-  .pc-moved b { display: block; margin-bottom: 2px; }
-  .pc-moved .pm-go { display: inline-block; margin-top: 6px; padding: 0; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--link); background: none; border: 0; text-decoration: underline; cursor: pointer; }
-  .pc-moved .pm-x { margin-left: auto; flex: 0 0 auto; width: 32px; height: 32px; margin-top: -6px; margin-right: -8px; border: 0; background: transparent; color: var(--text-muted); font-size: 20px; line-height: 1; cursor: pointer; }
-  .panel.editing .pc-bottom, .panel.editing .pc-jump, .panel.editing .pc-moved { display: none; }
-  @media print { .pc-bottom, .pc-jump, .pc-moved, .pc-cust { display: none !important; } }
+  .panel.editing .pc-bottom, .panel.editing .pc-jump { display: none; }
+  @media print { .pc-bottom, .pc-jump, .pc-cust { display: none !important; } }
   .pc-cap { font-size: 10px; letter-spacing: .5px; color: var(--text-muted); text-align: center; margin: 0 0 3px; font-weight: 600; }
   .pc-join { display: flex; border: 1px solid var(--blue); border-radius: 20px; overflow: hidden; }
   .pc-btns .pc-join .rec-btn { flex: 1 1 0; width: auto; border: 0; border-radius: 0; flex-direction: row; gap: 6px; min-height: 40px; padding: 6px 4px; }
@@ -993,7 +989,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -2870,7 +2866,7 @@ refreshTabs();
 
 // ── Move to another device: copy a code or save a file with your settings (and, optionally, your progress) ──
 const XFER_PROGRESS = 'uasChecklistProgress';
-const XFER_KEYS = ['uasDrones', 'uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasKeepAwake', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'wxStripView', 'wxStripSpan', 'uasWindHts', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', 'uasMovedOff', XFER_PROGRESS];
+const XFER_KEYS = ['uasDrones', 'uasWindUnit', 'uasNoTrack', 'uasRegion', 'uasNight', 'uasKeepAwake', 'uasHideHints', 'wxUnits', 'uasProgressHours', 'uasTabs', 'uasCustomItems', 'uasCollapsedSections', 'wxSite', 'wxRecent', 'wxStripView', 'wxStripSpan', 'uasWindHts', 'uasWindLimits', 'uasKpLimits', 'uasTempLimits', 'uasFileName', 'uasPilot', 'uasDrone', 'uasRegNo', 'uasPdfLayout', 'uasPdfPaper', 'uasTheme', 'uasPrintTipOff', 'uasEditTipOff', XFER_PROGRESS];
 // Share… shows where the browser can share but Save file does not already open a share sheet
 // (desktop browsers: Chrome/Edge have a folder dialog; Safari on a Mac may claim file sharing but not deliver it; touch devices already share from Save file)
 const XFER_HAS_SHARE = (() => {
@@ -5605,8 +5601,6 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
 });
 // 4.1.1: Customize sits beside the progress count; Print, PDF and Save flight record sit after the last section, with a pointer for pilots who looked at the top
 (function () {
-  try { if (localStorage.getItem('uasRegion') === null && localStorage.getItem('uasMovedOff') === null) localStorage.setItem('uasMovedOff', '1'); } catch (e) {}   // brand-new visitors never knew the old spot
-  const movedOff = () => { try { return localStorage.getItem('uasMovedOff') === '1'; } catch (e) { return false; } };
   document.querySelectorAll('.panel').forEach(panelEl => {
     const card = panelEl.querySelector(':scope > .progress-card'); if (!card) return;
     const info = card.querySelector('.progress-info'), col = card.querySelector('.pc-btns'), anchor = panelEl.querySelector(':scope > .coffee-note');
@@ -5622,13 +5616,6 @@ document.querySelectorAll('.panel .pc-btns').forEach(col => {
     const goBottom = () => { try { bottom.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { bottom.scrollIntoView(); } };
     const jump = document.createElement('button'); jump.type = 'button'; jump.className = 'pc-jump';
     jump.innerHTML = '<b>\u2193 Log the flight</b> <small>\u00B7 Print, PDF, Save</small>'; jump.setAttribute('aria-label', 'Jump down to Print, PDF and Save flight record'); jump.onclick = goBottom;
-    if (!movedOff()) {
-      const n = document.createElement('div'); n.className = 'pc-moved'; n.setAttribute('role', 'note');
-      n.innerHTML = '<span aria-hidden="true">\u2139\uFE0F</span><div><b>Moved: Print, PDF and Save flight record</b>They are now at the bottom of the checklist.<br><button type="button" class="pm-go">Jump there \u2193</button></div><button type="button" class="pm-x" aria-label="Dismiss this notice">\u00D7</button>';
-      n.querySelector('.pm-go').onclick = goBottom;
-      n.querySelector('.pm-x').onclick = () => { try { localStorage.setItem('uasMovedOff', '1'); } catch (e) {} document.querySelectorAll('.pc-moved').forEach(x => x.remove()); };
-      card.before(n);
-    }
     card.before(jump);   // 4.2.14c: the jump link sits above the progress card, so it shows right under the three buttons
   });
 })();
