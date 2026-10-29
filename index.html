@@ -745,6 +745,13 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .ts .gear-ico, .ts .bak-ico, .ts .pc-ico, .ts .air-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
   .ts .tab-lbl { line-height: 1.2; }
   .ts.on { color: #fff; border-bottom-color: #fff; }
+  /* 4.3.0f: the strips under the three main buttons are segmented controls: a soft track, the selected segment filled */
+  @media screen {
+    .tabs, .tabs-cond, .tabs-set { height: 76px; padding: 4px; gap: 4px; margin-bottom: 10px; background: rgba(255,255,255,.13); border-radius: 16px; overflow-y: hidden; }
+    .tabs .tab, .tabs-cond .tc, .ts { border-bottom: 0; border-radius: 12px; padding: 6px 8px; justify-content: center; border: 1px solid transparent; }
+    .tabs .tab.active, .ts.on { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.5); color: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+    .tabs .tab { flex: 1 0 auto; }
+  }
   /* 4.2.0a: drones, each with its own limits */
   .dr-row-pill { margin: 0 0 8px; }
   .dr-pill { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; border: 1px solid var(--link); background: rgba(37,99,235,0.10); color: var(--link); font-family: inherit; font-size: 13px; font-weight: 700; text-align: left; cursor: pointer; }
@@ -980,7 +987,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0f</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
