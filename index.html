@@ -989,7 +989,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0i</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0j</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -3199,6 +3199,8 @@ document.querySelectorAll('.panel').forEach(panelEl => {
     const up = document.createElement('button'); up.type = 'button'; up.className = 'set-up'; up.textContent = '\u25B4 Back to the top';
     
     up.onclick = () => {
+      // 4.3.0j: on the Settings view the old button row is hidden (the header strip replaced it), so scrolling to it did nothing: go to the top of the page
+      if (!heads.offsetParent) { window.scrollTo({ top: 0, behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' }); return; }
       try { const r = heads.getBoundingClientRect(); if (r.top < 110 || r.bottom > window.innerHeight) heads.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
     };
     bd.appendChild(up);
