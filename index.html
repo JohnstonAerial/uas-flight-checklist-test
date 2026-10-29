@@ -363,6 +363,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .pc-bottom .pc-btns { flex: 1 1 100%; margin-bottom: 0; }
   .pc-jump { display: block; width: 100%; box-sizing: border-box; margin: 0 0 10px; padding: 7px 12px; min-height: 36px; font-family: inherit; font-size: 14px; color: #fff; background: var(--blue); border: 1px solid var(--blue); border-radius: 18px; cursor: pointer; line-height: 1.35; text-align: center; }
   .pc-jump:active { filter: brightness(.9); }
+  .pc-jump.fit-off { display: none !important; }   /* 4.3.1c: the whole checklist already fits on screen */
+  body.cond-fits .tabs-cond { display: none !important; }   /* 4.3.1c: Weather and Airspace are both on screen, nothing to jump between */
   /* 4.3.0c: light mode = blue pill, white lettering; dark mode = white pill, blue lettering */
   @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pc-jump { color: var(--blue); background: #fff; border-color: #fff; } }
   :root[data-theme="dark"] .pc-jump { color: var(--blue); background: #fff; border-color: #fff; }
@@ -998,7 +1000,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1954,14 +1956,34 @@ function syncCondStrip() {
   // 4.3.0l: how far down the page is, whichever element the browser scrolls (window, <html> or <body>), so the Top button also shows on Safari/Mac
   function scrollPos() { return Math.max(window.pageYOffset || 0, document.documentElement ? document.documentElement.scrollTop : 0, document.body ? document.body.scrollTop : 0); }
   function topBtn() { try { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', scrollPos() > Math.min(window.innerHeight * 0.8, 350)); } catch (e) {} }
-  function tick() { try { syncCondStrip(); } catch (e) {} topBtn(); }
+  // 4.3.1c: on a tall window the Weather/Airspace switch and the Log the flight button have nothing to jump to, so they step aside
+  var stripH = 86, pillH = 46;
+  function syncFit() { try {
+    const vh = window.innerHeight, de = document.documentElement, b = document.body;
+    const strip = document.querySelector('.tabs-cond');
+    if (strip && b.classList.contains('view-wx')) {
+      const shown = !b.classList.contains('cond-fits');
+      if (shown && strip.offsetHeight > 20) stripH = strip.offsetHeight + 10;
+      b.classList.toggle('cond-fits', de.scrollHeight + (shown ? 0 : stripH) <= vh + 2);
+    } else b.classList.remove('cond-fits');
+    document.querySelectorAll('.panel').forEach(function (pn) {
+      const j = pn.querySelector('.pc-jump'), bt = pn.querySelector('.pc-bottom'); if (!j || !bt) return;
+      if (!pn.classList.contains('active') || !b.classList.contains('view-ck') || pn.classList.contains('editing')) { j.classList.remove('fit-off'); return; }
+      const off = j.classList.contains('fit-off'); if (!off && j.offsetHeight > 10) pillH = j.offsetHeight + 10;
+      const r = bt.getBoundingClientRect(), bottomEdge = r.bottom + window.scrollY - (off ? 0 : pillH);
+      j.classList.toggle('fit-off', bottomEdge <= vh - 8);
+    });
+  } catch (e) {} }
+  window.__syncFit = syncFit;
+  function tick() { try { syncCondStrip(); } catch (e) {} topBtn(); syncFit(); }
   const onScroll = function () { if (t) return; t = requestAnimationFrame(function () { t = 0; tick(); }); };
   window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('scroll', onScroll, { passive: true, capture: true });
   window.addEventListener('resize', tick);
   window.addEventListener('load', tick);
   window.addEventListener('pageshow', tick);
-  setInterval(topBtn, 500);
+  setInterval(function () { topBtn(); syncFit(); }, 500);
+  document.addEventListener('click', function () { setTimeout(syncFit, 80); setTimeout(syncFit, 400); }, true);
   window.__topToTop = function () { const smooth = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); try { window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' }); } catch (e) { window.scrollTo(0, 0); } if (document.body && document.body.scrollTop) document.body.scrollTop = 0; if (document.documentElement && document.documentElement.scrollTop && !smooth) document.documentElement.scrollTop = 0; };
 })();
 
