@@ -711,6 +711,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
   .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; white-space: nowrap; }
   .nv-short { display: none; }
+  .nv-more { display: none; }
+  @media (min-width: 601px) { .nv-more { display: inline; } }
   @media (max-width: 430px) { .nv-wide { display: none; } .nv-short { display: inline; } }
   /* 4.2.13m: on phones all three nav buttons stack: icon, name, small line */
   @media screen {
@@ -978,7 +980,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -988,7 +990,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
     <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small><span class="nv-wide">Weather &amp; airspace</span><span class="nv-short">Wx &amp; airspace</span></small></span></button>
     <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small>Checks &amp; log</small></span></button>
-    <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
+    <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up<span class="nv-more"> &amp; restore</span></small></span></button>
   </div>
   <div class="tabs" role="tablist" aria-label="Checklists">
     <div class="tab active" onclick="showPanel('general',this)">🏞 General</div>
