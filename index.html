@@ -16,6 +16,7 @@
 // Drone picture used instead of an emoji (same on every device)
 // Wind picture (three flowing streams) used on the Wind tile, strip chip and Settings row
 const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22h34a8 8 0 1 0-8-8" stroke="#4FC3F7" stroke-width="5"/><path d="M6 34h46a9 9 0 1 1-9 9" stroke="#2196F3" stroke-width="5"/><path d="M12 46h18a6 6 0 1 1-6 6" stroke="#64B5F6" stroke-width="5"/></svg>';
+const OK_IMG = '<svg class="wind-ico ok-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#22a455"/><path d="M7 12.4l3.6 3.6 6.6-7.4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
 const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
@@ -699,8 +700,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .gear-ico, .bak-ico { width: 1.2em; height: 1.2em; vertical-align: -0.22em; }
   .nv .gear-ico { margin: -0.2em 0; }
   .nv-two { display: inline-block; text-align: left; line-height: 1.1; vertical-align: middle; }
-  .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; }
+  .nv-two small { display: block; font-size: 10px; font-weight: 600; opacity: .85; white-space: nowrap; }
+  @media (max-width: 400px) { .nv-two small { font-size: 9.5px; } }
+  @media (max-width: 400px) { .nv-opt { display: none; } }
   .nv-two .bak-ico { width: 1.25em; height: 1.25em; vertical-align: -0.3em; }
+  .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
   .ts { flex: 1 1 0; min-width: 0; font-family: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 8px 9px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; color: rgba(255,255,255,0.85); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; }
   .ts .gear-ico, .ts .bak-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
@@ -936,7 +940,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13k</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13l</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -956,8 +960,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 </div>
 
 <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
-  <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> Conditions</button>
-  <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> Checklist</button>
+  <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> <span class="nv-two">Conditions<small>Weather<span class="nv-opt"> &amp; airspace</span></small></span></button>
+  <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> <span class="nv-two">Checklist<small><span id="nv-ok-ico">✔</span> Pre-flight</small></span></button>
   <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> <span class="nv-two">Settings<small><span id="nv-bak-ico">💾</span> Back up</small></span></button>
 </div>
 
@@ -1419,7 +1423,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pc-ico'); if (e) e.innerHTML = PC_IMG; })();
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
-(function () { [['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
+(function () { [['nv-ok-ico', OK_IMG], ['set-ico', GEAR_IMG], ['nv-bak-ico', BAK_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
 (function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); })();
 let current = 'general';
 
