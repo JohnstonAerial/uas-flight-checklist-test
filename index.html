@@ -933,7 +933,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13i</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13j</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -2389,6 +2389,7 @@ function toggleEdit(btn) {
     const st = panelEl.querySelector('.settings');
     if (st) { st.classList.remove('open'); st.classList.remove('open-bak'); xferClearMsg(st); st.querySelectorAll('.settings-toggle').forEach(t => t.setAttribute('aria-expanded', 'false')); }
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (document.body.classList.contains('view-set')) setView('set', true);   // Done pressed on the Settings view: reopen Preferences instead of leaving it blank
   }
   refreshCust(panelEl);
 }
