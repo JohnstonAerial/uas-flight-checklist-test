@@ -16,6 +16,8 @@
 // Drone picture used instead of an emoji (same on every device)
 // Wind picture (three flowing streams) used on the Wind tile, strip chip and Settings row
 const WIND_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22h34a8 8 0 1 0-8-8" stroke="#4FC3F7" stroke-width="5"/><path d="M6 34h46a9 9 0 1 1-9 9" stroke="#2196F3" stroke-width="5"/><path d="M12 46h18a6 6 0 1 1-6 6" stroke="#64B5F6" stroke-width="5"/></svg>';
+const GEAR_IMG = '<svg class="wind-ico gear-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(0 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(45 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(90 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(135 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(180 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(225 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(270 12 12)"/><rect x="10.3" y="1.6" width="3.4" height="5" rx="1" fill="#f5b301" transform="rotate(315 12 12)"/><circle cx="12" cy="12" r="7.2" fill="#f5b301"/><circle cx="12" cy="12" r="3" fill="#7a5a00"/></svg>';
+const BAK_IMG = '<svg class="wind-ico bak-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3.5h13.2l3.3 3.3V19.5a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V5A1.5 1.5 0 0 1 4 3.5z" fill="#334155"/><rect x="7" y="3.5" width="9" height="5.6" rx=".8" fill="#d1d5db"/><rect x="12.8" y="4.6" width="2" height="3.4" rx=".4" fill="#4b5563"/><rect x="6.5" y="12.2" width="11" height="8.8" rx="1" fill="#f4f1ea"/><line x1="8.5" y1="15" x2="15.5" y2="15" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/><line x1="8.5" y1="17.8" x2="13.5" y2="17.8" stroke="#9ca3af" stroke-width="1.2" stroke-linecap="round"/></svg>';
 const CK_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4" width="15" height="18" rx="2.2" fill="#f4f1ea" stroke="#9a8a6a" stroke-width="1.2"/><rect x="8.5" y="2" width="7" height="4.2" rx="1.4" fill="#6b7280"/><path d="M7.6 11.2l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="11.2" x2="17" y2="11.2" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/><path d="M7.6 16.6l1.5 1.5 2.7-3" fill="none" stroke="#22a455" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><line x1="13.4" y1="16.6" x2="17" y2="16.6" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round"/></svg>';
 const PC_IMG = '<svg class="wind-ico pc-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="7" r="4.2" fill="#f5b301"/><line x1="19.4" y1="7.0" x2="21.0" y2="7.0" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="17.8" y1="10.8" x2="18.9" y2="11.9" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="14.0" y1="12.4" x2="14.0" y2="14.0" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="10.2" y1="10.8" x2="9.1" y2="11.9" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="8.6" y1="7.0" x2="7.0" y2="7.0" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="10.2" y1="3.2" x2="9.1" y2="2.1" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="14.0" y1="1.6" x2="14.0" y2="0.0" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><line x1="17.8" y1="3.2" x2="18.9" y2="2.1" stroke="#f5b301" stroke-width="1.4" stroke-linecap="round"/><path transform="translate(-1 2)" d="M6.5 16.5a3.5 3.5 0 0 1-.3-7A5 5 0 0 1 16 8.6a3.9 3.9 0 0 1 .5 7.9z" fill="#b4c4d4" stroke="#6f8aa5" stroke-width="1.1" stroke-linejoin="round"/><line x1="6" y1="19.2" x2="5" y2="22.2" stroke="#3b9be0" stroke-width="1.6" stroke-linecap="round"/><line x1="9.5" y1="19.2" x2="8.5" y2="22.2" stroke="#3b9be0" stroke-width="1.6" stroke-linecap="round"/><line x1="13" y1="19.2" x2="12" y2="22.2" stroke="#3b9be0" stroke-width="1.6" stroke-linecap="round"/><path d="M18.5 13H21.5a2 2 0 1 0-2-2" fill="none" stroke="#3b9be0" stroke-width="1.6" stroke-linecap="round"/></svg>';
 const SUNRISE_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="18.1" y1="13.5" x2="20.0" y2="12.8" stroke="#f5b301" stroke-width="1.5" stroke-linecap="round"/><line x1="15.6" y1="10.5" x2="16.7" y2="8.8" stroke="#f5b301" stroke-width="1.5" stroke-linecap="round"/><line x1="12.0" y1="9.4" x2="12.0" y2="7.4" stroke="#f5b301" stroke-width="1.5" stroke-linecap="round"/><line x1="8.4" y1="10.5" x2="7.3" y2="8.8" stroke="#f5b301" stroke-width="1.5" stroke-linecap="round"/><line x1="5.9" y1="13.5" x2="4.0" y2="12.8" stroke="#f5b301" stroke-width="1.5" stroke-linecap="round"/><path d="M6.8 16a5.2 5.2 0 0 1 10.4 0z" fill="#f5b301"/><line x1="2" y1="16.4" x2="22" y2="16.4" stroke="#8fa6bd" stroke-width="1.6" stroke-linecap="round"/></svg>';
@@ -461,7 +463,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .body-set .keep-row > span, .body-set .region-row > span { flex: 1 1 auto; }
   .body-set .keep-row select { font-size: 15px; flex: 1 1 52%; min-width: 0; }
   .body-set .cust-row { flex-wrap: wrap; row-gap: 8px; }
-  .body-set .cust-row::before { content: '📝 Your checklist & tab'; font-size: 14px; white-space: nowrap; flex: 1 1 auto; min-width: 0; }
+  .body-set .cust-row::before { content: '📝 Your checklist & tab' attr(data-tab); font-size: 14px; white-space: nowrap; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .body-set .cust-row .cust-btn { font-size: 13px; padding: 6px 12px; white-space: nowrap; flex: 0 0 auto; }
   .body-set .cust-row .cust-toggle { margin-left: auto; }
   .fn-block { padding: 8px 16px 10px; border-top: 1px solid var(--border); text-align: left; }
@@ -693,6 +695,14 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .set-heads .settings-toggle .chev { display: none; }
   .settings.open .set-heads .tg-set, .settings.open-bak .set-heads .tg-bak { background: #2563EB; color: #fff; border: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.3); }
   .foot-links .foot-bak { white-space: nowrap; }
+  /* 4.2.13i: Settings sections live in the header on the Settings view */
+  .gear-ico, .bak-ico { width: 1.2em; height: 1.2em; vertical-align: -0.22em; }
+  .nv .gear-ico { margin: -0.2em 0; }
+  .tabs-set { display: none; }
+  .ts { flex: 1 1 0; min-width: 0; font-family: inherit; background: none; border: 0; border-bottom: 3px solid transparent; padding: 8px 8px 9px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.2px; color: rgba(255,255,255,0.85); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 1px; }
+  .ts .gear-ico, .ts .bak-ico { display: block; width: 28px; height: 28px; margin: 0 auto; vertical-align: baseline; }
+  .ts .tab-lbl { line-height: 1.2; }
+  .ts.on { color: #fff; border-bottom-color: #fff; }
   /* 4.2.0a: drones, each with its own limits */
   .dr-row-pill { margin: 0 0 8px; }
   .dr-pill { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; border: 1px solid var(--link); background: rgba(37,99,235,0.10); color: var(--link); font-family: inherit; font-size: 13px; font-weight: 700; text-align: left; cursor: pointer; }
@@ -866,13 +876,16 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     body.bk-dirty .mainnav .nv-set::after { content: ''; position: absolute; top: 5px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: #e0301e; box-shadow: 0 0 0 2px var(--bg); }
     body.view-wx .panel, body.view-wx .tabs { display: none !important; }
     body.view-wx .tabs-cond { display: flex; }
+    body.view-set .tabs { display: none !important; }
+    body.view-set .tabs-set { display: flex; }
+    body.view-set .set-heads { display: none; }
     body:not(.view-wx) #wx-panel, body:not(.view-wx) #region-card { display: none !important; }
     body:not(.view-ck) .progress-bar-wrap { visibility: hidden; }
     body.view-ck .panel.active:not(.editing) .settings { display: none; }
     body.view-set .panel.active > :not(.settings) { display: none !important; }
   }
   @media print {
-    .tabs-cond { display: none !important; }
+    .tabs-cond, .tabs-set { display: none !important; }
     .bk-banner { display: none !important; }
     @page { margin: 14mm 12mm; }
     :root:root:root { --green:#0F6E56; --green-light:#E1F5EE; --text:#000; --text-muted:#000; --text-light:#000; --card:#fff; --section-bg:#fff; --border:#999; --bg:#fff; --amber-light:#fff; }
@@ -920,7 +933,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.2.13i</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)">☕ Buy me a coffee</a>
@@ -932,6 +945,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div class="tab" onclick="showPanel('mapping',this)">🗺 Mapping</div>
     <div class="tab" onclick="showPanel('zeitview',this)">📋 Commercial</div>
   </div>
+  <div class="tabs-set" role="tablist" aria-label="Settings sections"><button type="button" class="ts ts-pref" role="tab" onclick="setSection('tg-set')"><span id="ts-ico-pref">⚙</span><span class="tab-lbl">Preferences</span></button><button type="button" class="ts ts-bak" role="tab" onclick="setSection('tg-bak')"><span id="ts-ico-bak">💾</span><span class="tab-lbl">Back up &amp; restore</span></button></div>
   <div class="tabs-cond" aria-hidden="true"><div class="tc"><span class="tab-ico" id="tc-ico">🌤</span><span class="tab-lbl">Conditions</span></div></div>
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="header-bar" style="width:0%"></div>
@@ -941,7 +955,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 <div class="mainnav" id="mainnav" role="tablist" aria-label="Sections">
   <button type="button" class="nv nv-wx" role="tab" data-v="wx" onclick="setView('wx')"><span id="nv-ico">🌤</span> Conditions</button>
   <button type="button" class="nv nv-ck" role="tab" data-v="ck" onclick="setView('ck')"><span id="ck-ico">✅</span> Checklist</button>
-  <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')">⚙ Settings</button>
+  <button type="button" class="nv nv-set" role="tab" data-v="set" onclick="setView('set')"><span id="set-ico">⚙</span> Settings</button>
 </div>
 
 <div class="print-fields" aria-hidden="true">
@@ -1402,6 +1416,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
 (function () { const e = document.getElementById('pc-ico'); if (e) e.innerHTML = PC_IMG; })();
 (function () { const e = document.getElementById('pin-ico'); if (e) e.innerHTML = PIN_IMG; })();
 (function () { const e = document.getElementById('ck-ico'); if (e) e.innerHTML = CK_IMG; })();
+(function () { [['set-ico', GEAR_IMG], ['ts-ico-pref', GEAR_IMG], ['ts-ico-bak', BAK_IMG]].forEach(function (p) { const e = document.getElementById(p[0]); if (e) e.innerHTML = p[1]; }); })();
 (function () { ['tc-ico','nv-ico'].forEach(function (i) { const e = document.getElementById(i); if (e) e.innerHTML = PC_IMG; }); })();
 let current = 'general';
 
@@ -1825,6 +1840,7 @@ function setView(v, noSave) {
     if (st && !st.classList.contains('open') && !st.classList.contains('open-bak')) { const t = st.querySelector('.tg-set'); if (t) t.click(); }
   }
   if (!noSave) window.scrollTo(0, 0);
+  if (typeof syncSetStrip === 'function') syncSetStrip();
 }
 (function () {
   let v = 'wx'; try { v = localStorage.getItem(VIEW_KEY) || 'wx'; } catch (e) {}
@@ -1833,6 +1849,18 @@ function setView(v, noSave) {
   const ob = new MutationObserver(() => { if (document.querySelector('.panel.editing') && !document.body.classList.contains('view-ck')) setView('ck'); });
   document.querySelectorAll('.panel').forEach(pn => ob.observe(pn, { attributes: true, attributeFilter: ['class'] }));
 })();
+
+// 4.2.13i: the header strip on the Settings view switches between Preferences and Back up & restore
+function setSection(cls) { const t = document.querySelector('.panel.active .' + cls); if (t) t.click(); syncSetStrip(); }
+function syncSetStrip() {
+  const st = document.querySelector('.panel.active .settings');
+  const bak = !!(st && st.classList.contains('open-bak')), pref = !bak;
+  [['.ts-pref', pref], ['.ts-bak', bak]].forEach(function (p) { const b = document.querySelector(p[0]); if (b) { b.classList.toggle('on', p[1]); b.setAttribute('aria-selected', String(p[1])); } });
+  const tl = document.querySelector('.tab.active .tab-lbl'), tab = document.querySelector('.tab.active');
+  const name = ((tl || tab) ? (tl || tab).textContent : '').trim();
+  document.querySelectorAll('.cust-row').forEach(function (r) { r.dataset.tab = ''; });
+  const cr = document.querySelector('.panel.active .cust-row'); if (cr && name) cr.dataset.tab = ': ' + name;
+}
 
 function showPanel(panel, tab) {
   closeItemMenu();
@@ -1854,6 +1882,7 @@ function showPanel(panel, tab) {
   tab.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
   updateProgress(panel);
   if (document.body.classList.contains('view-set')) setView('set', true);
+  syncSetStrip();
   window.scrollTo(0, 0);
 }
 
@@ -3037,7 +3066,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
       tgSet.setAttribute('aria-expanded', String(wrap.classList.contains('open'))); tgBak.setAttribute('aria-expanded', String(wrap.classList.contains('open-bak'))); };
     return t;
   };
-  const tgSet = mkTg('tg-set', '⚙ Preferences', 'open'), tgBak = mkTg('tg-bak', '💾 Back up &amp; restore', 'open-bak');
+  const tgSet = mkTg('tg-set', GEAR_IMG + ' Preferences', 'open'), tgBak = mkTg('tg-bak', BAK_IMG + ' Back up &amp; restore', 'open-bak');
   heads.append(tgSet, tgBak);
   const bkb = makeBkBanner(() => { if (tgBak.getAttribute('aria-expanded') !== 'true') tgBak.click(); try { tgBak.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} });
   const bodySet = document.createElement('div'); bodySet.className = 'settings-body body-set';
@@ -3045,7 +3074,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and settings are saved on this device only and don\'t sync. Each browser, and each Home Screen app, keeps its own copy. To move them to another device or browser, use Back up & restore.';
   const help = document.createElement('div'); help.className = 'settings-help foot-links';
-  help.innerHTML = '<a class="foot-bak" href="#">💾 Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">✉ Send feedback</a>';
+  help.innerHTML = '<a class="foot-bak" href="#">' + BAK_IMG + ' Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">📘 Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">✉ Send feedback</a>';
   const fbl = help.querySelector('.fb-link');
   const fbVer = appVer();
   fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
@@ -3169,6 +3198,7 @@ if (restoredAt) {
 
 ['zeitview','mapping','general'].forEach(updateProgress);
 foldFinishedOnLoad();
+(function () { const ob = new MutationObserver(syncSetStrip); document.querySelectorAll('.settings').forEach(function (st) { ob.observe(st, { attributes: true, attributeFilter: ['class'] }); }); syncSetStrip(); })();
 if (document.body.classList.contains('view-set')) setView('set', true);   // opened on Settings last time: open its section now that it exists
 
 // After a restore from a code or file: start at the top with Settings closed, and say so
