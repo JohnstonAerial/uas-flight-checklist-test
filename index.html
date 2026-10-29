@@ -34,6 +34,7 @@ const ALOFT_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-
 const KP_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 20v14a18 18 0 0 0 36 0V20" stroke="#B0BEC5" stroke-width="10"/><path d="M9 6h10v14H9z" fill="#EF5350" stroke="none"/><path d="M45 6h10v14H45z" fill="#42A5F5" stroke="none"/></svg>';
 const DRONE_IMG = '<img class="dr-ico" alt="" src="data:image/png;base64,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">';
 const HELP_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F5B83D"/><path d="M8.6 9.3a3.5 3.5 0 1 1 5.2 3c-1 .6-1.6 1.2-1.6 2.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><circle cx="12.2" cy="17.9" r="1.4" fill="#fff"/></svg>', COFFEE_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
+const CEIL_IMG = '<svg class="wind-ico ceil-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18.5a4.2 4.2 0 0 1-.4-8.4 5.6 5.6 0 0 1 10.8-1.2 4.8 4.8 0 0 1 .6 9.6z" fill="#9fb3c8"/><path d="M4 21.2h16" stroke="#F5B83D" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3 2.4"/></svg>', TEMP_IMG = '<svg class="wind-ico temp-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7.6" y="1.8" width="8.8" height="15" rx="4.4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.1"/><circle cx="12" cy="17.8" r="5.4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.1"/><rect x="8.7" y="5" width="6.6" height="12" fill="#e2e8f0"/><rect x="10.4" y="7" width="3.2" height="11" rx="1.6" fill="#E8504A"/><circle cx="12" cy="17.8" r="3.6" fill="#E8504A"/></svg>', VIS_IMG = '<svg class="wind-ico vis-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.8 12C4 7.6 7.6 5.4 12 5.4s8 2.2 10.2 6.6C20 16.4 16.4 18.6 12 18.6S4 16.4 1.8 12z" fill="#f4f1ea" stroke="#94a3b8" stroke-width="1.2"/><circle cx="12" cy="12" r="4.2" fill="#4a90d9"/><circle cx="12" cy="12" r="2" fill="#1e3a5f"/><circle cx="13.2" cy="10.8" r=".9" fill="#fff"/></svg>', RAIN_IMG = '<svg class="wind-ico rain-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 14a4 4 0 0 1-.4-8 5.4 5.4 0 0 1 10.4-1.1 4.6 4.6 0 0 1 .6 9.1z" fill="#9fb3c8"/><path d="M7.5 15.6 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/><path d="M12 17.4 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/><path d="M16.5 15.6 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/></svg>';
 try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) {}
 </script>
 <style>
@@ -814,6 +815,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-model { margin-top: 8px; }
   .wx-model strong { font-weight: 700; }
   .wx-loc { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: -4px 0 10px; font-size: 13px; color: var(--text); }
+  .wx-label .ceil-ico, .wx-label .temp-ico, .wx-label .vis-ico, .wx-label .rain-ico { width: 1.6em; height: 1.6em; vertical-align: -0.45em; margin: -0.2em 0; }
+  .hs-lab .temp-ico, .hs-lab .vis-ico, .hs-lab .ceil-ico, .hs-lab .rain-ico { width: 1.3em; height: 1.3em; vertical-align: -0.3em; }
   .wx-label .hum-ico { width: 1.3em; height: 1.3em; vertical-align: -0.3em; }
   .wx-sug .pin-ico { width: 1.2em; height: 1.2em; vertical-align: -0.25em; }
   .wx-loc-label .pin-ico { width: 1.3em; height: 1.3em; vertical-align: -0.3em; }
@@ -990,7 +993,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0g</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0h</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -3645,7 +3648,7 @@ function hourStripHtml(om, hIdx) {
   }
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
   const opts = views.map(v => '<option value="' + v[0] + '"' + (v[0] === view ? ' selected' : '') + '>' + vIcon[v[0]] + ' ' + v[1] + '</option>').join('');
-  return '<div class="wx-strip"><div class="hs-title">Forecast <span class="ws-chip hs-chip"><span class="hs-lab">' + (view === 'wind' ? WIND_IMG : view === 'alt' ? ALOFT_IMG : vIcon[view]) + '\u00A0' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
+  return '<div class="wx-strip"><div class="hs-title">Forecast <span class="ws-chip hs-chip"><span class="hs-lab">' + (view === 'wind' ? WIND_IMG : view === 'alt' ? ALOFT_IMG : ({ temp: TEMP_IMG, vis: VIS_IMG, cloud: CEIL_IMG, rain: RAIN_IMG })[view] || vIcon[view]) + '\u00A0' + name + '</span><select class="hs-sel" aria-label="Hourly forecast view" onchange="stripViewSet(this.value)">' + opts + '</select></span> ' + (unitLab ? '<span class="hs-unit">in ' + (view === 'wind' || view === 'alt' ? windChipHtml() : unitLab) + '</span> ' : '') + seg + '<span class="hs-loc">' + String(site ? site.name : 'My location').replace(/[<>&"]/g, '') + '</span></div><div class="hs-cap">' + capTxt + '</div><div class="hs-row" role="group" aria-label="Hour by hour ' + name + ' forecast, scrolls sideways" tabindex="0">' + cells + '</div><div class="hs-key">' + keyTxt + '</div></div>';
 }
 function calmHtml(c, H, hIdx, siteTag) {
   if (!c || c.kind === 'ok') return '';
@@ -4673,7 +4676,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       // Lowest cloud layer of any cover at the nearest station, when it is lower than the ceiling shown
       const lc = metarData2 && metarData2.lowCloud;
       const lowCloudTxt = () => lc && (ceilFt === null ? lc.station !== stationId : lc.base < ceilFt && lc.station !== stationId)
-        ? '☁️ Lowest cloud nearby: ' + lc.cover + ' ' + fmtAlt(lc.base) + ' (' + lc.station + ')' : '';
+        ? CEIL_IMG + ' Lowest cloud nearby: ' + lc.cover + ' ' + fmtAlt(lc.base) + ' (' + lc.station + ')' : '';
       // US only: legal max altitude = 500 ft below the ceiling (broken/overcast layer), shown only when it is under the 400 ft limit
       const maxAltTxt = () => {
         if (region === 'intl' || !metarData2) return '';
@@ -4703,9 +4706,9 @@ async function renderWeather(lat, lon, attempt = 1) {
       const fmtVisObs = (v) => isMetric() ? (v.mi * 1.609344 >= 16 ? '16+ km' : (+(v.mi * 1.609344).toFixed(1)) + ' km') : (v.plus || v.mi >= 10 ? '10+ SM' : (+v.mi.toFixed(2)) + ' SM');
       const visTxt = () => ov ? fmtVisObs(ov) : fmtVis(wx.visibility);
       const visSrc = () => ov ? ' · ' + ov.station : (wx.visibility != null ? ' · forecast model' : '');
-      const visNote = () => metarData2 && metarData2.lowVis && metarData2.lowVis.length ? '☁️ Lower nearby: ' + metarData2.lowVis.map(v => v.station + ' ' + fmtVisObs({ mi: v.mi, plus: false }) + ' (' + fmtDist(v.dist) + ')').join(' · ') : '';
+      const visNote = () => metarData2 && metarData2.lowVis && metarData2.lowVis.length ? CEIL_IMG + ' Lower nearby: ' + metarData2.lowVis.map(v => v.station + ' ' + fmtVisObs({ mi: v.mi, plus: false }) + ' (' + fmtDist(v.dist) + ')').join(' · ') : '';
       const alsoTxt = () => metarData2 && metarData2.also && metarData2.also.length ? 'Also reporting:' + metarData2.also.map(a => '<div class="wx-li">' + a.station + ' ' + NB(a.ft != null ? fmtAlt(a.ft) : a.kind === 'none' ? 'No ceiling' : 'Clear') + ' ' + NB('(' + fmtDist(a.dist) + ')') + '</div>').join('') : '';
-      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? '☁️ Lower nearby:' + metarData2.lower.map(l => '<div class="wx-li">' + l.station + ' ' + NB(fmtAlt(l.ft)) + ' ' + NB('(' + fmtDist(l.dist) + ')') + '</div>').join('') : '';
+      const lowerTxt = () => metarData2 && metarData2.lower && metarData2.lower.length ? CEIL_IMG + ' Lower nearby:' + metarData2.lower.map(l => '<div class="wx-li">' + l.station + ' ' + NB(fmtAlt(l.ft)) + ' ' + NB('(' + fmtDist(l.dist) + ')') + '</div>').join('') : '';
       // US only: visibility under 3 statute miles (14 CFR 107.51) is shown in red with a short note
       const visBelowMin = () => region !== 'intl' && typeof visM === 'number' && visM < 4828;
 
@@ -4818,7 +4821,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${windHTML}
           </div>
           <div class="wx-item">
-            <div class="wx-label">☁️ Cloud Ceiling</div>
+            <div class="wx-label">${CEIL_IMG} Cloud Ceiling</div>
             <div class="wx-value ${ceilClass}">${ceilTxt}</div>
             <div class="wx-sub">${ceilNote}</div>
             ${metarData2 ? `<div class="wx-sub"${metarData2.ageMin != null ? ' data-rec-age="' + (Date.now() - metarData2.ageMin * 60000) + '"' : ''}>${stationId} · ${fmtDist(metarData2.dist)} away${metarData2.ageMin != null ? ' · ' + ageText(metarData2.ageMin * 60000) : ''}</div>` : ''}
@@ -4830,17 +4833,17 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${(() => { const H = om && om.hourly; if (!H || !H.cloud_cover || hIdx < 0) return ''; const c = H.cloud_cover[hIdx], lo = H.cloud_cover_low ? H.cloud_cover_low[hIdx] : null; if (c == null || !isFinite(c)) return ''; return `<div class="wx-sub wx-model">Model for your spot: <strong>${Math.round(c)}%\u00A0cloud${lo != null && isFinite(lo) ? '<br>' + Math.round(lo) + '%\u00A0low' : ''}</strong></div>`; })()}
           </div>
           <div class="wx-item">
-            <div class="wx-label"><button type="button" class="wx-gear" data-lim="temp" aria-label="Edit your temperature limits in Settings">⚙</button>🌡 Temp</div>
+            <div class="wx-label"><button type="button" class="wx-gear" data-lim="temp" aria-label="Edit your temperature limits in Settings">⚙</button>${TEMP_IMG} Temp</div>
             <div class="wx-value ${tempOk ? tempColor(wx.main.temp) : ''}">${tempOk ? fmtTemp(wx.main.temp) : '—'}</div>
             ${obsT ? `<div class="wx-sub" data-rec-age="${Date.now() - obsT.ageMin * 60000}">${obsT.station} · ${fmtDist(obsT.dist)} away · ${ageText(obsT.ageMin * 60000)}</div>` : ''}
-            <div class="wx-label wx-vislab">👁 Visibility</div>
+            <div class="wx-label wx-vislab">${VIS_IMG} Visibility</div>
             <div class="wx-value wx-vis-val ${visBelowMin() ? 'wx-alert' : (typeof visM === 'number' && visM >= 4828 ? 'wx-good' : '')}">${visTxt()}<span class="wx-vis-src">${visSrc()}</span></div>
             ${visBelowMin() ? '<div class="wx-sub wx-alert">⛔ Below 3 SM minimum</div>' : ''}
             ${visNote() ? `<div class="wx-sub">${visNote()}</div>` : ''}
             ${(() => { const ed = elevDens(om); return ed ? `<div class="wx-sub wx-elev">Elevation ${NB(fmtAlt(ed.elFt))}<br><span class="${ed.diff >= 1500 ? 'wx-warn' : ''}">Density alt ${NB(fmtAlt(ed.daFt))}</span></div>` : ''; })()}
           </div>
           <div class="wx-item">
-            <div class="wx-label">🌧 Precipitation</div>
+            <div class="wx-label">${RAIN_IMG} Precipitation</div>
             <div class="wx-value ${pb.cls}">${pb.val}</div>
             ${pb.lines.map(l => `<div class="wx-sub">${l}</div>`).join('')}
             <a class="wx-link" href="${region === 'intl' ? 'https://www.rainviewer.com/map.html?loc=' + lat.toFixed(3) + ',' + lon.toFixed(3) + ',8&layer=radar' : nwsRadarUrl(lat, lon)}" target="_blank" rel="noopener">Radar map ›</a>
