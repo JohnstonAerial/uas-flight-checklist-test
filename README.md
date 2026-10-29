@@ -4,7 +4,7 @@ A free, mobile-friendly drone preflight checklist web app with live weather cond
 
 **Use it now:** [checklist.johnstonaerial.com](https://checklist.johnstonaerial.com)
 
-📘 **New here?** Start with the [How-to guides](HOW-TO.md). You can also open them in the app with the **📘 Help** button at the top of the page, or the **Help & guides** link at the bottom of any tab.
+📘 **New here?** Start with the [How-to guides](HOW-TO.md). You can also open them in the app with the gold **Help** button at the top of the page, or the **Help & guides** link at the bottom of any tab.
 
 ☕ **Free to use.** If it helps you, you can [buy me a coffee](https://buymeacoffee.com/JohnstonAerial).
 
@@ -14,15 +14,15 @@ A free, mobile-friendly drone preflight checklist web app with live weather cond
 
 <table>
   <tr>
-    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/08-conditions-dark.png"><img src="screenshots/08-conditions-light.png" alt="Live preflight conditions: wind, cloud ceiling, temperature, Kp index, precipitation, humidity, sunrise and sunset, with TFR, NOTAM and radar buttons" width="170"></picture><br><sub><b>Live conditions</b></sub></td>
-    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/01-checklist-dark.png"><img src="screenshots/01-checklist-light.png" alt="Checklist with progress bar, Before leaving home items and checked boxes" width="170"></picture><br><sub><b>Checklist</b></sub></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/08-conditions-dark.png"><img src="screenshots/08-conditions-light.png" alt="The Conditions tab with Conditions, Checklist and Settings tabs on top, then live preflight conditions for Cheyenne: wind with Windier nearby, cloud ceiling, precipitation, visibility, the 10-day wind outlook, and the Airspace chart, FAA UAS Facility Map, TFRs and NOTAMs buttons with nearby airport codes" width="170"></picture><br><sub><b>Live conditions</b></sub></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/01-checklist-dark.png"><img src="screenshots/01-checklist-light.png" alt="The Checklist tab with custom mission tabs, the percentage and a Customize button, the four sections folded, then a card with Print, PDF and Save flight record, and the footer with the version" width="170"></picture><br><sub><b>Checklist</b></sub></td>
   </tr>
   <tr>
     <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/05-ready-to-fly-dark.png"><img src="screenshots/05-ready-to-fly-light.png" alt="Ready to fly banner after the pre-flight sections are complete" width="170"></picture><br><sub><b>&quot;Ready to fly&quot; banner</b></sub></td>
     <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/04-reorder-dark.png"><img src="screenshots/04-reorder-light.png" alt="Customize mode with drag handles, Hide buttons and the Editing your list bar" width="170"></picture><br><sub><b>Customize: drag, hide, add</b></sub></td>
   </tr>
   <tr>
-    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/02-settings-dark.png"><img src="screenshots/02-settings-light.png" alt="Settings panel with Where you fly, Checklist items, Clear saved progress after, Wind limit and Record file name" width="170"></picture><br><sub><b>Settings</b></sub></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/02-settings-dark.png"><img src="screenshots/02-settings-light.png" alt="The Settings tab with Settings and Back up & restore buttons, then Appearance, Where you fly, Keep screen on, Customize, Clear saved progress after, limits, Record file name and Default pilot, drone and reg. #, and the PDF layout" width="170"></picture><br><sub><b>Settings</b></sub></td>
     <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/03-customize-dark.png"><img src="screenshots/03-customize-light.png" alt="Customize panel with tab name, Hide this tab and the Tab icon picker" width="170"></picture><br><sub><b>Rename tabs, pick an icon</b></sub></td>
   </tr>
   <tr>
@@ -30,8 +30,8 @@ A free, mobile-friendly drone preflight checklist web app with live weather cond
     <td align="center" width="50%"><img src="screenshots/07-printed.png" alt="Printed checklist with date, time, site and pilot lines to fill in" width="170"><br><sub><b>Print it for a pencil</b></sub></td>
   </tr>
   <tr>
-    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/09-backup-restore-dark.png"><img src="screenshots/09-backup-restore-light.png" alt="Back up and restore panel with Copy code and Save file, then Restore from file, a Paste a backup code here box and Restore from code" width="170"></picture><br><sub><b>Back up &amp; restore</b></sub></td>
-    <td></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/09-backup-restore-dark.png"><img src="screenshots/09-backup-restore-light.png" alt="Back up & restore on the Settings tab: Include current progress, Copy code and Save file, then Restore from file and Paste code, with the footer and version below" width="170"></picture><br><sub><b>Back up &amp; restore</b></sub></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/10-add-item-link-dark.png"><img src="screenshots/10-add-item-link-light.png" alt="A custom item added with a link, Check Airspace with Open airaware.aloft.ai, and below it the add box with Pack traffic cones typed and the optional link box empty" width="170"></picture><br><sub><b>Add an item, with or without a link</b></sub></td>
   </tr>
 </table>
 
@@ -57,9 +57,9 @@ CONDITIONS
 Wind: 8 mph (Gusts 14 mph · From NW; KXYZ · 6 mi away · observed 2:00 PM;
       Model for your spot: 9 / 17 mph; 400 ft: 16 mph)
 Cloud Ceiling: 4,500 ft AGL
-Temperature: 72°F (Visibility 10.0 mi)
-KP Index: 2.0
+Temperature: 72°F (Visibility 10+ SM · KXYZ)
 Precipitation: None (Radar: no echoes within 30 mi · 2:10 PM)
+KP Index: 2.0
 Humidity: 48% (Dew point 51°F)
 Sunrise 07:16 AM · Sunset 06:45 PM
 Golden hour 07:04 AM – 07:53 AM · 06:14 PM – 07:04 PM
@@ -91,7 +91,484 @@ UAS Flight Checklists v3.7.12 · checklist.johnstonaerial.com
 
 </details>
 
-Items you flagged are listed as **NEEDS ATTENTION**, items you hid are left out, and the **Pilot** and **Drone** lines come from **⚙ Settings**. Anything you leave blank is left out of the record.
+Items you flagged are listed as **NEEDS ATTENTION**, items you hid are left out, and the **Pilot**, **Drone** and **Reg. #** lines come from the tab's own Customize boxes, or from the defaults in **⚙ Settings** when those are blank. Anything you leave blank is left out of the record.
+
+---
+
+## What's new in v3.9.4
+
+- **A shorter Settings panel** — **⚙ Settings** is grouped into **Display**, **Limits**, **Your info** and **PDF**. Drop-down boxes are only as wide as their text and sit on the right, and the settings take roughly a third less room on a phone.
+- **Show or hide the explanations** — the grey explanation text under the settings has a **Hide explanations** link at the top. They are showing the first time you open the app. If you hide them, the app remembers on that device, and the choice is saved with **Back up & restore**. The line that says your settings are saved on this device only always stays.
+- **Explanations for Back up & restore** — the same **Hide explanations** link now covers **Back up & restore**, which explains what **Include current progress** saves (your checked, N/A and Needs attention marks), what **Save file**, **Copy code**, **Restore from file…** and **Paste code…** do, and that a restore asks you to confirm first. It only mentions **Share…** on devices that show it.
+- **Night note only when it matters** — the lights and training reminder under **I fly at night** always shows when night flying is on, and is an ordinary explanation (hidden with the others) when it is off. The setting now reads **No / Yes** so it fits on a phone.
+- **Steady text size on iPhone** — turning the phone sideways no longer enlarges small text.
+- **Small fixes on iPhone** — **Appearance** and **PDF layout** no longer overlap or get cut off, and the **Default reg. #** box no longer cuts off its hint.
+
+---
+
+## What's new in v4.3.0
+
+- **The three main buttons are now at the very top.** **Conditions**, **Checklist** and **Settings** sit in the blue bar right under the title, and they never move. The switch for the part you are in sits just under them: **Weather / Airspace**, your checklist tabs, or **Preferences / Back up & restore**. The selected button turns white.
+- **The switches look like switches.** The row under the three buttons is now a soft rounded track with the one you are on filled in, so it is clear you can tap the others.
+- **A "Log the flight" button on the Checklist.** Right under your checklist tabs, one tap (**↓ Log the flight · Print, PDF, Save**) jumps you down to **Print**, **PDF** and **Save flight record**. It is blue in light mode and white in dark mode so it is easy to spot. The old "Moved: Print, PDF and Save" note is gone.
+- **Shorter labels that always fit.** **Conditions** says *Weather & airspace* (*Wx & airspace* on a narrow phone), **Checklist** says *Checks & log*, and **Settings** says *Back up* on a phone and *Back up & restore* on a wider screen.
+- **More drawn icons.** **Help** is a gold question mark and **Buy me a coffee** is a gold cup. The **Cloud Ceiling**, **Temp**, **Visibility** and **Precipitation** tiles, and the **Print**, **PDF** and **Save flight record** buttons, have their own pictures too. They look the same on every phone and computer.
+- **The ↑ Top button shows up on tall screens too.** It now appears after a short scroll, so it also shows on an iPad held upright. The extra "Back to the top" button at the bottom of Settings is gone, since **↑ Top** does the job.
+
+## What's new in v4.2.13
+
+- **Drawn icons instead of emoji.** The three buttons now have their own pictures, and so do the sunrise and sunset line, golden hour, your location pin, the humidity tile, the drone on the **Max legal altitude** line, the **Pilot** fields and the Back up & restore switch. They look the same on every phone and computer.
+- **Each button says what's inside.** **Conditions** says *Weather & airspace*, **Checklist** says *Checks & log* and **Settings** says *Back up*. The three buttons are laid out the same way on every screen and stay at one height.
+- **Settings shows its two parts at the top.** **Preferences** and **Back up & restore** are now in the blue bar when you open Settings, so you can see where Back up & restore is. Pressing **Done** after customizing no longer leaves Settings blank. The **Your checklist & tab** row names the tab you are editing.
+- **Weather and Airspace in the blue bar.** On Conditions, tap **Airspace** to jump to the airspace buttons, or **Weather** to go back up. The underline follows you as you scroll.
+- **A ↑ Top button.** Once you scroll down a screen, a small **↑ Top** button appears at the bottom right and takes you back to the top and the three buttons.
+- **No jump on first open.** The app now opens on the tab you used last without flashing the wrong one first.
+
+## What's new in v4.2.12
+
+- **The three buttons stay put.** **Conditions**, **Checklist** and **Settings** used to sit at a different height on each tab, because the General / Mapping / Commercial strip was hidden on Conditions. Conditions now shows a **Conditions** label in that strip, so the buttons are at the same height on all three tabs and don't move when you switch.
+
+## What's new in v4.2.11
+
+- **A new picture on the Preflight Conditions title.** The satellite dish beside **Preflight Conditions** is now a small drawing of a sun behind a cloud with rain and a wind curl. It matches the Wind and Kp icons and looks the same on every phone and computer.
+- **Updated screenshots.** The Conditions, Settings and Back up & restore screenshots in this guide now show the current icons and the Forecast strip.
+
+## What's new in v4.2.10
+
+- **Inspect, then charge.** On every checklist, **Batteries inspected for damage** now comes before **All drone batteries fully charged**, so you look for swelling, cracks or corrosion before you rely on the charge. Your ticks and any order you set yourself are untouched.
+- **A cleaner forecast strip title.** It reads **Forecast** now. The **24 hours / 10 days** switch beside it already shows the range.
+- **New Wind, Aloft and Kp icons.** The Wind tile and the strip's Wind chip show a small drawing of blue wind streams, the Aloft chip shows the same streams with an up arrow, and the Kp tile and its Settings row show a magnet. They look the same on every phone and computer. The open view list on the strip still shows emoji, because a phone's own picker can only show text.
+- **Drone picture, drone only.** The little drone on the Best window box, the drone picker, the Default drone row and the **Add a drone** button no longer has green grass behind it.
+- **A clearer airspace note.** Under the airspace buttons it now says what the copied airport code is for: "NOTAMs copies the airport code to paste in its location box." It also fits three lines on a phone.
+
+## What's new in v4.2.9
+
+- **Your drone, as a picture.** The **Best window** / **Possible window** box, the drone picker under your location, the **Default drone** row in Settings and the **Add a drone** button now show a small drone picture instead of a dove or helicopter emoji. It looks the same on every phone and computer.
+- **Icons on the weather tiles.** Each tile and each view of the forecast strip has a small icon in front of its name (wind, cloud, temperature, visibility, rain, Kp and humidity). The Temperature tile now reads **Temp** so the icon and the gear fit on one line.
+- **Cloud layers sit under the airport line.** The reported layers ("Bkn 400 · Ovc 4,700 ft") now come right after the station and age, ahead of the model numbers. A single layer that only repeats the ceiling at the top of the tile is left out.
+
+## What's new in v4.2.8
+
+- **A tidier forecast strip.** The Next 24 hours / Next 10 days strip is smaller and more uniform on a phone. The unit now sits beside the view chip ("in mph", "in °F", "in SM", "in mm"), and the notes fit on one line.
+- **Pick the wind unit from the strip.** In the Wind and Aloft views the unit is a picker, the same one as on the Wind tile, and the two stay in sync.
+- **Simpler Wind view.** The small blue rain chance under the wind tiles is gone. Rain has its own view, and the best-window line already counts it.
+- **Temp view without the extra line.** The tiles are plainly temperatures, so the caption is gone.
+- **No empty "Today".** In the evening the 10-day strip starts at tomorrow instead of showing a blank tile.
+- **Cleaner day summaries.** Tap a day and the summary starts at the useful part ("Best 11a–6p · 6–9 mph · rain 1%") without repeating the day.
+- **Wind by height no longer jumps.** The build-up note shows the unit once, so changing the wind unit doesn't add a line.
+- **US spelling.** "Gray" and "colors" in the notes.
+
+## What's new in v4.2.7
+
+- **Wind by height stays open.** Tap **more** on the Wind tile once and it stays open, even after you close and reopen the app. It also goes with Back up and restore.
+- **Both heights in your flight record.** The saved PDF and flight record now always list the forecast wind at 260 ft and 400 ft (80 m and 120 m in metric), whether or not the section is expanded.
+- **Tidier flight record.** The Conditions lines now put a space and commas between stations (Windier nearby, Also reporting, Lower nearby), separate Elevation from Density alt, and no longer stack brackets like "(forecast))".
+- **Kp tile wording.** The Kp tile now just says **Normal** instead of "good to fly", and the high warning reads "GPS and compass can be affected". Colors and your adjustable warning levels are unchanged.
+
+## What's new in v4.2.6
+
+- **No more false "Radar echoes nearby."** Faint, tan-colored radar returns (clear-air echoes, insects and ground clutter) are no longer counted as rain, so a clear sky no longer shows echoes nearby. Real rain is still detected.
+
+## What's new in v4.2.5
+
+- **Steadier Conditions screen.** The page no longer jumps around while the weather loads, so you won't tap the wrong button as the tiles fill in.
+- **Clearer packing item.** It now reads "Pack the drone, controller and all gear — cases and bags zipped and latched."
+
+## What's new in v4.2.4
+
+- **Place search finds more of the world** — it now understands **Canadian provinces** and **Australian states** (**Toronto ON**, **Calgary, Alberta**, **Sydney NSW**), about 100 country names and codes (**Auckland NZ**, **Cape Town South Africa**), and common local-language names (**Wien**, **Roma**, **Warszawa**, **Koeln**, **Ciudad de Mexico** find Vienna, Rome, Warsaw, Cologne and Mexico City). When nothing matches, the message suggests adding the country.
+- **Abbreviations work** — **Ft Worth**, **Pt Pleasant**, **Mt. Airy**, **N Charleston**, **Lk Havasu**, **Hot Spgs**, **Mc Kinney** and **O Fallon** are found. The search also tries the other spelling, so a town filed as "Mt Pleasant" turns up when you type "Mount Pleasant NC".
+
+---
+
+## What's new in v4.2.3
+
+- **"St", "St." and "Ste" places are found** — searching **St Paul Minnesota**, **St. Louis** or **Ste Genevieve** now finds the city. The place database spells these out as "Saint" and "Sainte", so the search looks up both spellings and shows the combined results, with your state or country first.
+- **The ⚙ gears step aside once you add a drone** — when you have at least one drone, the gears on the **Wind**, **Temperature** and **KP Index** tiles are hidden. The blue drone pill's **⚙ Edit drones & limits** line takes you to the same place. Without a drone, the gears stay.
+
+---
+
+## What's new in v4.2.2
+
+- **FAA UAS Facility Map, for the whole area** — the old **FAA grid map** button is now **🗺 FAA UAS Facility Map**, the FAA's own name. Its line now looks at every grid square within 3 miles of your place, not one square, and shows the spread: for example **0–400 ft nearby · LAANC**. It turns amber when some nearby squares are 0 ft (FAA approval needed there), and stays green when every square is above 0. If every nearby square matches you get one number, such as **400 ft · LAANC**, and where the FAA has no grid within 3 miles it says **No grid nearby**. Tap the button to open the FAA's map for the exact square.
+- **Change how long your progress is kept, from the checklist** — the note under the progress card now ends **clears after 12 hours · change**. Tap **change** to open **Preferences** at **Clear saved progress after**; a **← Back to Checklist** bar returns you to the same spot.
+
+---
+
+## What's new in v4.2.1
+
+- **Preferences | Back up & restore** — the top of the **⚙ Settings** tab is now a two-part switch, so you no longer open "Settings" inside "Settings". **⚙ Preferences** holds your display, limits, drones and info settings; **💾 Back up & restore** holds Back up and Restore. One half is always showing. The bar at the bottom now says **▴ Back to the top**.
+- **Back up & restore in the footer of every tab** — the link at the bottom of **Conditions**, **Checklist** and **Settings** opens **Back up & restore** straight away. From Conditions or Checklist, a **← Back** bar at the top returns you to where you were.
+- **Fix** — on **Default** in **Settings → Limits**, the drone name box and **Delete this drone** no longer show (there is nothing to rename or delete on Default).
+
+---
+
+## What's new in v4.2.0
+
+- **Drones, each with their own limits** — add a drone in **⚙ Settings → Limits** (**＋ Add a drone**), name it, and set its own **wind**, **Kp** and **cold/heat** limits. A new drone starts as a copy of the limits you see, and your current limits stay as **Default**, so nothing changes until you add one. Once you have a drone, a blue pill under the place name on **Conditions** shows which drone's limits are in use, for example **Mini 4 Pro · wind 5 / 10 mph**. Tap it to switch: the Wind, Temperature and KP tiles, the Best window, the 24-hour strip and the no-flyable-window banner all follow the drone you pick. Drones are not tied to checklist tabs, so you can fly the same Mapping tab with a different drone on a different day. The drone list is included in **Back up & restore**.
+- **The ⚙ gear opens the drone you're using** — the gear on the Wind, Temperature and KP tiles takes you to the limits for the selected drone, with the **← Back to Conditions** bar to return.
+
+---
+
+## What's new in v4.1.3
+
+- **Gear on the Wind, Temperature and KP tiles** — a small ⚙ in the corner of those three tiles on **Conditions** opens **Settings** right at **Limits**, where your wind, Kp and cold/heat limits live. A blue **← Back to Conditions** bar at the top takes you straight back to where you were. The bar only shows when you arrive from a gear, and it disappears if you switch tabs yourself.
+
+---
+
+## What's new in v4.1.2
+
+- **Official drone maps for 13 more countries** — the button under the weather now follows the place you look up and opens that country's official drone map or airspace page: **Austria** (Dronespace), **Switzerland** (FOCA drone map), **Italy** (D-Flight), **Spain** (ENAIRE), **Denmark** (dronezoner, via droneregler.dk), **Sweden** (LFV), **Norway** (Avinor), **Finland** (Traficom), **Poland** (DroneRadar), **Czech Republic** (DroneMap), **the Netherlands** (GoDrone), **Germany** (dipul) and **Ireland** (IAA). The FAA buttons are hidden in those countries, since they don't apply there. Some of these sites open in the local language.
+- **Search understands a country** — type the town with its country, such as **Munich, Germany**, **Berlin Germany** or **Dublin Ireland**, and the results are limited to that country. Before, adding a country name found nothing.
+
+---
+
+## What's new in v4.1.1
+
+- **Customize is on the Checklist tab** — a small **✎ Customize** button sits beside the percentage at the top of the checklist. It opens the same Customize screen as before, and **⚙ Settings → Customize** still works too.
+- **Print, PDF and Save flight record moved to the bottom** — they are now in a card after the last section, just above the footer. Tap **↓ Print, PDF and Save flight record are at the bottom** under the progress card to jump straight there. The first time you open the app after this change, a blue **Moved** notice says the same, with a **Jump there** link. Close it with the **×** and it stays closed on that device. The choice is saved with **Back up & restore**. New visitors never see it.
+- **One footer on every tab** — **buy me a coffee**, **Help & guides**, **Send feedback** and the version number now show at the bottom of **Conditions**, **Checklist** and **Settings**, not only the checklist.
+
+---
+
+## What's new in v4.1.0
+
+- **Three tabs: Conditions, Checklist, Settings** — the app now opens on **🌤 Conditions**, the preflight weather card. **✅ Checklist** is one tap away, and **⚙ Settings** holds **Settings** and **Back up & restore**. The General, Mapping and Commercial tabs show on the Checklist and Settings tabs. The app remembers the tab you used last on that device. A red dot on **⚙ Settings** means a backup is due. Nothing you saved changes: your tabs, customized lists, progress and settings are the same as before, and **Customize** from Settings takes you to the checklist.
+- **Saved places drop down from the search box** — under **Change**, tap the search box to see your saved places, and type to narrow them. It now remembers your last **10** places (it was 5).
+- **The guide-only reminder moved to the top** — "Guide only. Check your own weather sources and the sky before you fly." now sits at the top of the weather card. The bottom line keeps just the radar credit.
+
+---
+
+## What's new in v4.0.14
+
+- **The wind reminder moved to the top** — the note that obstructions and terrain can make it windier where you fly now sits at the top of the weather card, under the place name, instead of between the tiles. On a calm day it stays quiet gray. When wind needs attention (the airport or model wind is at caution level or higher, or a nearby station is windier) it turns amber and bold with a ⚠️.
+
+---
+
+## What's new in v4.0.13
+
+- **TFR count on the button** — the **⚠️ TFRs — FAA.gov** button now shows how many TFRs the FAA lists for your state and nationwide, for example **NC: 3 · US: 12**. It is a count only and does not say whether one is near you, so the button still opens the FAA's list. (This uses the small Cloudflare Worker already used for weather. If you run your own copy, update `uas-metar-worker.js`; without it the count just doesn't appear.)
+- **NOTAMs: nearby airport codes** — the FAA's NOTAM search opens with an empty **Location** box. The **📋 NOTAMs — AIM** button now shows the nearest airport and copies its code when you tap it, ready to paste. Under the buttons a **Nearby** row lists up to three airports with their distances. Tap one to switch to it, or tap **All 3** to copy all three comma-separated and search them together.
+- **HOW-TO** — new tips for using the FAA's TFR page on a phone (turn it sideways, then use the search by state box) and for the NOTAM steps.
+
+---
+
+## What's new in v4.0.12
+
+- **FAA grid map button** — the **Facility map — FAA** button is now **🗺 FAA grid map**. It opens the FAA's UAS Facility Map already centered on the place you chose, so there is no pop-up to accept and nothing to search for. The button also shows what the FAA grid says at that spot, such as **400 ft · LAANC**, **0 ft · FAA approval** or **No grid here**. It is a guide only, so still check LAANC or your airspace app before you fly. USA only, like the TFR and NOTAM buttons.
+
+---
+
+## What's new in v4.0.11
+
+- **Buttons for your country** — the buttons under the weather now follow the place you look up. Countries with their own official drone resource get a button: **Australia** (CASA's verified drone safety apps), **Argentina** (ANAC rules and registration), **France** (the DGAC open-category page), **Belgium** (the Droneguide map), **the UK** (the NATS restriction zones map) and **Canada** (the NRC drone site selection tool), plus 13 European countries added in v4.1.2 (see below). In those countries the FAA buttons are hidden, since they don't apply.
+- **Another country?** With **Outside USA** chosen, or a place from search in a country we don't have yet, you get **🌍 Find your aviation authority** (a list of national authorities) and a line asking you to tell us which country to add.
+- **SkyVector always top left** — the airspace chart button stays in the top-left corner whatever the country, with the other buttons beside and below it.
+
+---
+
+## What's new in v4.0.10
+
+- **Airspace chart outside the USA** — the **🛩 Airspace chart — SkyVector** button now stays when you choose **Outside USA** under **Where you fly**, because SkyVector has aviation charts for many countries. The USA-only buttons (**Facility map**, **TFRs**, **NOTAMs**) are still hidden. SkyVector is a chart for crewed aircraft: its TFR overlay is US only and it doesn't know your country's drone rules, so keep using your own aviation authority's rules and drone airspace app.
+
+---
+
+## What's new in v4.0.9
+
+- **Better radar link** — in the USA, **Radar map ›** in the Precipitation tile now opens the National Weather Service radar, centred on your spot. Outside the USA it still opens RainViewer. The separate **Radar — NWS** button below the tiles is gone, since the tile link does the same job.
+- **Even buttons** — the four buttons under the weather (USA only) are now a tidy two-by-two grid: **Facility map** and **Airspace chart** on top, **TFRs** and **NOTAMs** below.
+
+---
+
+## What's new in v4.0.8
+
+- **Keep screen on** — a new setting in **⚙ Settings**. Turn it on and the screen will not lock while the app is open and in view. It is off by default (it uses more battery), is included in Back up and restore, and shows a note if your phone or browser can't do it.
+- **Elevation and density altitude** — the Temperature tile now shows the elevation of your spot and an estimated density altitude (how thin the air acts, from temperature, humidity and pressure). It turns bold when the air is much thinner than the elevation alone, which can mean less lift and shorter battery life.
+- **Cloud tile model line** — the Cloud Ceiling tile adds "Model for your spot" with the forecast cloud cover and low cloud, so it lines up with the Wind tile.
+- **Tidier tiles** — the note about obstructions and terrain now sits once on its own line under the Wind and Cloud Ceiling tiles.
+
+---
+
+## What's new in v4.0.7
+
+- **Quieter location label** — the place name on the forecast strip no longer has a pin and now uses the same grey as the strip's title, so it reads as a reminder of where the forecast is for and not something you can tap.
+
+---
+
+## What's new in v4.0.6
+
+- **Your location on the forecast strip** — the title of the Next 24 hours / Next 10 days strip now shows where the forecast is for (your place name, or **My location**), to the right of the **24 hours | 10 days** switch. On a phone you no longer have to scroll to the top to check which place you are looking at. A long name wraps to a second line.
+
+---
+
+## What's new in v4.0.5
+
+- **Next 24 hours** — the hourly strip under the weather tiles now shows the next 24 hours instead of 12, in every view (Wind, Aloft, Temp, Visibility, Clouds and Rain). The switch beside the view chip now reads **24 hours | 10 days**, and your saved choice still carries over. The Best window box and its look-ahead lines still look 12 hours ahead.
+- **One airport per line** — the **Also reporting**, **Lower nearby** and **Windier nearby** lists now put each airport on its own line (code, value and distance), so a name never splits across lines on a narrow phone.
+- **Cleaner Wind and Cloud Ceiling tiles** — the thin divider lines inside both tiles are gone, which saves a little height and reads more calmly.
+- **Updated Live conditions screenshot** — the README picture now shows the current Wind and Cloud Ceiling tiles and the 24-hour strip.
+
+---
+
+## What's new in v4.0.4
+
+- **Fixed: weather tiles cut off on narrow phones** — on some phones (or with large text), a long list in the Wind tile could push the Cloud Ceiling tile off the right edge of the screen. Both tiles now always fit, and the lists wrap cleanly between airports instead of inside a number or a distance.
+- **Windier nearby is quieter** — the line now appears only when the other airport's wind is outside the green band of your wind limits (orange or red) and is notably windier, so a calm morning no longer shows a "windier" airport at 5 mph.
+
+---
+
+## What's new in v4.0.3
+
+- **Also reporting, on the Cloud Ceiling tile** — when none of the other airports within 30 miles has a lower ceiling than the nearest one, the tile now lists up to two of them (nearest first) with their ceilings, so you can see whether the airports around you agree. If one is lower, the existing **Lower nearby** line shows instead.
+- **Simpler wind details** — the list under **more** on the Wind tile no longer repeats the ground wind (it is already shown as **Model for your spot**). It now shows the wind at about 260 ft and 400 ft.
+
+---
+
+## What's new in v4.0.2
+
+- **Windier nearby** — the Wind tile shows the nearest airport's observed wind first. If another airport within 30 miles has a recent report that is at least 5 mph windier, or in a worse colour band against your limits, the tile now adds a **Windier nearby** line with that airport, its wind and its distance (up to two). It only appears when it is useful; on calm or even days nothing changes.
+- **A reminder under the wind** — a short note at the bottom of the Wind tile: obstructions and terrain can make it windier where you fly. The numbers are a baseline, and the call is still yours.
+
+---
+
+## What's new in v4.0.1
+
+- **Airspace chart button** — a new full-width button under the weather links, **🛩 Airspace chart — SkyVector**, opens a free aviation chart centered on your spot with TFRs drawn on it. It works on phones and tablets. It is a pilot's chart, not drone-specific, and it can miss some TFRs, so the FAA **TFRs** button is still the official list.
+- **Clearer key under the hourly strip** — the dimmed hours are now labelled **dimmed = night** (the hours before sunrise and after sunset), instead of "dimmed = after sunset".
+
+---
+
+## What's new in v4.0
+
+- **10-day outlook** — the **Next 12 hours** strip now has a **12 hours | 10 days** switch beside the view chip. In the 10-day view each chip is one day, showing the daytime peak wind (with gusts beneath) coloured by your wind limits. The other views work the same way: **Aloft** shows the peak wind at 400 ft, **Temp** the high with the low beneath, **Visibility** the lowest, **Clouds** the daytime average, and **Rain** the highest chance with the amount. Swipe sideways to see all ten days.
+- **Tap a day for a summary** — tapping a day changes only the grey line above the strip, for example **Wed 21 · Best 3p–6p · 8–11 mph · rain 0%**. Tap it again, or switch back to 12 hours, to clear it. The window box and tiles still describe the next 12 hours.
+- **Days 6 to 10 are a rough guide** — those days are drawn lighter and their summary starts with **Rough guide**. Check again closer to the day.
+- **Your view is remembered** — the 12 hours / 10 days choice and the Wind / Aloft / Temp / Visibility / Clouds / Rain view now stay as you left them, and they are included in **Back up** and **Restore**.
+- **Two new checklist lines** — **SD card inserted and its cover closed — before powering on**, and **Arms unfolded and locked — and landing gear in place, if your drone has it**, on all three tabs.
+
+---
+
+## What's new in v3.9.12
+
+- **The window box leads with the earliest window** — when there is more than one flyable stretch, the **Possible window** / **Best window** box now shows the earliest run of 2 hours or more. If a later run is longer, a short **Longer:** line mentions it.
+- **Clearer wind wording** — the Wind tile says **Sustained speeds · gusts not forecast aloft**. In **Next 12 hours**, the Wind view says it is the ground wind, with a short caption and a key that reads **Sustained / gusts**, and the Aloft view reads **Wind at 400 ft · sustained only · mph**.
+- **iPad PDF box** — after you tap **PDF** (or **Save PDF** in a flight record) on an iPad, the "Your PDF is ready" box now appears with **View** and **Share…**. **Share…** has **Save to Files**. On an iPhone or iPad, if the Share sheet can't open, the PDF opens in a new tab instead.
+- **Tidier text on small screens** — clock times like 11:10 AM, "7 min ago" and the dots and slashes between items no longer split across two lines. Saved records and PDFs are not affected.
+- **Clearer explanations in Settings** — the hints for **Wind**, **Kp**, **Cold** and **Heat**, and the **PDF layout** note, are reworded. The **PDF layout** note now says **Compact** is two columns with fewer pages, **Large print** is one column in bigger type, and **Print** is always one column in large type.
+
+---
+
+## What's new in v3.9.11
+
+- **The night notice follows "I fly at night"** — when the sun is down, the notice at the bottom of the weather card used to look the same whether or not you fly at night. With **I fly at night** on in Settings it now reads a calm **Night flying on — anti-collision light visible 3 SM**; with it off, it stays the amber **Sun is down** warning. Outside the USA it says to check your local rules.
+- **No double reminder** — when the **Possible window** or **Best window** box already says **Night hours included — anti-collision lights required**, the notice at the bottom steps aside so you only see it once.
+
+---
+
+## What's new in v3.9.10
+
+- **View button for your PDF on computers** — after you tap **PDF** (or **Save PDF** in a flight record) on a computer, the "Your PDF is ready" box now has **View** next to **Share…** and **Download**. **View** opens the PDF in a new browser tab so you can read it and print it from there. If your browser blocks the new tab, use **Download**. Phones and tablets work as before.
+- **Same buttons for everyone** — the small print tip now sits below the **Print**, **PDF** and **Save flight record** buttons, so the buttons look the same whether or not the tip is showing.
+
+---
+
+## What's new in v3.9.9
+
+- **A tidier Wind and Cloud ceiling tile** — the wind arrow now says what it means (**↓ from N** shows the wind coming from the north), and the opened **more** view under Wind drops the repeated figures: one short note, the Ground / 260 ft / 400 ft table, and the **Wind builds with height** box when it applies. The Cloud ceiling tile lists the airport's cloud layers on one line.
+- **Cloud trend moved** — whether the sky is easing, building or steady now leads the caption of the **Clouds** view on the Next 12 hours strip (for example **Easing: 100% now → 8% by 5a**).
+
+---
+
+## What's new in v3.9.8
+
+- **Six views for the Next 12 hours strip** — tap the small chip on the strip title (**Wind ▾**) to switch between **Wind** (sustained wind with the gust underneath), **Aloft** (wind at 400 ft, or 120 m), **Temp**, **Visibility** (with a **fog** flag when the temperature is close to the dew point), **Clouds** and **Rain** (chance and amount). Colours follow your wind and temperature limits, and the line under the title says what each view shows. The strip always opens on Wind.
+
+---
+
+## What's new in v3.9.7.1
+
+- **Change the wind unit right on the Wind tile** — the unit next to the wind number is now a small dropdown chip (**mph ▾**). Tap it to see wind in mph, km/h, m/s or knots, for a quick look or for good. The tile, the height rows, the **Next 12 hours** strip and the Best window all follow, and your choice is saved and backed up. The separate **Wind speed** row in Settings and the small hint are gone.
+
+---
+
+## What's new in v3.9.7
+
+- **Imperial / Metric button fits on narrow phones** — the second line (for example **°F · mi · ft**) stays on one row instead of wrapping into three lines when the text is large or the screen is narrow.
+
+---
+
+## What's new in v3.9.6
+
+- **Wind speed unit on the Wind tile** — tap the small unit chip (for example **mph ▾**) on the Wind tile to read wind in mph, km/h, m/s or knots. It starts as mph for USA and km/h for Outside USA, and stays what you choose.
+- **Imperial / Metric button** — the button at the top of the weather panel now reads **Imperial** or **Metric** and switches temperature, distance and altitude. It leaves your wind unit alone.
+- **Wind by height** — a **more** link on the Wind tile shows wind at ground level, 260 ft and 400 ft, with a note when it gets stronger higher up.
+- **Next 12 hours** — a sideways-swiping strip under the tiles shows wind and gusts hour by hour, coloured by your wind limits, with rain chance. Since v4.0 it can also show the next 10 days, and since v4.0.5 the hourly view covers 24 hours.
+- **Cloud ceiling details** — the tile lists the airport's cloud layers (the easing or building trend moved to the Clouds view of the hourly strip in v3.9.9).
+- **Print** — closing the print dialog returns you to where you were on the checklist.
+
+---
+
+## What's new in v3.9.5
+
+- **Clearer wording in Settings** — **Appearance** now reads "Auto follows device settings. Choose Light or Dark to override it." **Where you fly** says it changes the checklist items, weather units and airspace links to match your country. The **I fly at night** note says Best window will include night hours, and to check your lights and training requirements first.
+- **"This browser" instead of "this device"** — your settings, tabs and lists are kept by each browser (and each Home Screen app) separately, so the saved notes, the back-up reminder and the **Restore** warning now say **this browser**.
+- **Back up & restore wording by device** — AirDrop and **Save to Files** are only mentioned on iPhone, iPad and Mac. On Android, Windows and other devices it says to save the backup where you like or send it by email or a messaging app.
+
+---
+
+## What's new in v3.9.3
+
+- **Fly at night, with lights** — a new **🌙 I fly at night** setting under **⚙ Settings** (next to **Where you fly**). It is **No** by default. Set it to **Yes, with lights** and the **Best window** also counts night hours, with a reminder that anti-collision lights are required. Night flying needs anti-collision lights and current night training or a waiver, so it is your call to turn it on. The setting is saved with **Back up & restore**.
+- **A clearer message at night** — with the setting off, the red box now says **No flyable daylight window in the next 12 hrs**, so after dark it no longer reads as if every hour is unflyable.
+
+---
+
+## What's new in v3.9.2
+
+- **Best window is color-coded** — the box on the weather card now tells you at a glance. **Green** is a **Best window**: two or more hours in a row when wind, gusts, rain and visibility are all fine. **Orange** is a **Possible window**: there is no green stretch, but there are two or more dry hours with good visibility when the wind is above your orange point and still under your limits. It says **Fly with caution** and shows the wind and gusts to expect. **Red** is **No flyable window in the next 12 hrs**: wind at or over your limits, rain or storms, or low cloud or visibility, with the reason underneath.
+- **Best window follows the airport's visibility** — for the current hour, the Best window now uses the same visibility as the **Visibility** tile: the nearest airport report when there is one, otherwise the forecast. A low forecast no longer holds back **Now** when the airport reports 3 SM or more, and a foggy airport report holds it back in every country, not only the US.
+- **A clearer message when Save file can't open the share sheet** — in **Back up & restore**, if your browser won't open the share sheet, the message now says so, names the error, and tells you to tap **Save file** again to choose where to save it.
+
+---
+
+## What's new in v3.9.1
+
+- **Best window no longer ignores fog** — the **Best window** line was built from the hourly forecast alone, so it could say **Now – 9 AM** while the airport reported a 100 ft cloud ceiling and 1.5 SM visibility. Now, when the airport reports a ceiling or visibility below minimums, **Now** doesn't count. A window that starts later says **Low cloud or visibility reported now**, and if no hour qualifies, **No calm window** says so too. The forecast still can't tell when fog will lift, so check the airport report before you go.
+
+---
+
+## What's new in v3.9
+
+- **One tab per drone** — each tab can now have its own **Pilot**, **Drone** and **Reg. #**. In **Customize**, type them in the boxes under **For records and PDFs saved from this tab**. They print on that tab's saved flight records and checklist PDF. A box you leave empty uses the default from **⚙ Settings**, so you only fill in what's different. The three Settings boxes are now labeled **Default pilot**, **Default drone** and **Default reg. #**.
+- **Clone another tab onto this one** — in **Customize**, **Clone another tab onto this one…** makes the tab you're on an exact, editable copy of another tab, including its Drone, Reg. # and Pilot. Handy if you fly several drones and want the same list on each tab. You pick the tab to copy from, and a confirmation names both tabs before anything is replaced. **Undo** works until you leave or reload the page, and **Restore original list** brings the tab's own list back.
+- **Copy to… for items you added** — each item you added now has a **Copy to…** button. It copies the item, and its link, to another tab. If that tab already has an item with the same name in the section, it says so instead of making a duplicate.
+- **Six more drone icons, in color** — pick from drawn icons for a Mavic-style drone, FPV, whoop, wing, hex and Inspire-style drone. A color row under the icons recolors the drawn ones. **Restore original list** clears the color.
+- **A tab icon picker that folds away** — Customize shows the current icon with a **Change ›** button. The icon grid and colors open only when you want them.
+- **A bottom bar that names the tab** — while you customize, the bar at the bottom of the screen says which tab you're editing and follows the name if you rename it. Tab chips on the bar jump to another tab, so you don't scroll up to switch.
+- **A shorter Customize screen** — while you customize, **Appearance**, **Where you fly**, the limits, the record file name and the PDF settings are hidden, so your checklist sits much closer to the top. They come back when you press **Done**.
+- **Hiding a tab no longer jumps to the top** — hide a tab and you land on the next tab's Customize, not at the top of the page.
+- **A clearer back-up reminder** — the line in Customize now reads **After you make changes, back them up.** Your customizing lives only on this device and browser, so a backup is how you keep it.
+
+---
+
+## What's new in v3.8.14
+
+- **Links show the useful part** — an item whose link opens an email, a call, a text or FaceTime now shows the address or number, for example **info@JohnstonAerial.com ›** or **+19195550100 ›**, instead of just **Email ›** or **Call ›**. A Shortcuts link shows the shortcut's own name, for example **Open Air Aware ›**. Anything after a `?` in the link (a subject, a message) still works when you tap, it just isn't shown. Items you already made update on their own.
+- **Edit your own items** — in **Customize**, each item you added has a blue **Edit** button and a red **Delete** button on a row under it. **Edit** changes the text and the link in place, and keeps the item's place and checkmark.
+- **Links you've used before** — the **Link or app address** box suggests the links you've already saved, so you can tap one instead of typing it again.
+- **A clearer Customize button** — in **⚙ Settings**, **Customize ›** is now a solid blue button that's easy to find.
+- **Expand and Collapse** — the progress card has an **Expand | Collapse** pair instead of one button that changed its name. **Collapse** folds every section in one tap for a clean screen; **Expand** opens them all. The one that has nothing to do is dimmed.
+- **A tidier Restore row** — in **Back up & restore**, **Restore from file…** and **Paste code…** sit side by side. **Paste code…** opens the box for a backup code, and the box and any message close again when you close it. **Save file** is a solid blue button, like **Restore from file…**.
+- **Honest Save file message** — in browsers that start a plain download, such as Safari, the message now says **Backup started. If your browser asks, choose where to save it.** It no longer claims the file went to Downloads. The backup file name uses your own date.
+- **Orange for caution** — the caution color is now an orange-leaning amber in light mode (it was a gold that was hard to tell from yellow), and the notes in **⚙ Settings** say **orange at / red at**. Dark mode is unchanged.
+- **More room in the Limits settings** — extra space between the Wind, Kp, Cold and Heat rows and their notes.
+- **A longer wait for your location** — the app now waits up to 30 seconds to find you, since a computer can be slower at it than a phone.
+
+---
+
+## What's new in v3.8.13
+
+- **Light or dark, your choice** — **⚙ Settings** has a new **Appearance** row: **Auto** follows your device (as before), or choose **Light** or **Dark**. Handy for Light in bright sun while your phone is in dark mode. Your choice is included in Back up & restore.
+- **Temperature now has warning colors** — the Temperature card is green in the normal range and turns amber and then red when it gets cold or hot. The standard points are cold amber at 40 °F (4 °C) and red at 14 °F (−10 °C), heat amber at 95 °F (35 °C) and red at 104 °F (40 °C). Set your own in **⚙ Settings** (**Cold warning** and **Heat warning**), based on your aircraft's operating range. They are included in Back up & restore.
+- **Clearer colors** — a truer red in both light and dark mode, and a gold amber in light mode, so caution and stop are easy to tell apart at a glance.
+
+---
+
+## What's new in v3.8.12
+
+- **Easier to read in dark mode** — the green used for good conditions, the "Ready to fly" banner, section counts and the Back up message is now lighter in dark mode, so it no longer fades into the background.
+- **Back up & restore messages stand out** — "Backup complete" (or an error) now appears in a bordered box instead of a thin line of small text.
+
+---
+
+## What's new in v3.8.11
+
+- **Visit counting can be turned off on your own devices** — this page uses Cloudflare Web Analytics to count visits. If you run the checklist, you can keep your own visits out of the numbers: open the page once with `?notrack` on the end of the address (for example `checklist.johnstonaerial.com/?notrack`). That browser then stops sending visits, until you open it once with `?track`. Nothing else about the app changes.
+
+---
+
+## What's new in v3.8.10
+
+- **Back-up reminders, so you never lose your customizing** — your changes are saved only in that browser on that device, so the app now reminds you to back up. While you customize, a red line under **How to customize** says **After you change the list, back it up**. When you press **Done**, or change a setting such as **Pilot**, **Drone**, **Reg. #**, your wind or Kp limits or your PDF choices, a red banner appears under the **Settings** and **Back up & restore** buttons with a **Back up now** button. It stays until you back up or dismiss it. The how-to card also has a new **Back up** line, and the **How-to guides** now explain it first.
+- **The add button says Add item** — the box for a new checklist item is full width, the optional link box sits under it, and the button on the right reads **Add item**.
+- **A clear Close bar** — the small ▴ arrow at the bottom of **Settings** and **Back up & restore** is now a full-width bar, **▴ Close settings** or **▴ Close back up & restore**. While either is open, everything below it is hidden so the bar is the end of the page. Customize still shows your checklist.
+
+---
+
+## What's new in v3.8.9
+
+- **Visibility is easier to read** — in the Temperature tile, visibility now has its own **Visibility** label and a larger value, such as **10+ SM · KJNX**. It is **green at 3 SM or more** and **red below 3 SM**, with **⛔ Below 3 SM minimum** underneath. In US units it now reads **SM** (statute miles), the way you scan for it. Metric still shows km, and distances to airports still show mi.
+- **FAA UAS Facility Maps button** — a fourth button on the weather card, **🗺 Facility map — FAA**, opens the FAA's UAS Facility Maps (the **Visualize it** map) for LAANC grid altitudes. The buttons now sit in a 2×2 grid, and like the TFR, NOTAM and radar buttons it is hidden outside the USA.
+- **Golden hour fits your screen** — on a tablet or computer it stays on one line. On a narrow phone it splits into **✨ Golden hour**, the morning window and the evening window, so a time range never breaks in the middle.
+- **Tiles in a better order** — **Temperature** sits beside **Precipitation** (both tall) and **KP Index** beside **Humidity** (both short), so there is less blank space on the card. The saved record lists them in the same order.
+- **The press-and-hold tip matches the menu** — it now reads **Tip: press and hold an item for Needs attention or N/A**, the same words as the menu, and it wraps evenly on a narrow screen.
+
+---
+
+## What's new in v3.8.8
+
+- **Reset is now "Uncheck all"** — the button at the bottom of the progress card cleared only your ticks, flags and N/A marks, but the word "Reset" sounded like it wiped more. **↺ Uncheck all** says what it does, and the confirmation spells it out: "This clears the ticks, flags and N/A marks on 3 items. Items you hid or added stay as they are."
+- **Restore original list tells you what it will change** — the confirmation now lists only what applies to that tab, with counts, for example "This brings back 2 hidden items, removes the 3 items you added and resets the tab name and icon. Other tabs and your ticks are not changed." It only ever affects the tab you're editing.
+- **A Restore line in "How to customize"** — the card at the top of **Customize** now explains **Restore original list** alongside Tabs, Hide, Add and Move.
+
+---
+
+## What's new in v3.8.7
+
+- **Customize is easier to find and follow** — in **⚙ Settings**, the row now reads **📝 Your checklist & tab** with a **Customize** button, so it's clear that Customize covers the tab itself (its name, icon and Hide) as well as the items on it. While you customize, the bar at the bottom says **Editing this checklist and tab**, and the page scrolls to the controls for you.
+- **A "How to customize" card at the top** — the instructions (**Tabs**, **Hide**, **Add**, **Move**) now sit at the top of that block, above the **Tab name** box, instead of further down the page. Tap **Got it** and the card shrinks to a one-line **ⓘ How to customize ›** that you can tap to bring it back. **Back up & restore** remembers that you tapped **Got it**.
+- **Adding your own item is clearer** — the box now reads **\* Checklist item, e.g. Check airspace**. If you tap **Add** with nothing typed, the box turns red and asks for the checklist item. Tapping **Done** saves a filled-in box, and clears one that is only half filled in, so nothing is left behind.
+- **Add a link to your own items** — when you add an item, the optional **Link or app address** box turns it into a shortcut. Great for a **Check airspace** item that opens your airspace app. It isn't only websites; see the table below.
+
+| Type this in the link box | The item shows | What it does |
+|---|---|---|
+| `airaware.aloft.ai` or `https://airaware.aloft.ai` | **Open airaware.aloft.ai ›** | Opens the website. On an iPhone, a site with its own app may open in that app. |
+| `mailto:someone@example.com` | **someone@example.com ›** | Starts an email to that address. You can add a subject and message, for example `mailto:someone@example.com?subject=Job%20done&body=Job%20complete`. |
+| `tel:+19105551212` | **+19105551212 ›** | Starts a phone call. |
+| `sms:+19105551212` | **+19105551212 ›** | Starts a text message. On an iPhone, add `&body=On%20my%20way` to fill in the message. |
+| `facetime:someone@example.com` | **someone@example.com ›** | Starts a FaceTime call. |
+| `dji://…` or any `name://…` | **Open name app ›** | Opens that app, if it's installed and publishes an address like this. |
+| `shortcuts://run-shortcut?name=Open%20Air%20Aware` | **Open Air Aware ›** | Runs an iPhone or iPad Shortcut by name, and shows that name. See the tip below. |
+
+Spaces aren't allowed in a link: write `%20` for a space, `%0A` for a new line and `%26` for an `&` inside text. Unsafe types such as `javascript:` and `file:` are refused. If the box turns red, the address wasn't accepted. The link sits under the item's text, so ticking the item works as before.
+
+**iPhone tip: open an app that has no web address.** Some apps can't be opened with a link. Make a Shortcut that opens the app, then link to the Shortcut:
+
+1. In the **Shortcuts** app, tap **+** and add the **Open App** action. Choose the app, such as Air Aware.
+2. Name the shortcut as an action, for example **Open Air Aware**.
+3. In the checklist's **Link or app address** box, type `shortcuts://run-shortcut?name=Open%20Air%20Aware`. The name must match the shortcut's name exactly, with `%20` for each space.
+
+The item then shows **Open Air Aware ›**, the shortcut's own name. Tapping it runs the shortcut, which opens your app. The Shortcuts app may flash on screen first, and iOS may ask you to allow it the first time. This works on iPhone and iPad only.
+
+- **Fix: the Customize button fits on small or zoomed phone screens** — it is no longer cut off at the right edge.
+
+---
+
+## What's new in v3.8.6
+
+- **More of what airports report, worldwide** — the weather card now reads the full standard set of airport weather codes. A **funnel cloud** or **tornado/waterspout** report turns the Precipitation card red with the airport and distance; **squalls** show in amber. **Sandstorms and duststorms** show on the Humidity card, and blowing or drifting dust, sand and snow, dust whirls and spray are named in words. **Freezing rain and drizzle** keep the word "freezing", showers and thunderstorms with rain or hail read clearly, and several conditions at once (for example "rain and snow") are all shown. Anything near the airport but not at it says "in the vicinity". Unknown codes are skipped.
+- **PDF on a computer: Download or Share** — on a Mac or other computer with a mouse, **PDF** (the checklist and the flight record) opens a small box with **Download** and **Share…**. **Download** saves to your Downloads folder, where you can open it and print or move it. The Mac share sheet has no Print or Save to Files, so Download comes first. Phones and tablets work as before and go straight to the share sheet.
+- **Fix: Download really downloads** — in the box that appears when the share sheet doesn't open, **Download** no longer tries the share sheet first.
+- **A tip on Print** — a small tip under **Print | PDF** explains that Print uses your browser's page settings and that **PDF** gives you the compact layout or a different paper size. Tap **×** to dismiss it. **Back up & restore** remembers that you dismissed it.
+
+---
+
+## What's new in v3.8.5
+
+- **Airport temperature and humidity** — **Temperature**, dew point and **Humidity** now come from the nearest airport report within 30 miles when it is no more than 75 minutes old, with the airport code and distance shown. The forecast model is the fallback, labeled as such.
+- **Fog, mist and haze from the airport** — when the nearest airport report says fog, mist, haze, smoke, dust, sand or volcanic ash, the **Humidity** card says so in words with the airport and distance. Fog is shown in bold amber (red only when visibility is also under 3 miles); the others are a plain note. It is also written into your saved flight record.
+- **Set your own Kp warning** — **⚙ Settings** has a new **Kp warning** row for where the Kp card turns amber and red. The standard points are now amber at 4 (active) and red at 5 (storm); leave a box empty to use them. It is saved with your other settings and included in Back up & restore.
+- **Kp with decimals** — the Kp card shows the current estimate, for example 2.3, instead of a whole number.
+- **Fix: precipitation words** — airport reports that list rain and another condition together (for example "-RA BR") are now read correctly.
+
+---
+
+## What's new in v3.8.4
+
+- **Mark an item N/A** — press and hold any item and a small menu appears: **Needs attention** or **N/A for this flight**. An N/A item is greyed with an **N/A** tag and doesn't count for or against your progress (for example "12 of 78 complete · 2 N/A"). A section where everything is N/A counts as done. Tap an N/A item to put it back. It's remembered like your ticks and cleared by **Reset**. If you'd rather never see an item, **Hide** it in customize instead.
+- **N/A in your records** — **Print**, **PDF** and the **flight record** show N/A items greyed with "(N/A)" and a dash in the box, so the paper copy says why an item wasn't ticked.
+- **Ceiling from the nearest station** — the weather card now takes the cloud ceiling from the nearest airport report within 30 miles. If a farther station is lower, it shows as a plain note, "Lower nearby", and doesn't color the card.
+- **Visibility from the nearest airport report** — when a report no older than 75 minutes is available, **Visibility** shows that reading with the airport code (for example "10+ mi · KJNX"), and the red **Below 3 mi minimum** warning applies to what was actually reported. The weather forecast is the fallback, labeled as the forecast model. Lower readings at farther stations appear as a "Lower nearby" note.
 
 ---
 
@@ -186,7 +663,7 @@ New checklist items, on top of v3.8. Each is a plain item you can hide in **Cust
 ## What's new in v3.7.7
 
 - **Your own wind limit** — in **⚙ Settings**, set the sustained wind and gust limits your drone can handle. The wind card turns amber at about two-thirds of your limit and red at the limit, and gusts now count too. Leave the boxes empty for the standard limits (23 mph sustained, 25 mph gusts). The boxes follow your units (mph or km/h) and are saved in Back up & restore.
-- **Settings and Back up & restore are two buttons** under the page header, each opening its own card, so the checklist starts higher on the page. **Settings** is one short list: Checklist for, Checklist items, Clear saved progress after and Wind limit, with the "saved on this device only" note at the top. **Back up & restore** has clear Back up and Restore halves.
+- **Settings and Back up & restore are two buttons** under the page header, each opening its own card, so the checklist starts higher on the page. **Settings** is one short list: Checklist for, Checklist items, Clear saved progress after, Wind limit and Kp warning, with the "saved on this device only" note at the top. **Back up & restore** has clear Back up and Restore halves.
 - **Help, feedback and coffee at the bottom** — **📘 Help & guides** and **✉ Send feedback** now sit on one line at the bottom of each tab, under the coffee line. **Send feedback** opens an email to info@JohnstonAerial.com with your app version and device filled in, so you can add what works, what's missing or what's confusing.
 - Small wording changes: the **✎ Customize list** button now reads **✎ Customize**, and **Outside the USA** now reads **Outside USA**.
 
@@ -395,28 +872,28 @@ Version 3 is a major update built around making the checklist *yours*:
 - **Live Preflight Conditions panel** showing:
   - Wind speed, gusts, and direction arrow, plus wind at 400 ft
   - Cloud ceiling in feet AGL from nearby airport (METAR) reports
-  - Temperature and visibility
+  - Temperature and visibility (from the nearest airport report when one is fresh)
   - Precipitation: live radar at your location, airport reports and the forecast, with a link to the radar map
-  - Humidity and dew point, with a fog and lens-fogging warning
+  - Humidity and dew point, with a fog and lens-fogging warning and any fog, mist or haze the airport reports
   - KP Index (space weather / GPS interference risk)
   - Sunrise and sunset times, and the golden hour windows, with a link to the AfterGlow sky forecast for the same place
   - The best window of the next 12 daylight hours, worked out from your own Wind limit
-- **Color-coded cards** — green means fine, amber means caution, red means serious. The wind card turns amber at about two-thirds of your wind limit and red at the limit (by default 23 mph sustained or 25 mph gusts; you can set your own in Settings). The cloud ceiling turns amber below 1,000 ft and red at 500 ft or lower (Cannot fly). Visibility under 3 miles is red. KP index turns amber at 3 and red at 4. Fog risk is amber and turns red only when visibility is also under 3 miles. Precipitation is red when radar, an airport report or the forecast confirm it, and amber on radar echoes or a forecast alone
+- **Color-coded cards** — green means fine, orange means caution, red means serious. The wind card turns orange at about two-thirds of your wind limit and red at the limit (by default 23 mph sustained or 25 mph gusts; you can set your own in Settings). The cloud ceiling turns orange below 1,000 ft and red at 500 ft or lower (Cannot fly). Visibility is green at 3 statute miles (SM) or more and red below 3 SM. KP index turns orange at 4 and red at 5 unless you set your own in Settings. Temperature is orange at 40 °F or below and 95 °F or above, and red at 14 °F or below and 104 °F or above, unless you set your own in Settings. Fog risk is orange and turns red only when visibility is also under 3 miles. Precipitation is red when radar, an airport report or the forecast confirm it, and orange on radar echoes or a forecast alone
 - **Night notice** — after sunset or before sunrise, the weather card reminds you what night flying needs (in the USA, an anti-collision light visible for 3 miles; elsewhere, check your local rules), and the reminder is printed on the saved flight record
 - **Choose your flight site** — check weather for where you're going, not just where you are; recent sites are remembered on your device
 - **One-tap buttons** for TFRs, NOTAMs, and NWS Radar (see [How-to guides](HOW-TO.md#check-tfrs-and-notams-before-you-fly-usa) for how to read them)
 - **Progress tracker** — percentage complete per tab, with a **ready to fly** banner when your pre-flight sections are done and a **flight complete** banner when everything is
-- **Works outside the USA** — the first time you open it, choose **USA** or **Outside USA**. Choosing outside the USA hides the items marked "(US)" (TFR and LAANC checks and the TFR recheck on site), rewords the NOTAM item so it isn't tied to a US website, removes the FAA/NWS buttons under the weather panel, and switches the weather to metric. Change it any time in **⚙ Settings**
-- **Customize the list** — open **⚙ Settings** and tap **✎ Customize** to hide items that don't apply where you fly, add your own items to any section, and drag items into the order you prefer. Hidden items don't count toward progress, and checks follow an item when you move it. **Restore original list** puts the tab back to the defaults
-- **Rename, re-icon or hide tabs** — in Customize mode, rename the tab you're on, give it a different icon (pick one, type your own emoji, or choose none) or hide it (at least one tab always stays), and bring hidden tabs back from any tab. Renaming and changing the icon change only how the tab looks; use Hide and Add to change what's inside it
+- **Works outside the USA** — the first time you open it, choose **USA** or **Outside USA**. Choosing outside the USA hides the items marked "(US)" (TFR and LAANC checks and the TFR recheck on site), rewords the NOTAM item so it isn't tied to a US website, hides the FAA buttons under the weather panel (SkyVector stays, and countries with their own drone resource get a button, such as Australia, Argentina, France, Belgium, the UK and Canada), and switches the weather to metric. Change it any time in **⚙ Settings**
+- **Customize the list** — open **⚙ Settings** and tap **Customize** (in the **Your checklist & tab** row) to hide items that don't apply where you fly, add your own items to any section, change or delete the ones you added with **Edit** and **Delete**, and drag items into the order you prefer. Hidden items don't count toward progress, and checks follow an item when you move it. **Restore original list** puts the tab back to the defaults
+- **Rename, re-icon or hide tabs** — in Customize mode, rename the tab you're on, give it a different icon (pick a drawn drone icon and color, type your own emoji, or choose none), set its own Pilot, Drone and Reg. #, clone another tab onto it, or hide it (at least one tab always stays), and bring hidden tabs back from any tab. Items you added can be copied to another tab with **Copy to…**. Renaming and changing the icon change only how the tab looks; use Hide and Add to change what's inside it
 - **Back up & restore** — see below
-- **Collapsible sections** — tap a section header to fold it up or open it, or use **Collapse all / Expand all**. Finished sections fold themselves and the next unfinished one opens, and on your first visit only the first section of each tab is open. Each header shows its count (like 9/12), a ✓ when it's finished and an amber ⚠ if something in it needs attention, even when folded. Your fold state is remembered
+- **Collapsible sections** — tap a section header to fold it up or open it, or use the **Expand | Collapse** buttons on the progress card. Finished sections fold themselves and the next unfinished one opens, and on your first visit only the first section of each tab is open. Each header shows its count (like 9/12), a ✓ when it's finished and an orange ⚠ if something in it needs attention, even when folded. Your fold state is remembered
 - **Progress is saved on your device** — checks and flags survive a reload or an accidental app close, and expire so the next flight starts clean. The default is 12 hours; change it in Settings (1 hour, 4 hours, 12 hours, 24 hours or 3 days)
-- **Imperial / metric toggle** — tap the units button in the weather panel to switch wind, temperature, visibility and ceiling between mph/°F/mi/ft and km/h/°C/km/m; your choice is remembered
-- **Weather shows its age** — the "Updated" line turns amber after 30 minutes, and weather auto-refreshes when you return to the app after 10+ minutes
-- **Flag items that need attention** — press and hold any item to mark it amber. Flagged items don't count as complete until you resolve them: tap one to mark it done, or press and hold it again to clear the flag
+- **Imperial / Metric toggle** — tap the units button in the weather panel to switch temperature, visibility and ceiling between °F/SM/ft and °C/km/m; your choice is remembered. Wind has its own unit: tap the unit on the Wind tile (mph, km/h, m/s or knots).
+- **Weather shows its age** — the "Updated" line turns orange after 30 minutes, and weather auto-refreshes when you return to the app after 10+ minutes
+- **Flag items that need attention, or mark them N/A** — press and hold any item for a small menu. **Needs attention** marks it orange; flagged items don't count as complete until you resolve them: tap one to mark it done, or press and hold it again to clear the flag. **N/A for this flight** greys it out and takes it out of your progress; tap it to put it back
 - **Save a flight record** — tap **Save flight record** to keep a PDF or plain text copy of the checklist (what was checked, flagged items, optional weather, your pilot name, drone and registration number from Settings, site, customer, notes, optional GPS coordinates and a few optional details) as a file you can save, share or email. See [How-to guides](HOW-TO.md#save-a-flight-record)
-- **Print it, or save it as a PDF** — **Print** prints the open tab as a clean paper checklist, with your checked and flagged items marked and blank date, time, site and pilot lines, for use with a pencil. **PDF** makes the same sheet as a PDF file, with your pilot name, drone and registration filled in if you saved them in Settings, and works in the Home Screen app too. See [How-to guides](HOW-TO.md#print-it-and-use-a-pencil) The PDF is **Compact** (two columns, fewer pages) or **Large print**, on **Letter** or **A4**, as you choose in **⚙ Settings**.
+- **Print it, or save it as a PDF** — **Print** prints the open tab as a clean paper checklist, with your checked and flagged items marked and blank date, time, site and pilot lines, for use with a pencil. **PDF** makes the same sheet as a PDF file, with your pilot name, drone and registration filled in if you saved them in Settings, and works in the Home Screen app too. **Print** is one column in large type. For two columns or A4, use **PDF**. See [How-to guides](HOW-TO.md#print-it-and-use-a-pencil) The PDF is **Compact** (two columns, fewer pages) or **Large print**, on **Letter** or **A4**, as you choose in **⚙ Settings**.
 - **Works on any device** — phone, tablet, desktop, or dedicated controller screen
 - **Completely free** to host and run
 
@@ -424,16 +901,16 @@ Version 3 is a major update built around making the checklist *yours*:
 
 ## Back up & restore
 
-Your settings and progress are stored in the browser on the device you're using. They don't sync by themselves, and a checklist added to your Home Screen can keep its own separate copy from the browser tab (iPhones and iPads always do). It works the same on any phone, tablet or computer, in any current browser. **Back up & restore** (the **💾 Back up & restore** button under the page header) saves a copy of your setup. Use it to move to another device, to move from your browser to the Home Screen app (or back), to get your settings back on the same device after clearing your browser, or to keep several setups and switch between them. See [Make your own profiles](HOW-TO.md#make-your-own-profiles).
+Your settings and progress are stored in the browser on the device you're using. They don't sync by themselves, and a checklist added to your Home Screen can keep its own separate copy from the browser tab (iPhones and iPads always do). It works the same on any phone, tablet or computer, in any current browser. **Back up & restore** (under the **⚙ Settings** tab: **💾 Back up & restore**) saves a copy of your setup. Use it to move to another device, to move from your browser to the Home Screen app (or back), to get your settings back on the same device after clearing your browser, or to keep several setups and switch between them. See [Make your own profiles](HOW-TO.md#make-your-own-profiles).
 
 **To back up**
-1. Tap **💾 Back up & restore** under the page header
+1. Tap the **⚙ Settings** tab, then **💾 Back up & restore**
 2. Choose whether to **Include current progress** (leave it off to move only your settings)
 3. Tap **Copy code** to copy a code you can paste into a message or note, **Save file** to save or share a small backup file, or (on a computer) **Share…** to send the code with AirDrop, Mail or Messages
 
 **To restore**
 1. Tap **💾 Back up & restore** where you want your setup: on a new device, in the Home Screen app, or on the same device
-2. Paste the code and tap **Restore from code**, or tap **Restore from file…** and choose your backup
+2. Tap **Restore from file…** and choose your backup, or tap **Paste code…**, paste the code and tap **Restore from code**
 3. Confirm — the checklist reloads, closes the cards and scrolls to the top, and a short message confirms it worked
 
 Restoring **replaces** that device's settings with the backup. A backup includes your region, units, tab names, tab icons and hidden tabs, hidden/added/reordered items, fold state, recent flight sites, progress retention, record file name, and your pilot name, drone and registration number — and, if you chose it, your checks and flags. Progress that has already expired is not restored.
@@ -449,7 +926,7 @@ Restoring **replaces** that device's settings with the backup. A backup includes
 Cloud ceiling comes from real METAR reports from the FAA/NWS [Aviation Weather Center](https://aviationweather.gov), which needs no key but blocks direct browser requests. The checklist reaches it through a tiny Cloudflare Worker (`uas-metar-worker.js` in this repo) that holds no secrets. This deployment already points at one, so a fork works as-is. To run your own:
 
 1. Create a free [Cloudflare](https://cloudflare.com) account → **Workers & Pages → Create → Hello World**
-2. Paste in the contents of `uas-metar-worker.js` and deploy
+2. Paste in the contents of `uas-metar-worker.js` and deploy (it also serves the TFR count)
 3. In `index.html`, set `METAR_PROXY` to your Worker's URL
 
 ### Host it
@@ -470,13 +947,13 @@ Or simply download `index.html` and open it locally in any browser. The weather 
 2. Select the tab that matches your mission type
 3. Review the **Preflight Conditions** panel — tap **↻ Refresh** to update weather. It shows your current location by default; tap **Change** to look up a different flight site, and **Use my location** to switch back
 4. Tap each item to check it off as you complete it
-5. Press and hold an item to flag it as **needs attention** (amber). Tap a flagged item once it's resolved to check it off, or press and hold it again to clear the flag
+5. Press and hold an item for a menu: **Needs attention** (amber) or **N/A for this flight** (greyed, not counted). Tap a flagged item once it's resolved to check it off, or press and hold it again to clear the flag. Tap an N/A item to put it back
 6. When you check off the last item in a section, it folds itself and the next unfinished section opens. Tap any header to open a section again. A section with a flagged item stays open until the flag is resolved
-7. The progress bar tracks your completion percentage and shows how many items need attention. When your pre-flight sections are done, a **ready to fly** banner appears; after the last section, **flight complete**
-8. Tap **Reset** (bottom of the progress card) to clear all checks and flags on the current tab — it asks you to confirm first
+7. The progress bar tracks your completion percentage and shows how many items need attention and how many are N/A. When your pre-flight sections are done, a **ready to fly** banner appears; after the last section, **flight complete**
+8. Tap **Uncheck all** (bottom of the progress card) to clear all checks, flags and N/A marks on the current tab — it asks you to confirm first
 9. Tap **Save flight record** to keep a PDF or text copy of the flight, **PDF** to save the checklist as a printable file, or **Print** to print the tab (in Safari or a computer browser)
 
-**To make it yours:** open **⚙ Settings**, tap **✎ Customize**, and hide items you don't need, add your own, drag items into your order, and rename, change the icon of, or hide whole tabs — then press **Done** in the bar at the bottom. Before you leave Settings, consider saving a backup. More in the [How-to guides](HOW-TO.md).
+**To make it yours:** open **⚙ Settings**, tap **Customize**, and hide items you don't need, add your own, drag items into your order, and rename, change the icon of, or hide whole tabs — then press **Done** in the bar at the bottom. Before you leave Settings, consider saving a backup. More in the [How-to guides](HOW-TO.md).
 
 ---
 
@@ -517,7 +994,7 @@ Yes. It's free to fork, and you can host your own copy and change the default it
 
 ## Limitations
 
-- **No automatic sync** — saved progress and settings live only in the browser on the device you're using (and progress is cleared when it expires or when you tap Reset). Use **Back up & restore** to move them to another device. Plan to use a single device per flight.
+- **No automatic sync** — saved progress and settings live only in the browser on the device you're using (and progress is cleared when it expires or when you tap Uncheck all). Use **Back up & restore** to move them to another device. Plan to use a single device per flight.
 - **No account or login** — by design. Keeps it simple, private, and free.
 - **Backup codes need a recent browser** — codes are compressed using a feature of current browsers (Chrome, Edge, Firefox and Safari from roughly 2023 on, including iOS/iPadOS 16.4 and newer). On older browsers a backup still works but the code is longer.
 - **Weather defaults to your current GPS location** — to check a different flight site, tap **Change** on the weather panel and search for a town, postal code (ZIP code in the USA), or coordinates. Place search works best for towns and cities; for a specific job site, use a nearby town or enter coordinates. Cloud ceiling comes from the nearest METAR station, which can be several miles from the site (the station is shown on the panel). The **Radar — NWS** button opens the national map.
