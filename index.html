@@ -986,7 +986,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0k</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.0l</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1010,7 +1010,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   </div>
 </div>
 
-<button type="button" class="to-top" id="to-top" aria-label="Back to the top" onclick="window.scrollTo({ top: 0, behavior: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'auto' : 'smooth' })">↑ Top</button>
+<button type="button" class="to-top" id="to-top" aria-label="Back to the top" onclick="window.__topToTop()">↑ Top</button>
 
 
 <div class="print-fields" aria-hidden="true">
@@ -1936,7 +1936,21 @@ function syncCondStrip() {
   const air = el.getBoundingClientRect().top <= hb + 160 || (atBottom && window.scrollY > 40);
   condMark(air);
 }
-(function () { let t = 0; function topBtn() { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', window.scrollY > window.innerHeight * 0.8); } window.addEventListener('scroll', function () { if (t) return; t = requestAnimationFrame(function () { t = 0; syncCondStrip(); topBtn(); }); }, { passive: true }); window.addEventListener('resize', function () { syncCondStrip(); topBtn(); }); })();
+(function () {
+  let t = 0;
+  // 4.3.0l: how far down the page is, whichever element the browser scrolls (window, <html> or <body>), so the Top button also shows on Safari/Mac
+  function scrollPos() { return Math.max(window.pageYOffset || 0, document.documentElement ? document.documentElement.scrollTop : 0, document.body ? document.body.scrollTop : 0); }
+  function topBtn() { try { const b = document.getElementById('to-top'); if (b) b.classList.toggle('show', scrollPos() > window.innerHeight * 0.8); } catch (e) {} }
+  function tick() { try { syncCondStrip(); } catch (e) {} topBtn(); }
+  const onScroll = function () { if (t) return; t = requestAnimationFrame(function () { t = 0; tick(); }); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('scroll', onScroll, { passive: true, capture: true });
+  window.addEventListener('resize', tick);
+  window.addEventListener('load', tick);
+  window.addEventListener('pageshow', tick);
+  setInterval(topBtn, 500);
+  window.__topToTop = function () { const smooth = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); try { window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' }); } catch (e) { window.scrollTo(0, 0); } if (document.body && document.body.scrollTop) document.body.scrollTop = 0; if (document.documentElement && document.documentElement.scrollTop && !smooth) document.documentElement.scrollTop = 0; };
+})();
 
 function showPanel(panel, tab) {
   closeItemMenu();
