@@ -1000,7 +1000,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1964,7 +1964,9 @@ function syncCondStrip() {
     if (strip && b.classList.contains('view-wx')) {
       const shown = !b.classList.contains('cond-fits');
       if (shown && strip.offsetHeight > 20) stripH = strip.offsetHeight + 10;
-      b.classList.toggle('cond-fits', de.scrollHeight + (shown ? 0 : stripH) <= vh + 2);
+      // the real bottom of the content, not scrollHeight (that is never less than the window height, which made the strip flash on and off)
+      let cb = 0; Array.prototype.forEach.call(b.children, function (e) { if (!e.offsetParent || getComputedStyle(e).position === 'fixed') return; cb = Math.max(cb, e.getBoundingClientRect().bottom + window.scrollY); }); cb += 24;
+      b.classList.toggle('cond-fits', cb + (shown ? 0 : stripH) <= vh + (shown ? 0 : 2));
     } else b.classList.remove('cond-fits');
     document.querySelectorAll('.panel').forEach(function (pn) {
       const j = pn.querySelector('.pc-jump'), bt = pn.querySelector('.pc-bottom'); if (!j || !bt) return;
