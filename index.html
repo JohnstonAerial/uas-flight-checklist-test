@@ -33,6 +33,12 @@ const ALOFT_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-
 // Magnet picture for the Kp (geomagnetic) tile and its Settings row
 const KP_IMG = '<svg class="wind-ico" viewBox="0 0 64 64" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 20v14a18 18 0 0 0 36 0V20" stroke="#B0BEC5" stroke-width="10"/><path d="M9 6h10v14H9z" fill="#EF5350" stroke="none"/><path d="M45 6h10v14H45z" fill="#42A5F5" stroke="none"/></svg>';
 const DRONE_IMG = '<img class="dr-ico" alt="" src="data:image/png;base64,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">';
+const STOP_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><polygon points="8,1.5 16,1.5 22.5,8 22.5,16 16,22.5 8,22.5 1.5,16 1.5,8" fill="#d93025" transform="translate(-.5 -.5) scale(1.04)"/><rect x="6" y="10.6" width="12" height="2.8" rx="1.2" fill="#fff"/></svg>';
+const WARN_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2L22.6 20.6a1.2 1.2 0 0 1-1 1.8H2.4a1.2 1.2 0 0 1-1-1.8z" fill="#F5B83D" stroke="#F5B83D" stroke-width="1" stroke-linejoin="round"/><rect x="10.8" y="8.5" width="2.4" height="6.5" rx="1.2" fill="#3b2a00"/><circle cx="12" cy="18" r="1.4" fill="#3b2a00"/></svg>';
+const BOLT_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.8 1.5L4.5 13.5h6l-1.5 9 9.5-12.5h-6.2z" fill="#F5B83D" stroke="#c98a00" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+const NOSIG_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9a14 14 0 0 1 20 0M5.5 12.8a9 9 0 0 1 13 0M9 16.5a4 4 0 0 1 6 0" fill="none" stroke="#6b7a90" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="20" r="1.6" fill="#6b7a90"/><path d="M3.5 3.5l17 17" stroke="#d93025" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const MOON_IMG = '<svg class="wind-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A9 9 0 0 1 9.5 4a9 9 0 1 0 10.5 10.5z" fill="#F5B83D"/><circle cx="18" cy="5" r="1.1" fill="#F5B83D"/><circle cx="21" cy="9" r=".8" fill="#F5B83D"/></svg>';
+const MAIL_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.2" fill="#fff" stroke="#394a63" stroke-width="2"/><path d="M3.5 7l8.5 6.5L20.5 7" fill="none" stroke="#2f80ed" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const HELP_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="#F5B83D"/><path d="M8.6 9.3a3.5 3.5 0 1 1 5.2 3c-1 .6-1.6 1.2-1.6 2.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round"/><circle cx="12.2" cy="17.9" r="1.4" fill="#fff"/></svg>', COFFEE_IMG = '<svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>';
 const CEIL_IMG = '<svg class="wind-ico ceil-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 18.5a4.2 4.2 0 0 1-.4-8.4 5.6 5.6 0 0 1 10.8-1.2 4.8 4.8 0 0 1 .6 9.6z" fill="#9fb3c8"/><path d="M4 21.2h16" stroke="#F5B83D" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="3 2.4"/></svg>', TEMP_IMG = '<svg class="wind-ico temp-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="7.6" y="1.8" width="8.8" height="15" rx="4.4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.1"/><circle cx="12" cy="17.8" r="5.4" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.1"/><rect x="8.7" y="5" width="6.6" height="12" fill="#e2e8f0"/><rect x="10.4" y="7" width="3.2" height="11" rx="1.6" fill="#E8504A"/><circle cx="12" cy="17.8" r="3.6" fill="#E8504A"/></svg>', VIS_IMG = '<svg class="wind-ico vis-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M1.8 12C4 7.6 7.6 5.4 12 5.4s8 2.2 10.2 6.6C20 16.4 16.4 18.6 12 18.6S4 16.4 1.8 12z" fill="#f4f1ea" stroke="#94a3b8" stroke-width="1.2"/><circle cx="12" cy="12" r="4.2" fill="#4a90d9"/><circle cx="12" cy="12" r="2" fill="#1e3a5f"/><circle cx="13.2" cy="10.8" r=".9" fill="#fff"/></svg>', RAIN_IMG = '<svg class="wind-ico rain-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 14a4 4 0 0 1-.4-8 5.4 5.4 0 0 1 10.4-1.1 4.6 4.6 0 0 1 .6 9.1z" fill="#9fb3c8"/><path d="M7.5 15.6 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/><path d="M12 17.4 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/><path d="M16.5 15.6 c0 0 -2.2 2.8 -2.2 4.4 a2.2 2.2 0 0 0 4.4 0 c0 -1.6 -2.2 -4.4 -2.2 -4.4z" fill="#4a90d9"/></svg>';
 const RESET_IMG = '<svg class="wind-ico reset-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.2 12a8.2 8.2 0 1 1-2.6-6" fill="none" stroke="#2f80ed" stroke-width="2.4" stroke-linecap="round"/><path d="M20.6 3.4v5.2h-5.2z" fill="#2f80ed"/><path d="M12 7.6V12l3 1.8" fill="none" stroke="#8aa4c4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -1012,7 +1018,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1h</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.1k</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -2056,7 +2062,7 @@ document.querySelectorAll('.panel .complete-banner').forEach(b => {
   b.after(h);
   const row = document.createElement('div');
   row.className = 'keep-row';
-  row.innerHTML = '<span>💾 Saved in this browser only · clears after</span>' +
+  row.innerHTML = '<span>'+BAK_IMG+' Saved in this browser only · clears after</span>' +
     '<select class="keep-hours" aria-label="How long this device keeps your saved checklist progress" onchange="setKeepHours(this.value)">' +
     '<option value="1">1 hour</option><option value="4">4 hours</option><option value="12">12 hours</option><option value="24">24 hours</option><option value="72">3 days</option></select>';
   h.after(row);
@@ -3218,7 +3224,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   const note = document.createElement('div'); note.className = 'settings-note';
   note.textContent = 'Your progress and settings are saved on this device only and don\'t sync. Each browser, and each Home Screen app, keeps its own copy. To move them to another device or browser, use Back up & restore.';
   const help = document.createElement('div'); help.className = 'settings-help foot-links';
-  help.innerHTML = '<a class="foot-bak" href="#">' + BAK_IMG + ' Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">' + HELP_IMG + ' Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">✉ Send feedback</a>';
+  help.innerHTML = '<a class="foot-bak" href="#">' + BAK_IMG + ' Back up &amp; restore</a><span class="foot-sep" aria-hidden="true"> · </span><a href="https://github.com/JohnstonAerial/uas-flight-checklist-test#readme" target="_blank" rel="noopener">' + HELP_IMG + ' Help &amp; guides</a><span class="foot-sep" aria-hidden="true"> · </span><a class="fb-link" href="#">' + MAIL_IMG + ' Send feedback</a>';
   const fbl = help.querySelector('.fb-link');
   const fbVer = appVer();
   fbl.href = 'mailto:info@JohnstonAerial.com?subject=' + encodeURIComponent('Checklist feedback ' + fbVer) +
@@ -3268,7 +3274,7 @@ document.querySelectorAll('.panel').forEach(panelEl => {
   card.appendChild(mini);
   const tip = panelEl.querySelector('.flag-hint');
   const sn = document.createElement('div'); sn.className = 'saved-note';
-  sn.innerHTML = '💾 Saved on this device and browser only · clears after <span class="saved-hours"></span> <a class="saved-chg" href="#">· change</a>';
+  sn.innerHTML = BAK_IMG + ' Saved on this device and browser only · clears after <span class="saved-hours"></span> <a class="saved-chg" href="#">· change</a>';
   tip.after(sn);
   const en = document.createElement('div'); en.className = 'edit-note';
   en.innerHTML = '<button type="button" class="en-mini" onclick="editTipShow()">ⓘ How to customize ›</button><div class="en-full">' +
@@ -4119,8 +4125,8 @@ function ceilingNote(ft, metar) {
   }
   let note;
   const intl = region === 'intl';   // the cloud rules below are US rules; outside the USA say it neutrally
-  if (ft <= 500) note = intl ? '⚠️ Very low ceiling — check your local cloud and visibility rules' : '⛔ Cannot fly — below minimums';
-  else if (ft < 1000) note = intl ? '⚠️ Very low — keep clear of cloud' : '⚠️ Very low — stay 500 ft below clouds';
+  if (ft <= 500) note = intl ? WARN_IMG + ' Very low ceiling — check your local cloud and visibility rules' : STOP_IMG + ' Cannot fly — below minimums';
+  else if (ft < 1000) note = intl ? WARN_IMG + ' Very low — keep clear of cloud' : WARN_IMG + ' Very low — stay 500 ft below clouds';
   else if (ft < 3000) note = intl ? 'Low ceiling — keep clear of cloud' : 'Low ceiling — stay 500 ft below clouds';
   else note = 'Good for ops';
   const low = metar ? lowestLayer(metar) : null;
@@ -4496,11 +4502,11 @@ function showOffline() {
     lastDraw = goodDraw;
     goodDraw();
     const t = tnb(new Date(lastWeatherAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    const msg = '📴 No signal — weather isn\'t updating. Showing data from ' + t + '.';
+    const msg = NOSIG_IMG + ' No signal — weather isn\'t updating. Showing data from ' + t + '.';
     body.insertAdjacentHTML('afterbegin', '<div class="wx-status wx-warn">' + msg + '</div>');
     srSay('No signal. Weather isn\'t updating. Showing data from ' + t + '.');
   } else {
-    const msg = '📴 No signal — can\'t load the weather. It will load when you\'re back online.';
+    const msg = NOSIG_IMG + ' No signal — can\'t load the weather. It will load when you\'re back online.';
     body.innerHTML = '<div class="wx-status wx-alert">' + msg + '</div>';
     srSay('No signal. Can\'t load the weather.');
   }
@@ -4603,7 +4609,7 @@ async function renderWeather(lat, lon, attempt = 1) {
           }
           const cape = H.cape || [], wc = H.weather_code || [];
           const stormHr = hrs.find(i => wc[i] >= 95 || (cape[i] >= 1000 && H.precipitation_probability[i] >= 30));
-          if (stormHr !== undefined) out.storm = '⚡ Storms possible ~' + hrLabel(stormHr);
+          if (stormHr !== undefined) out.storm = BOLT_IMG + ' Storms possible ~' + hrLabel(stormHr);
           return (out.rain || out.storm) ? out : null;
         })(),
         precipNext: (() => {
@@ -4641,10 +4647,10 @@ async function renderWeather(lat, lon, attempt = 1) {
         return !!(sr && ss && n && (n < sr || n > ss));
       };
       const nightTxt = () => nightOn()   // "I fly at night" on: a calm reminder instead of a warning
-        ? (region === 'intl' ? '🌙 Night flying on — check your local rules for night flying' : '🌙 Night flying on — <span style="white-space:nowrap">anti-collision</span> light visible 3 SM')
+        ? (region === 'intl' ? MOON_IMG + ' Night flying on — check your local rules for night flying' : MOON_IMG + ' Night flying on — <span style="white-space:nowrap">anti-collision</span> light visible 3 SM')
         : region === 'intl'
-        ? '🌙 Sun is down — check your local rules for night flying'
-        : '🌙 Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 SM';
+        ? MOON_IMG + ' Sun is down — check your local rules for night flying'
+        : MOON_IMG + ' Sun is down — night flight needs an <span style="white-space:nowrap">anti-collision</span> light visible 3 SM';
       const fmtT = (iso) => iso ? tnb(new Date(iso).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})) : '—';
       // AfterGlow opens at this same spot (it reads lat, lon and name from the link)
       const agName = (typeof site !== 'undefined' && site && site.name) ? String(site.name).slice(0, 60) : 'Current location';
@@ -4828,7 +4834,7 @@ async function renderWeather(lat, lon, attempt = 1) {
 
       const kp = kpData2;
       const kpVal = kp !== null ? kp.toFixed(1) : '—';
-      const kpNoteFn = () => { const l = kpLimits(); return kp === null ? 'Unavailable' : kp >= l.r ? '⛔ High — GPS and compass can be affected' : kp >= l.a ? '⚠️ Elevated — monitor' : 'Normal'; };
+      const kpNoteFn = () => { const l = kpLimits(); return kp === null ? 'Unavailable' : kp >= l.r ? STOP_IMG + ' High — GPS and compass can be affected' : kp >= l.a ? WARN_IMG + ' Elevated — monitor' : 'Normal'; };
 
       const now = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
@@ -4870,7 +4876,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         body.innerHTML = `
         <div class="wx-grid">
           <div class="wx-note wx-guidenote">Guide only. Check your own weather sources and the sky before you fly.</div>
-          <div class="wx-note wx-windnote${windCaution ? ' wx-warn' : ''}">${windCaution ? '⚠️ ' : ''}Obstructions/terrain can make it windier where you fly.</div>
+          <div class="wx-note wx-windnote${windCaution ? ' wx-warn' : ''}">${windCaution ? WARN_IMG + ' ' : ''}Obstructions/terrain can make it windier where you fly.</div>
           <div class="wx-item">
             ${windHTML}
           </div>
@@ -4892,7 +4898,7 @@ async function renderWeather(lat, lon, attempt = 1) {
             ${obsT ? `<div class="wx-sub" data-rec-age="${Date.now() - obsT.ageMin * 60000}">${obsT.station} · ${fmtDist(obsT.dist)} away · ${ageText(obsT.ageMin * 60000)}</div>` : ''}
             <div class="wx-label wx-vislab">${VIS_IMG} Visibility</div>
             <div class="wx-value wx-vis-val ${visBelowMin() ? 'wx-alert' : (typeof visM === 'number' && visM >= 4828 ? 'wx-good' : '')}">${visTxt()}<span class="wx-vis-src">${visSrc()}</span></div>
-            ${visBelowMin() ? '<div class="wx-sub wx-alert">⛔ Below 3 SM minimum</div>' : ''}
+            ${visBelowMin() ? '<div class="wx-sub wx-alert">' + STOP_IMG + ' Below 3 SM minimum</div>' : ''}
             ${visNote() ? `<div class="wx-sub">${visNote()}</div>` : ''}
             ${(() => { const ed = elevDens(om); return ed ? `<div class="wx-sub wx-elev">Elevation ${NB(fmtAlt(ed.elFt))}<br><span class="${ed.diff >= 1500 ? 'wx-warn' : ''}">Density alt ${NB(fmtAlt(ed.daFt))}</span></div>` : ''; })()}
           </div>
