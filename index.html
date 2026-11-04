@@ -845,7 +845,9 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-sug .pin-ico { width: 1.2em; height: 1.2em; vertical-align: -0.25em; }
   .wx-loc-label .pin-ico { width: 1.3em; height: 1.3em; vertical-align: -0.3em; }
   .wx-loc-label { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .wx-loc-btn { flex-shrink: 0; font-size: 12px; color: var(--link); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; padding: 3px 10px; }
+  .wx-loc-btns { display: flex; gap: 6px; flex-shrink: 0; }
+  .wx-loc-btn[hidden] { display: none !important; }
+  .wx-loc-btn { flex-shrink: 0; text-decoration: none; font-size: 12px; color: var(--link); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; padding: 3px 10px; }
   .wx-picker { background: var(--section-bg); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
   .wx-search { display: flex; gap: 6px; }
   .wx-q-hint { font-size: 12px; color: var(--text-muted); margin: 6px 2px 0; }
@@ -1020,7 +1022,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5b</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1064,7 +1066,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   </div>
   <div class="wx-loc">
     <span class="wx-loc-label"><span id="pin-ico"></span> <span id="wx-loc-name">My location</span></span>
-    <button class="wx-loc-btn" onclick="toggleLocPicker()">Change</button>
+    <span class="wx-loc-btns"><a class="wx-loc-btn" id="wx-loc-map" target="_blank" rel="noopener" hidden>Map</a><button class="wx-loc-btn" onclick="toggleLocPicker()">Change</button></span>
   </div>
   <div class="dr-row-pill" id="dr-row" hidden><button type="button" class="dr-pill" id="dr-pill" aria-haspopup="listbox" aria-expanded="false"></button></div>
   <div class="dr-menu" id="dr-menu" role="listbox" hidden></div>
@@ -4323,6 +4325,12 @@ function friendlyWxError(e) {
 
 function updateLocLabel() {
   document.getElementById('wx-loc-name').textContent = site ? site.name : 'My location';
+  // 4.3.5c: a Map link for a searched or typed spot, so you can see where it is
+  const mp = document.getElementById('wx-loc-map');
+  if (mp) {
+    if (site && isFinite(site.lat) && isFinite(site.lon)) { mp.href = 'https://www.google.com/maps/search/?api=1&query=' + Number(site.lat).toFixed(5) + ',' + Number(site.lon).toFixed(5); mp.setAttribute('aria-label', 'Show ' + site.name + ' on a map (opens in a new tab)'); mp.hidden = false; }
+    else { mp.hidden = true; mp.removeAttribute('href'); }
+  }
 }
 
 function toggleLocPicker() {
