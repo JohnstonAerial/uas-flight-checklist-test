@@ -1022,7 +1022,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1068,8 +1068,6 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <span class="wx-loc-label"><span id="pin-ico"></span> <span id="wx-loc-name">My location</span></span>
     <span class="wx-loc-btns"><a class="wx-loc-btn" id="wx-loc-map" target="_blank" rel="noopener" hidden>Map</a><button class="wx-loc-btn" onclick="toggleLocPicker()">Change</button></span>
   </div>
-  <div class="dr-row-pill" id="dr-row" hidden><button type="button" class="dr-pill" id="dr-pill" aria-haspopup="listbox" aria-expanded="false"></button></div>
-  <div class="dr-menu" id="dr-menu" role="listbox" hidden></div>
   <div class="wx-picker" id="wx-picker" hidden>
     <form class="wx-search" onsubmit="searchSite(event)">
       <input id="wx-q" type="search" placeholder="Town, ZIP, or lat, lon" autocomplete="off" autocapitalize="words" enterkeyhint="search">
@@ -1079,6 +1077,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <div id="wx-results"></div>
     <div class="wx-chips" id="wx-chips"></div>
   </div>
+  <div class="dr-row-pill" id="dr-row" hidden><button type="button" class="dr-pill" id="dr-pill" aria-haspopup="listbox" aria-expanded="false"></button></div>
+  <div class="dr-menu" id="dr-menu" role="listbox" hidden></div>
   <div id="wx-body">
     <div class="wx-status wx-loading">Locating...</div>
   </div>
@@ -4328,7 +4328,10 @@ function updateLocLabel() {
   // 4.3.5c: a Map link for a searched or typed spot, so you can see where it is
   const mp = document.getElementById('wx-loc-map');
   if (mp) {
-    if (site && isFinite(site.lat) && isFinite(site.lon)) { mp.href = 'https://www.google.com/maps/search/?api=1&query=' + Number(site.lat).toFixed(5) + ',' + Number(site.lon).toFixed(5); mp.setAttribute('aria-label', 'Show ' + site.name + ' on a map (opens in a new tab)'); mp.hidden = false; }
+    if (site && isFinite(site.lat) && isFinite(site.lon)) { const ll = Number(site.lat).toFixed(5) + ',' + Number(site.lon).toFixed(5);
+      // iPhone and iPad: Apple Maps opens straight into the Maps app (Google Maps asks first); everything else: Google Maps
+      const apple = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      mp.href = apple ? 'https://maps.apple.com/?ll=' + ll + '&q=' + encodeURIComponent(site.name) : 'https://www.google.com/maps/search/?api=1&query=' + ll; mp.setAttribute('aria-label', 'Show ' + site.name + ' on a map (opens in a new tab)'); mp.hidden = false; }
     else { mp.hidden = true; mp.removeAttribute('href'); }
   }
 }
