@@ -845,6 +845,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-sug .pin-ico { width: 1.2em; height: 1.2em; vertical-align: -0.25em; }
   .wx-loc-label .pin-ico { width: 1.3em; height: 1.3em; vertical-align: -0.3em; }
   .wx-loc-label { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wx-loc-near { margin: -6px 0 10px 2px; font-size: 12px; color: var(--text-muted); }
+  .wx-loc-near[hidden] { display: none; }
   .wx-loc-btns { display: flex; gap: 6px; flex-shrink: 0; }
   .wx-loc-btn[hidden] { display: none !important; }
   .wx-loc-btn { flex-shrink: 0; text-decoration: none; font-size: 12px; color: var(--link); cursor: pointer; background: none; border: 1px solid var(--border); border-radius: 14px; font-family: inherit; padding: 3px 10px; }
@@ -1022,7 +1024,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1068,6 +1070,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
     <span class="wx-loc-label"><span id="pin-ico"></span> <span id="wx-loc-name">My location</span></span>
     <span class="wx-loc-btns"><a class="wx-loc-btn" id="wx-loc-map" target="_blank" rel="noopener" hidden>Map</a><button class="wx-loc-btn" onclick="toggleLocPicker()">Change</button></span>
   </div>
+  <div class="wx-loc-near" id="wx-loc-near" hidden></div>
   <div class="wx-picker" id="wx-picker" hidden>
     <form class="wx-search" onsubmit="searchSite(event)">
       <input id="wx-q" type="search" placeholder="Town, ZIP, or lat, lon" autocomplete="off" autocapitalize="words" enterkeyhint="search">
@@ -4323,7 +4326,28 @@ function friendlyWxError(e) {
   return 'Weather unavailable: ' + m;
 }
 
+// 4.3.5e: for a typed or pasted coordinate spot, say which US community it is near (National Weather Service lookup; no name outside the USA)
+const nearCache = {};
+async function updateNear() {
+  const el = document.getElementById('wx-loc-near'); if (!el) return;
+  el.hidden = true; el.textContent = '';
+  if (!site || !isFinite(site.lat) || !isFinite(site.lon) || !/^-?\d+(\.\d+)?, -?\d+(\.\d+)?$/.test(String(site.name))) return;
+  const key = Number(site.lat).toFixed(3) + ',' + Number(site.lon).toFixed(3);
+  const show = (t) => { if (t && site && key === Number(site.lat).toFixed(3) + ',' + Number(site.lon).toFixed(3)) { el.textContent = t; el.hidden = false; } };
+  if (key in nearCache) { show(nearCache[key]); return; }
+  try {
+    const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 6000);
+    const r = await fetch('https://api.weather.gov/points/' + key, { signal: ctl.signal });
+    clearTimeout(tm);
+    if (!r.ok) { nearCache[key] = ''; return; }
+    const d = await r.json(), rl = d && d.properties && d.properties.relativeLocation && d.properties.relativeLocation.properties;
+    const t = rl && rl.city ? 'Near ' + rl.city + (rl.state ? ', ' + rl.state : '') : '';
+    nearCache[key] = t; show(t);
+  } catch (e) { /* no name: the coordinates and the Map link still work */ }
+}
+
 function updateLocLabel() {
+  updateNear();
   document.getElementById('wx-loc-name').textContent = site ? site.name : 'My location';
   // 4.3.5c: a Map link for a searched or typed spot, so you can see where it is
   const mp = document.getElementById('wx-loc-map');

@@ -1041,6 +1041,7 @@ Ideas for items of your own: a tracker tag in the drone or case (charged and on 
 - [Open-Meteo](https://open-meteo.com) — wind, gusts, wind at 400 ft, temperature, visibility, sunrise/sunset (no key required)
 - [Aviation Weather Center](https://aviationweather.gov/data/api/) — METAR cloud ceiling (no key, via a small Cloudflare Worker)
 - [NOAA Space Weather](https://services.swpc.noaa.gov) — KP Index (no key required)
+- [National Weather Service](https://www.weather.gov/documentation/services-web-api) — the "Near ..." community name shown under coordinates you type (USA only, no key required)
 - [aviationweather.gov](https://aviationweather.gov) — TFR and NOTAM links
 - Hosted free on [GitHub Pages](https://pages.github.com)
 - Weather proxy via [Cloudflare Workers](https://workers.cloudflare.com)
