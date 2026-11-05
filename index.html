@@ -1024,7 +1024,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.5e</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.6a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -5154,6 +5154,34 @@ if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     else if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPanel(t.dataset.pid, t); return; }
     if (n) { e.preventDefault(); showPanel(n.dataset.pid, n); n.focus(); }
   }));
+})();
+
+// 4.3.6a: opened from Afterglow with ?lat=&lon=&name= on the address: use that spot for the weather (like picking a place),
+// then take those three items off the address so a reload doesn't reset the spot
+(function applyIncomingSpot() {
+  try {
+    const q = new URLSearchParams(location.search);
+    if (!q.has('lat') || !q.has('lon')) return;
+    const lat = parseFloat(q.get('lat')), lon = parseFloat(q.get('lon'));
+    let nm = String(q.get('name') || '').replace(/[\u0000-\u001f<>]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
+    ['lat', 'lon', 'name'].forEach(k => q.delete(k));
+    const rest = q.toString();
+    try { history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash); } catch (e) {}
+    if (!isFinite(lat) || !isFinite(lon) || Math.abs(lat) > 90 || Math.abs(lon) > 180) return;
+    // a bare "My location" or "Dropped pin" from the other app means nothing here; show the coordinates (the "Near <town>" line then names them)
+    if (!nm || /^(my location|dropped pin|current location)$/i.test(nm)) nm = lat.toFixed(3) + ', ' + lon.toFixed(3);
+    site = { name: nm, lat: lat, lon: lon };
+    store('wxSite', site);
+    recentSites = [site, ...recentSites.filter(r => Math.abs(r.lat - lat) > 0.01 || Math.abs(r.lon - lon) > 0.01)].slice(0, 10);
+    store('wxRecent', recentSites);
+    const near = document.getElementById('wx-loc-near');
+    if (near && near.parentNode) {
+      const d = document.createElement('div'); d.className = 'wx-note'; d.id = 'wx-from-ag'; d.style.margin = '-4px 0 8px 2px';
+      d.textContent = 'Spot from Afterglow: ' + nm;
+      near.parentNode.insertBefore(d, near.nextSibling);
+      setTimeout(() => { if (d.parentNode) d.parentNode.removeChild(d); }, 12000);
+    }
+  } catch (e) {}
 })();
 
 loadWeather();
