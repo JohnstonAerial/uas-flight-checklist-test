@@ -1028,7 +1028,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.6c</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.6d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -4828,7 +4828,7 @@ async function renderWeather(lat, lon, attempt = 1) {
       try {
         const gs = wx.sunrise ? goldenHours(String(wx.sunrise).slice(0, 10), lat, lon, siteOff || 0) : [];
         const hm = (mins) => fmtT(String(wx.sunrise).slice(0, 10) + 'T' + String(Math.floor(mins / 60) % 24).padStart(2, '0') + ':' + String(mins % 60).padStart(2, '0'));
-        if (gs.length) goldenLine = '<div class="wx-golden"><span class="gh-t">' + GOLDEN_IMG + ' Golden hour</span> ' + gs.map(a => '<span class="gh-w">' + hm(a[0]) + ' – ' + hm(a[1]) + '</span>').join('<span class="gh-sep"> · </span>') + '</div><a class="wx-ag-btn" href="' + agUrl + '" target="_blank" rel="noopener">' + AG_ICON + '<span>AfterGlow sky forecast<small>Will the sky color up ' + agWhere + '? ›</small></span></a>';
+        if (gs.length) goldenLine = '<div class="wx-golden"><span class="gh-t">' + GOLDEN_IMG + ' Golden hour</span> ' + gs.map(a => '<span class="gh-w">' + hm(a[0]) + ' – ' + hm(a[1]) + '</span>').join('<span class="gh-sep"> · </span>') + '</div><a class="wx-ag-btn" href="' + agUrl + '" target="afterglow_tab">' + AG_ICON + '<span>AfterGlow sky forecast<small>Will the sky color up ' + agWhere + '? ›</small></span></a>';
       } catch (e) {}
 
       // Ceiling from METAR (kept in feet; converted for display)
