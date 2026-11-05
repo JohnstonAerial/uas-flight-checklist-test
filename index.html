@@ -878,8 +878,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .wx-disclaimer { font-size: 10px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.4; }
   .wx-golden { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 3px; }
   .wx-golden .wx-link { margin-top: 2px; }
-  /* 4.3.6c: the AfterGlow link is a sunset-orange button (AfterGlow's colors), same in light and dark */
-  .wx-ag-btn { display: flex; align-items: center; justify-content: center; gap: 10px; box-sizing: border-box; width: 100%; max-width: 420px; margin: 10px auto 2px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(135deg, #f6b44a, #ee7a3a); color: #1b1206; font-size: 14px; font-weight: 700; line-height: 1.25; text-align: left; text-decoration: none; }
+  /* 4.3.6e: the AfterGlow link is a dusk-to-gold sunset gradient (purple, rose, gold), so it never reads as the checklist's orange warnings; same in light and dark */
+  .wx-ag-btn { display: flex; align-items: center; justify-content: center; gap: 10px; box-sizing: border-box; width: 100%; max-width: 420px; margin: 10px auto 2px; padding: 10px 14px; border-radius: 10px; background: linear-gradient(100deg, #5b3a8c 0%, #b8497a 52%, #e9a23c 100%); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.4); font-size: 14px; font-weight: 700; line-height: 1.25; text-align: left; text-decoration: none; }
   .wx-ag-btn small { display: block; font-size: 12px; font-weight: 500; opacity: 0.85; }
   .wx-ag-btn svg { width: 28px; height: 28px; flex: none; }
   .gh-w { white-space: nowrap; }
@@ -1028,7 +1028,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>UAS Flight Checklists</h1>
-      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.6d</p>
+      <p>🧪 TEST COPY · Drone Preflight Checklist · v4.3.6e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -4822,7 +4822,7 @@ async function renderWeather(lat, lon, attempt = 1) {
         const near = /^near /i.test(n), city = n.replace(/^near /i, '').split(',')[0].trim().slice(0, 30);
         return city ? (near ? 'near ' : 'at ') + city.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])) : 'here';
       })();
-      const AG_ICON = '<svg viewBox="0 0 32 32" fill="none" stroke="#1b1206" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 22h24M9 22a7 7 0 0 1 14 0M16 6v4M6.5 11.5l2.6 2.6M25.5 11.5l-2.6 2.6M2.5 17h3M26.5 17h3"/></svg>';
+      const AG_ICON = '<svg viewBox="0 0 32 32" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 22h24M9 22a7 7 0 0 1 14 0M16 6v4M6.5 11.5l2.6 2.6M25.5 11.5l-2.6 2.6M2.5 17h3M26.5 17h3"/></svg>';
       const agUrl = 'https://johnstonaerial.github.io/afterglow-test/?lat=' + Number(lat).toFixed(4) + '&lon=' + Number(lon).toFixed(4) + '&name=' + encodeURIComponent(agName);
       let goldenLine = '';
       try {
