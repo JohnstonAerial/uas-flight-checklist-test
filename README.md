@@ -1,4 +1,4 @@
-# UAS Flight Checklists
+# Drone Preflight Checklist
 
 A free, mobile-friendly drone preflight checklist web app with live weather conditions built in. It works for recreational and commercial pilots in any country — hide the items that don't apply to you, add your own, put things in the order you fly them, and back it all up. No app to download, no subscription required — just open it in any browser and fly.
 
@@ -86,7 +86,7 @@ During flight
   [ ] Hover check at 10ft (3m) — confirm stability, no drift, no warnings
   ...
 
-UAS Flight Checklists v3.7.12 · checklist.johnstonaerial.com
+Drone Preflight Checklist v3.7.12 · checklist.johnstonaerial.com
 ```
 
 </details>

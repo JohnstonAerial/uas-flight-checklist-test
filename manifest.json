@@ -1,6 +1,6 @@
 {
-  "name": "UAS Flight Checklist (Test)",
-  "short_name": "UAS Test",
+  "name": "Drone Preflight Checklist (Test)",
+  "short_name": "Drone Test",
   "description": "Test copy of the drone preflight checklist.",
   "start_url": "./",
   "scope": "./",
