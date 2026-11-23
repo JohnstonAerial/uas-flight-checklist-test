@@ -1046,7 +1046,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.9b</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.10a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -3654,7 +3654,8 @@ function dayChip(H, idx, view, ctx) {
   } else if (view === 'rain') {
     if (ppMax !== null) {
       const mm = vals(H.precipitation).reduce((s, x) => s + x, 0), c = ppMax >= 60 ? 'wx-alert' : ppMax >= 30 ? 'wx-warn' : 'wx-good';
-      html = '<div class="hs-c ' + cls[c] + '">' + Math.round(ppMax) + '%' + (mm >= (metric ? 0.1 : 0.13) ? '<small>' + (metric ? mm.toFixed(1) : (mm / 25.4).toFixed(2)) + '</small>' : nb) + '</div>';
+      // 4.4.10a: a notable chance with a tiny model amount shows "<0.01" (or "<0.1") instead of a blank under the percentage
+      html = '<div class="hs-c ' + cls[c] + '">' + Math.round(ppMax) + '%' + (mm >= (metric ? 0.1 : 0.13) ? '<small>' + (metric ? mm.toFixed(1) : (mm / 25.4).toFixed(2)) + '</small>' : (ppMax >= 30 ? '<small>' + (metric ? '&lt;0.1' : '&lt;0.01') + '</small>' : nb)) + '</div>';
     }
   }
   return { html };
@@ -3667,7 +3668,12 @@ function dayCaption(H, d, ctx) {
   if (!w) s += ' · no window figure';
   else if (w.kind === 'none') s += ' · No window';
   else s += ' · ' + (w.kind === 'best' ? 'Best ' : 'Possible ') + hrf(w.from) + '–' + hrf(w.to) + ' · ' + (Math.round(w.minW) === Math.round(w.maxW) ? fmtSpeedNum(w.maxW) : fmtSpeedNum(w.minW) + '–' + fmtSpeedNum(w.maxW)) + ' ' + speedUnit();
-  if (pps.length) s += ' · rain ' + Math.round(Math.max(...pps)) + '%';
+  if (pps.length) {
+    s += ' · rain ' + Math.round(Math.max(...pps)) + '%';
+    // 4.4.10a: say how much the model expects, or that it expects very little, so a high chance never looks like a missing number
+    const mmDay = d.idx.map(i => (H.precipitation || [])[i]).filter(v => v != null && isFinite(v)).reduce((t, v) => t + v, 0), metricD = ctx && ctx.metric;
+    if (Math.max(...pps) >= 30) s += mmDay >= (metricD ? 0.1 : 0.13) ? ' (about ' + (metricD ? mmDay.toFixed(1) + ' mm' : (mmDay / 25.4).toFixed(2) + ' in') + ')' : ' (very little expected)';
+  }
   // The selected tile above already shows the day, so the line starts at the useful part
   s = s.indexOf(d.label + ' · ') === 0 ? s.slice(d.label.length + 3) : s;
   return s;   // later days are marked by the note below the tiles and their lighter colour, so no "Rough guide" prefix (it made the line wrap)
@@ -3770,7 +3776,7 @@ function hourStripHtml(om, hIdx) {
       rain: 'Highest chance of rain in the day · amount below'
     }[view];
     const sd = days.find(d => d.dd === stripDay);
-    capTxt = sd ? dayCaption(H, sd, null) : dcap;
+    capTxt = sd ? dayCaption(H, sd, { metric }) : dcap;
     keyTxt = 'Tap a day\u00A0· later days are a rough guide';
   }
   const seg = '<span class="hs-seg" role="group" aria-label="Forecast range"><button type="button" class="' + (dayMode ? '' : 'on') + '" aria-pressed="' + (!dayMode) + '" onclick="stripSpanSet(\'12h\')">24 hours</button><button type="button" class="' + (dayMode ? 'on' : '') + '" aria-pressed="' + dayMode + '" onclick="stripSpanSet(\'10d\')">10 days</button></span>';
