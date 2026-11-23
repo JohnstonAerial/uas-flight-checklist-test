@@ -1042,7 +1042,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8b</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8c</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -1991,7 +1991,21 @@ function hdrOffset() { const hdr = document.querySelector('.header'); if (!hdr) 
 function condGo(w) {
   condMark(w === 'air'); condLock = Date.now() + 900;
   const hb = hdrOffset();
-  if (w === 'air') { const el = document.querySelector('.wx-tfr-row'); if (el) window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hb - 10), behavior: 'smooth' }); }
+  if (w === 'air') {
+    const el = document.querySelector('.wx-tfr-row');
+    if (el) {
+      window.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + window.scrollY - hb - 10), behavior: 'smooth' });
+      // 4.4.8c: once the scroll settles, measure where the buttons really are and nudge them just below the header (the sticky header and any layout shift made the first landing too high)
+      const fix = function () {
+        const r = document.querySelector('.wx-tfr-row'), h = document.querySelector('.header'); if (!r) return;
+        const hb2 = h ? Math.max(0, h.getBoundingClientRect().bottom) : 0, d = r.getBoundingClientRect().top - hb2 - 10;
+        if (Math.abs(d) > 4) window.scrollBy({ top: d, behavior: 'smooth' });
+        condLock = Date.now() + 900;
+      };
+      let done = false; const once = function () { if (done) return; done = true; fix(); };
+      window.addEventListener('scrollend', once, { once: true }); setTimeout(once, 900);
+    }
+  }
   else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function syncCondStrip() {
