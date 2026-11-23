@@ -554,6 +554,8 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   @media (max-width: 340px) { .wl-row { gap: 5px; } .wl-row input { width: 48px; } }
   .settings-help a { color: var(--link); display: inline-block; }
   .coffee-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 16px 16px 4px; }
+  body.view-wx .foot-links { padding-bottom: 10px; }   /* 4.4.8e: less empty space between the feedback link and the about text on Conditions */
+  body.view-wx .content { padding-bottom: 16px; }
   body.view-wx .coffee-note { padding-top: 2px; }   /* 4.4.8d: less empty space between the airspace card and the footer on the Conditions view */
   .foot-links { margin: 0 auto; padding: 0 16px 28px; font-size: 13px; color: var(--text-light); }
   .foot-links a { padding: 8px 4px; }
@@ -1043,7 +1045,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8d</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
