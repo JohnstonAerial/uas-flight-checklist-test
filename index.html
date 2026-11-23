@@ -554,6 +554,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   @media (max-width: 340px) { .wl-row { gap: 5px; } .wl-row input { width: 48px; } }
   .settings-help a { color: var(--link); display: inline-block; }
   .coffee-note { font-size: 11px; color: var(--text-light); text-align: center; padding: 16px 16px 4px; }
+  body.view-wx .coffee-note { padding-top: 2px; }   /* 4.4.8d: less empty space between the airspace card and the footer on the Conditions view */
   .foot-links { margin: 0 auto; padding: 0 16px 28px; font-size: 13px; color: var(--text-light); }
   .foot-links a { padding: 8px 4px; }
   .ver-line { text-align: center; font-size: 11px; color: var(--text-light); padding: 0 16px 24px; margin-top: -20px; }
@@ -768,7 +769,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .nv-two .ok-ico { width: 1.15em; height: 1.15em; vertical-align: -0.25em; }
   .tabs-set { display: none; }
   /* 4.2.13r: floating Top button once you have scrolled down */
-  .to-top { position: fixed; right: 14px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 45; font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: #2563EB; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 9px 14px; box-shadow: 0 3px 12px rgba(0,0,0,0.35); cursor: pointer; opacity: 0; pointer-events: none; -webkit-transform: translateZ(0); transform: translateZ(0); will-change: opacity; transition: opacity .2s; }   /* 4.3.0m: no visibility/transform toggling: Safari on Mac and iPad did not repaint a fixed button until you touched the page */
+  .to-top { position: fixed; right: 10px; bottom: calc(34px + env(safe-area-inset-bottom, 0px)); z-index: 45; font-family: inherit; font-size: 12px; font-weight: 700; color: #fff; background: #2563EB; border: 1px solid rgba(255,255,255,0.25); border-radius: 999px; padding: 7px 12px; box-shadow: 0 3px 12px rgba(0,0,0,0.35); cursor: pointer; opacity: 0; pointer-events: none; -webkit-transform: translateZ(0); transform: translateZ(0); will-change: opacity; transition: opacity .2s; }   /* 4.3.0m: no visibility/transform toggling: Safari on Mac and iPad did not repaint a fixed button until you touched the page */
   .to-top.show { opacity: 1; pointer-events: auto; }
   body:has(.panel.editing) .to-top { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
   @media print { .to-top { display: none !important; } }
@@ -1042,7 +1043,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8c</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.8d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
