@@ -27,6 +27,10 @@ The app remembers the tab you used last on that device. Tapping **Customize** in
 
 **Change the place you're checking.** On **Conditions**, tap **Change**, then tap the search box. Your saved places (the last 10) drop down; type to narrow them, or type a town, ZIP code or latitude, longitude and tap **Search**. Abbreviations work too: St Paul, Ft Worth, Mt Airy and N Charleston find Saint Paul, Fort Worth, Mount Airy and North Charleston. In Canada add the province (**Toronto ON**); in Australia add the state (**Sydney NSW**).
 
+**Check the sky for this place in Afterglow.** On **Conditions**, under the Golden hour times, tap **Afterglow sky forecast and planner**. Afterglow opens with the place you are checking already chosen, so you can see tonight's sunset or tomorrow's sunrise forecast for the same spot. A phone or tablet opens it in the same tab: tap Back to return. In a Home Screen app it opens over this app: tap **X** to come back. Afterglow also has a **Drone Preflight Checklist** button that brings you back here with its place.
+
+**Coming from Afterglow.** If you tapped **Drone Preflight Checklist** in Afterglow, the app opens with the weather for that place. A note under the place name, "Spot from Afterglow", shows for a few seconds. To change the place, use **Change** as usual.
+
 **Change a limit from Conditions.** Tap the small ⚙ in the corner of the **Wind**, **Temperature** or **KP Index** tile. Once you have added a drone, the gears are hidden; tap the blue drone pill and choose **⚙ Edit drones & limits** instead. **Settings** opens at **Limits**; change the numbers, then tap **← Back to Conditions** at the top to return to the same spot.
 
 **Fly more than one drone? Give each its own limits.** Open **Settings → Limits** and tap **Add a drone** (the button with the drone picture). Name it, then set its wind, Kp and cold/heat limits in the boxes below. Your original limits stay as **Default**. Back on **Conditions**, tap the blue drone pill under the place name to pick which drone you're flying today; the tiles and the Best window use that drone's limits. The pill only shows once you've added a drone. Drones are not linked to checklist tabs. To remove one, select it in Settings → Limits and tap **Delete this drone**.
@@ -232,10 +236,11 @@ The first time you open the app it asks **Where do you fly?** Choose **Outside U
 **What changes**
 
 - **Units:** distances show in km, temperatures in °C. The **Imperial / Metric** button next to the weather title switches them without changing your region. Wind starts as km/h; tap the unit on the Wind tile to change it (mph, km/h, m/s or knots).
-- **Checklist wording:** the items marked "(US)" are hidden: the TFR check, the LAANC item and the TFR recheck on site. The NOTAM item is reworded to point you to your country's aviation authority or NOTAM service.
+- **Checklist wording:** the items marked "(US)" are hidden: the TFR check, the LAANC item and the TFR recheck on site. The NOTAM item is reworded to point you to your country's aviation authority or NOTAM service. The **Local and state rules** item becomes **Local rules**, for your region.
 - **Ceiling warnings:** low-cloud notes say "check your local cloud and visibility rules" instead of quoting US rules.
 - **Night notice:** after sunset or before sunrise it says to check your local rules for night flying. The same line is printed on a saved flight record.
 - **Place search:** you can search by town, postal code (ZIP code in the USA), or enter coordinates. Add the country to search outside the USA, for example **Munich, Germany**.
+- **Typing coordinates:** use decimal degrees like **35.50, -78.66**, or degrees, minutes and seconds like **35°30'00"N 78°39'36"W** (a W or S letter sets the sign, so no minus is needed). The compact aviation style (**353000N 0783936W**) and a pasted Google Maps or Apple Maps link work too. Short links like maps.app.goo.gl can't be read: open the link and copy the long address from the browser bar. For a spot you typed, **Map** shows it on a map, and in the USA a line under it says what community it is near.
 
 **What works worldwide**
 
@@ -269,6 +274,8 @@ The first time you open the app it asks **Where do you fly?** Choose **Outside U
 **This section is for flying in the USA only.** TFRs and NOTAMs here are the FAA's. In countries outside the USA the **FAA UAS Facility Map**, **TFRs** and **NOTAMs** buttons are hidden, so use your own country's aviation authority and drone airspace app instead (see [Use it outside the USA](#use-it-outside-the-usa)).
 
 ### TFRs
+
+**An easier list on a phone:** under the TFRs and NOTAMs buttons there is a **TFR list (unofficial)** button. It opens atisalerts.com, which shows the FAA's TFRs grouped by state in a layout that fits a phone. It is not the FAA, it can lag, and it gives dates by day only, so use it to look around and then confirm on the FAA site before you fly.
 
 The **⚠️ TFRs** button shows a count under its name, such as **NC: 3 · US: 12**: how many TFRs the FAA lists for your state, then how many are nationwide. It is a count only. It does not say whether one is near you, so open the list and check. The button opens the FAA's list for the whole country, so most of what you see will be far from you. To narrow it down:
 

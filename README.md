@@ -14,7 +14,7 @@ A free, mobile-friendly drone preflight checklist web app with live weather cond
 
 <table>
   <tr>
-    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/08-conditions-dark.png"><img src="screenshots/08-conditions-light.png" alt="The Conditions tab with Conditions, Checklist and Settings tabs on top, then live preflight conditions for Cheyenne: wind with Windier nearby, cloud ceiling, precipitation, visibility, the 10-day wind outlook, and the Airspace chart, FAA UAS Facility Map, TFRs and NOTAMs buttons with nearby airport codes" width="170"></picture><br><sub><b>Live conditions</b></sub></td>
+    <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/08-conditions-dark.png"><img src="screenshots/08-conditions-light.png" alt="The Conditions tab with Conditions, Checklist and Settings tabs on top, then live preflight conditions for Fayetteville, NC: wind, cloud ceiling, precipitation, visibility, the best flying window and the 24-hour forecast, the AfterGlow sky forecast button for that place, and the Airspace chart, FAA UAS Facility Map, TFRs and NOTAMs buttons with nearby airport codes" width="170"></picture><br><sub><b>Live conditions</b></sub></td>
     <td align="center" width="50%"><picture><source media="(prefers-color-scheme: dark)" srcset="screenshots/01-checklist-dark.png"><img src="screenshots/01-checklist-light.png" alt="The Checklist tab with custom mission tabs, the percentage and a Customize button, the four sections folded, then a card with Print, PDF and Save flight record, and the footer with the version" width="170"></picture><br><sub><b>Checklist</b></sub></td>
   </tr>
   <tr>
@@ -113,6 +113,83 @@ Items you flagged are listed as **NEEDS ATTENTION**, items you hid are left out,
 - **Small fixes on iPhone** — **Appearance** and **PDF layout** no longer overlap or get cut off, and the **Default reg. #** box no longer cuts off its hint.
 
 ---
+
+## What's new in v4.4.6
+
+- **New subtitle.** Under the heading it now reads "Weather, airspace and your checklist in one place."
+- **The link to Afterglow has a new name.** The button on **Conditions** and the link at the bottom of each tab now read **Afterglow sky forecast and planner**, because Afterglow now plans shoots as well as forecasting the sky.
+- **Plainer page description.** The text at the bottom of the page, and the description search engines and link previews show, now say "live weather and airspace" and mention the flight record. Nothing changes in how the app works.
+
+---
+
+## What's new in v4.4.5
+
+- **Easier to find in search.** A short plain-text description now sits at the bottom of the page, and the page tells search engines what it is. Nothing changes in how the app works.
+
+---
+
+## What's new in v4.4.4
+
+- **One name everywhere: Drone Preflight Checklist.** The page title, heading, the name under the icon on your Home Screen ("Drone Checklist"), and the title and footer on printed and PDF flight records all use it now. The line under the heading reads "Free, with the weather built in."
+- **Shared links show a preview.** A link to the checklist now carries a title and a short description, so it reads properly when you send it to someone. A Home Screen app you already added keeps its old name until you remove it and add it again.
+
+---
+
+## What's new in v4.4.2
+
+- **Turn off counting of your own visits.** Tap the version text under the title five times to open a small box with a switch. It does the same as opening the page with `?notrack` (which also turns off the back-up reminder), and it works in the app on your Home Screen too, where you cannot type an address.
+
+---
+
+## What's new in v4.4.1
+
+- **Best window times are easier on the eyes.** The times in the green **Best window** and orange **Possible window** lines are now plain bold instead of extra heavy, so they no longer look bigger than the label next to them.
+
+## What's new in v4.4.0
+
+- **Afterglow opens right at your place.** The **AfterGlow sky forecast** button sits under the Golden hour times in the weather card on **Conditions**. It says where it will open: "Will the sky color up at Houston?", "near Angier", or "here" when the place is only coordinates or your own position. Tap it and Afterglow opens already set to that place.
+- **Coming the other way works too.** The blue **Drone Preflight Checklist** button in Afterglow opens this app with the weather for the place you were looking at. A small note, "Spot from Afterglow: ...", shows for about 12 seconds, and the place is added to your recent places like any place you pick. A place that makes no sense is ignored and you stay where you were.
+- **A new look.** The blue bar at the top is now a gradient, from sky blue through the usual blue to deep indigo, and the Afterglow button is midnight navy with gold, so it looks like Afterglow and never like one of the orange weather warnings.
+- **How the link opens depends on your device.** On a computer, the Afterglow link reuses one tab instead of opening a new one each time. On a phone or tablet in a browser it opens in the same tab, so the Back button returns you here. In a Home Screen app it opens Afterglow in the in-app browser; tap **X** to come back.
+- **Your place travels in the link itself.** It is sent in the web address of the link you tap, nothing more.
+
+---
+
+## What's new in v4.3.5
+
+- **Type coordinates the way you find them.** In the location box (**Conditions**, then **Change**) you can still type decimal coordinates like **35.50, -78.66**. You can now also type or paste degrees, minutes and seconds, like **35°30'00"N 78°39'36"W** or **35 30 00 N, 78 39 36 W**, the style on survey datasheets (**35 07 03.17630(N) 078 49 59.08821(W)**), the compact aviation style (**353000N 0783936W**), or a **Google Maps or Apple Maps link**. A W or S letter sets the sign, so you no longer have to remember the minus. Short links like maps.app.goo.gl can't be read, so the app says so and suggests copying the long address from the browser bar.
+- **A Map button next to Change.** For a spot you searched for or typed, **Map** shows it on a map. On an iPhone or iPad it opens Apple Maps, and everywhere else it opens Google Maps.
+- **Which town it is near (USA only).** When you type coordinates, a small line under the location says what community they are near, like "Near Angier, NC", from the National Weather Service. Outside the USA there is no name, and if the lookup fails the line simply does not appear.
+- **The search box opens right under Change.** It used to open below the drone picker; now the location and its search stay together.
+- **The footer wraps neatly.** On a narrow screen the coffee link stays together on one line, and the Afterglow link sits on its own line.
+
+---
+
+## What's new in v4.3.4
+
+- **A second TFR button that is easier on a phone (USA only).** Under **TFRs — FAA.gov** and **NOTAMs — AIM** there is now a full-width **TFR list (unofficial)** button. It opens atisalerts.com, a third-party list of the FAA's TFRs grouped by state that reads much better on a phone than the FAA's own page. It is unofficial, can lag, and gives dates by day only, so confirm on the FAA site before you fly. The note under the buttons says so. The button is hidden when you choose **Outside USA**.
+- **A link to Afterglow at the bottom.** Under the coffee note on each tab, **Also from Johnston Aerial: Afterglow sky forecast** opens my free sunrise and sunset forecast and planning app.
+
+---
+
+## What's new in v4.3.3
+
+- **Location now works in Chrome on a Mac.** On some Macs, Chrome could not find your location with the app's usual quick request and the weather panel said "Your location is taking too long to find." The app now asks for a precise fix, which Chrome answers. Nothing changes on a phone or in other browsers.
+
+## What's new in v4.3.2
+
+- **The location box says you can type coordinates.** Under the search box on **Conditions** (tap **Change**) a short line now reads "Or type coordinates with a comma, like 35.50, -78.66". If you fly somewhere with no town name to speak of, type your latitude and longitude with a comma between them and the app uses that exact spot. It always worked; now it says so.
+- **Outside the USA, no more postal-code hint.** The place database does not reliably know full postal codes outside the USA, so under **Outside USA** the box reads "Town or lat, lon", and the line under it suggests a town or coordinates. A search that finds nothing suggests a nearby town or coordinates too. ZIP codes still work in the USA.
+
+## What's new in v4.3.1
+
+- **A new checklist item: Local and state rules.** Right after the NOTAM line on all three tabs: check city, county and state drone laws, and any park or property rules, for where you launch and fly. Outside the USA it reads "Local rules" and points to regional and local rules. Each tab has one more item than before.
+- **The Weather / Airspace switch hides when it isn't needed.** On a tall screen where everything is already showing, the switch under the three main buttons goes away. It comes back when the page grows.
+- **The "Log the flight" button hides when you can already see Print, PDF and Save.** With the checklist collapsed, those buttons are already on screen, so the jump button steps aside. Expand everything and it returns.
+- **Settings has pictures on 11 more rows:** Appearance, **Where you fly**, **I fly at night**, **Keep screen on**, **Your checklist & tab**, **Cold warning**, **Heat warning**, **Record file name**, **Default reg. #**, **PDF layout** and **PDF paper**. **Clear saved progress after** has its own circular-arrow-with-clock picture too.
+- **The four airspace buttons have drawn icons:** Airspace chart, FAA UAS Facility Map, TFRs and NOTAMs.
+- **The warning lines are drawn, too:** a red stop sign (cannot fly, high Kp, below 3 SM), an amber triangle (very low ceiling, elevated Kp, windy), a lightning bolt (storms possible), Wi-Fi with a red slash (no signal) and a moon (night). **Send feedback** has an envelope, and the "Saved on this device" notes use the same disk as **Back up & restore**.
+- **Settings keep working in Safari private tabs,** where the browser refuses to save anything. Your choices (Light, Dark and the rest) hold for as long as the tab is open, then they are gone, as with any private tab.
 
 ## What's new in v4.3.0
 
@@ -616,7 +693,7 @@ New checklist items, on top of v3.8. Each is a plain item you can hide in **Cust
 ## What's new in v3.8
 
 - **Golden hour on the weather card** — under the sunrise and sunset times you now see the two golden-hour windows for your flight site, for example **Golden hour 07:05 AM – 07:54 AM · 06:13 PM – 07:03 PM**. It is worked out on your device from where the sun is (between 4° below and 6° above the horizon), so it needs no extra connection, works in any country, follows your flight site's time zone and uses your device's 12 or 24 hour clock. Expect it to be within a few minutes of other sources. It is left out when the sun never reaches that range, for example in the polar winter.
-- **A link to AfterGlow** — under it, **Will the sky color up? AfterGlow sky forecast ›** opens [AfterGlow](https://afterglow.johnstonaerial.com), the free sunrise and sunset sky forecast, at the same place you are checking here. If you have not used AfterGlow before it remembers that place; if you already have a place saved there, it uses this one for that visit and leaves your saved place alone.
+- **A link to AfterGlow** — under it, **Will the sky color up? Afterglow sky forecast and planner ›** opens [AfterGlow](https://afterglow.johnstonaerial.com), the free sunrise and sunset sky forecast, at the same place you are checking here. If you have not used AfterGlow before it remembers that place; if you already have a place saved there, it uses this one for that visit and leaves your saved place alone.
 - **Golden hour on your saved record** — the saved flight record (text and PDF) carries a **Golden hour** line right after the sunrise and sunset line.
 
 ---
