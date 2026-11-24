@@ -1046,7 +1046,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.10a</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.10b</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -3587,15 +3587,16 @@ function dayHours(om, hIdx) {
   if (!H || !H.time || !D || !D.time) return [];
   const nt = nightOn(), out = [];
   for (let dd = 0; dd < D.time.length && dd < 10; dd++) {
-    const key = String(D.time[dd]).slice(0, 10), all = [], sv = D.sunrise && D.sunset && D.sunrise[dd] && D.sunset[dd] ? [new Date(D.sunrise[dd]).getTime(), new Date(D.sunset[dd]).getTime()] : null;
+    const key = String(D.time[dd]).slice(0, 10), all = [], full = [], sv = D.sunrise && D.sunset && D.sunrise[dd] && D.sunset[dd] ? [new Date(D.sunrise[dd]).getTime(), new Date(D.sunset[dd]).getTime()] : null;
     for (let i = 0; i < H.time.length; i++) {
       if (String(H.time[i]).slice(0, 10) !== key) continue;
       if (dd === 0 && i < hIdx) continue;
+      full.push(i);   // 4.4.10b: the whole calendar day, for rain (a storm before sunrise still counts)
       const t = new Date(H.time[i]).getTime();
       if (nt || !sv || (t + 3600000 > sv[0] && t < sv[1])) all.push(i);
     }
     const d = new Date(key + 'T12:00:00');
-    out.push({ dd, idx: all, label: dd === 0 ? 'Today' : d.toLocaleDateString([], { weekday: 'short' }) + ' ' + d.getDate() });
+    out.push({ dd, idx: all, full, label: dd === 0 ? 'Today' : d.toLocaleDateString([], { weekday: 'short' }) + ' ' + d.getDate() });
   }
   return out;
 }
@@ -3616,7 +3617,7 @@ function dayWindow(H, idx) {
   const seg = info.slice(r.a, r.b + 1);
   return { kind: g ? 'best' : 'possible', from: H.time[info[r.a].i], to: H.time[info[r.b].i], maxW: Math.max(...seg.map(x => x.w)), minW: Math.min(...seg.map(x => x.w)) };
 }
-function dayChip(H, idx, view, ctx) {
+function dayChip(H, idx, view, ctx, full) {
   const { metric, intl, cls } = ctx, nb = '<small>&nbsp;</small>', none = '<div class="hs-c hc-none">—' + nb + '</div>';
   const ok = (v) => v != null && isFinite(v);
   const vals = (arr) => arr ? idx.map(i => arr[i]).filter(ok) : [];
@@ -3652,8 +3653,10 @@ function dayChip(H, idx, view, ctx) {
     const v = vals(H.cloud_cover);
     if (v.length) { const a = v.reduce((s, x) => s + x, 0) / v.length; html = '<div class="hs-c hc-cloud" style="background:rgba(142,142,147,' + (0.12 + 0.88 * a / 100).toFixed(2) + ')">' + Math.round(a) + '%' + nb + '</div>'; }
   } else if (view === 'rain') {
-    if (ppMax !== null) {
-      const mm = vals(H.precipitation).reduce((s, x) => s + x, 0), c = ppMax >= 60 ? 'wx-alert' : ppMax >= 30 ? 'wx-warn' : 'wx-good';
+    // 4.4.10b: rain is counted over the whole calendar day (midnight to midnight), not just daylight, so an overnight storm shows up
+    const rIdx = full && full.length ? full : idx, rpps = rIdx.map(i => (H.precipitation_probability || [])[i]).filter(ok), rMax = rpps.length ? Math.max(...rpps) : null;
+    if (rMax !== null) {
+      const ppMax = rMax, mm = rIdx.map(i => (H.precipitation || [])[i]).filter(ok).reduce((s, x) => s + x, 0), c = ppMax >= 60 ? 'wx-alert' : ppMax >= 30 ? 'wx-warn' : 'wx-good';
       // 4.4.10a: a notable chance with a tiny model amount shows "<0.01" (or "<0.1") instead of a blank under the percentage
       html = '<div class="hs-c ' + cls[c] + '">' + Math.round(ppMax) + '%' + (mm >= (metric ? 0.1 : 0.13) ? '<small>' + (metric ? mm.toFixed(1) : (mm / 25.4).toFixed(2)) + '</small>' : (ppMax >= 30 ? '<small>' + (metric ? '&lt;0.1' : '&lt;0.01') + '</small>' : nb)) + '</div>';
     }
@@ -3668,11 +3671,24 @@ function dayCaption(H, d, ctx) {
   if (!w) s += ' · no window figure';
   else if (w.kind === 'none') s += ' · No window';
   else s += ' · ' + (w.kind === 'best' ? 'Best ' : 'Possible ') + hrf(w.from) + '–' + hrf(w.to) + ' · ' + (Math.round(w.minW) === Math.round(w.maxW) ? fmtSpeedNum(w.maxW) : fmtSpeedNum(w.minW) + '–' + fmtSpeedNum(w.maxW)) + ' ' + speedUnit();
-  if (pps.length) {
-    s += ' · rain ' + Math.round(Math.max(...pps)) + '%';
-    // 4.4.10a: say how much the model expects, or that it expects very little, so a high chance never looks like a missing number
-    const mmDay = d.idx.map(i => (H.precipitation || [])[i]).filter(v => v != null && isFinite(v)).reduce((t, v) => t + v, 0), metricD = ctx && ctx.metric;
-    if (Math.max(...pps) >= 30) s += mmDay >= (metricD ? 0.1 : 0.13) ? ' (about ' + (metricD ? mmDay.toFixed(1) + ' mm' : (mmDay / 25.4).toFixed(2) + ' in') + ')' : ' (very little expected)';
+  const fIdx = d.full && d.full.length ? d.full : d.idx, fpps = fIdx.map(i => (H.precipitation_probability || [])[i]).filter(v => v != null && isFinite(v));
+  if (fpps.length) {
+    s += ' · rain ' + Math.round(Math.max(...fpps)) + '%';
+    // 4.4.10a/b: say how much the model expects (whole calendar day), or that it expects very little, so a high chance never looks like a missing number
+    const amt = i => { const v = (H.precipitation || [])[i]; return v != null && isFinite(v) ? v : 0; };
+    const mmDay = fIdx.reduce((t, i) => t + amt(i), 0), metricD = ctx && ctx.metric;
+    if (Math.max(...fpps) >= 30) {
+      if (mmDay >= (metricD ? 0.1 : 0.13)) {
+        // where does it fall? before sunrise / after sunset are outside the daylight hours in d.idx
+        let when = '';
+        if (d.idx.length && d.full) {
+          const a = d.idx[0], b = d.idx[d.idx.length - 1];
+          const pre = fIdx.filter(i => i < a).reduce((t, i) => t + amt(i), 0), post = fIdx.filter(i => i > b).reduce((t, i) => t + amt(i), 0), day = mmDay - pre - post;
+          if (day < mmDay * 0.25) when = pre >= mmDay * 0.5 ? ', mostly overnight before sunrise' : post >= mmDay * 0.5 ? ', mostly after sunset' : ', mostly overnight';
+        }
+        s += ' (about ' + (metricD ? mmDay.toFixed(1) + ' mm' : (mmDay / 25.4).toFixed(2) + ' in') + when + ')';
+      } else s += ' (very little expected)';
+    }
   }
   // The selected tile above already shows the day, so the line starts at the useful part
   s = s.indexOf(d.label + ' · ') === 0 ? s.slice(d.label.length + 3) : s;
@@ -3701,7 +3717,7 @@ function hourStripHtml(om, hIdx) {
   if (dayMode) {
     const ctx = { metric, intl, cls };
     cells = days.filter(d => d.idx.length).map(d => {   // today drops out once its daytime hours are over, instead of showing an empty dash
-      const c = dayChip(H, d.idx, view, ctx), sel = stripDay === d.dd;
+      const c = dayChip(H, d.idx, view, ctx, d.full), sel = stripDay === d.dd;
       return '<div class="hs-h hs-dy' + (sel ? ' sel' : '') + (d.dd >= 5 ? ' hs-f' + (d.dd - 4) : '') + '" data-k="' + d.dd + '" role="button" tabindex="0" aria-pressed="' + sel + '" aria-label="' + d.label + '" onclick="stripDayPick(' + d.dd + ')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();stripDayPick(' + d.dd + ')}"><div class="hs-t">' + d.label + '</div>' + c.html + '</div>';
     }).join('');
   }
