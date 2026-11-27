@@ -1090,7 +1090,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.13d</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.13e</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -2406,7 +2406,7 @@ function addItemButton(it) {
     acts.appendChild(cp); acts.appendChild(ed); acts.appendChild(b); it.appendChild(acts);
   } else {
     if (PK_BUILTIN.test(itemTextOf(it))) {
-      const pb = document.createElement('button'); pb.type = 'button'; pb.className = 'item-ed item-pk'; pb.textContent = 'Packs';
+      const pb = document.createElement('button'); pb.type = 'button'; pb.className = 'item-ed item-pk'; pb.textContent = 'Pick list';
       pb.setAttribute('onclick', 'pkOpen(event, this)');
       const cb = document.createElement('button'); cb.type = 'button'; cb.className = 'item-ed item-pkcp'; cb.textContent = 'Copy to\u2026'; cb.hidden = true;
       cb.setAttribute('onclick', 'itemCopy(event, this)'); it.appendChild(cb); it.appendChild(pb);
@@ -2467,12 +2467,12 @@ function itemCopy(e, btn) {
   const panelEl = it.closest('.panel'), pid = panelEl.id.replace('panel-', '');
   const sec = sectionTitleOf(it.closest('.section')), text = itemTextOf(it);
   let rec = custFor(panelEl.id).added.find(a => a.sec === sec && a.text === text), fromBuiltin = false;
-  if (!rec && !it.classList.contains('custom')) { const bp = pkCfgOf(it); if (bp) { rec = { sec: sec, text: text, pk: bp }; fromBuiltin = true; } }   // a built-in line with packs: copy the pack list
+  if (!rec && !it.classList.contains('custom')) { const bp = pkCfgOf(it); if (bp) { rec = { sec: sec, text: text, pk: bp }; fromBuiltin = true; } }   // a built-in line with packs: copy the pick list
   if (!rec) return;
   const box = document.createElement('div'); box.className = 'cust-copy';
   box.addEventListener('click', ev => ev.stopPropagation());
   box.addEventListener('pointerdown', ev => ev.stopPropagation());
-  const lab = document.createElement('div'); lab.className = 'cc-label'; lab.textContent = fromBuiltin ? 'Copy this pack list to which tab?' : 'Copy this item to which tab?'; box.appendChild(lab);
+  const lab = document.createElement('div'); lab.className = 'cc-label'; lab.textContent = fromBuiltin ? 'Copy this pick list to which tab?' : 'Copy this item to which tab?'; box.appendChild(lab);
   const msg = document.createElement('div'); msg.className = 'cc-msg'; msg.hidden = true;
   tabEls.filter(t => t.dataset.pid && t.dataset.pid !== pid && !t.classList.contains('tab-hidden')).forEach(t => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'item-ed'; b.textContent = tabName(t);
@@ -2487,21 +2487,21 @@ function itemCopy(e, btn) {
         const bt = [...baseKeyMap(tp).keys()].find(x => itemTextOf(x) === rec.text && !x.classList.contains('is-hidden'));
         if (bt) {
           msg.hidden = false;
-          if (pkCfgOf(bt)) { msg.className = 'cc-msg bad'; msg.textContent = tabName(t) + ' already has a pack list on this line. Open Packs there to change it.'; return; }
+          if (pkCfgOf(bt)) { msg.className = 'cc-msg bad'; msg.textContent = tabName(t) + ' already has a pick list on this line. Open Pick list there to change it.'; return; }
           pkSet(bt, pkCopy(rec.pk)); pkMarkBtn(bt); pkRender(bt);
-          msg.className = 'cc-msg'; msg.textContent = '\u2713 Pack list copied to ' + tabName(t) + ' (counts at 0).'; return;
+          msg.className = 'cc-msg'; msg.textContent = '\u2713 Pick list copied to ' + tabName(t) + ' (counts at 0).'; return;
         }
       }
       if (dup) {
         msg.hidden = false; msg.className = 'cc-msg bad'; msg.textContent = 'That tab already has this item in ' + tname + '.';
         if (rec.pk) {                                  // offer to put the pack list on the copy that is already there
-          msg.textContent += dup.pk ? ' It already has its own pack list.' : '';
+          msg.textContent += dup.pk ? ' It already has its own pick list.' : '';
           const go = document.createElement('button'); go.type = 'button'; go.className = 'item-ed'; go.style.marginLeft = '8px';
-          go.textContent = dup.pk ? 'Replace its packs (counts reset)' : 'Add the packs to it';
+          go.textContent = dup.pk ? 'Replace its pick list (counts reset)' : 'Add the pick list to it';
           go.onclick = () => {
             dup.pk = pkCopy(rec.pk); custSave();
             tp.querySelectorAll('.item.custom').forEach(x => { if (itemTextOf(x) === dup.text && sectionTitleOf(x.closest('.section')) === dup.sec) pkRender(x); });
-            msg.className = 'cc-msg'; msg.textContent = '\u2713 Packs added to the item on ' + tabName(t) + ' (' + tname + ').';
+            msg.className = 'cc-msg'; msg.textContent = '\u2713 Pick list added to the item on ' + tabName(t) + ' (' + tname + ').';
           };
           msg.appendChild(go);
         }
@@ -2636,10 +2636,11 @@ function itemEdit(e, btn) {
   it.classList.add('ce-open'); it.appendChild(f);
   ti.focus(); ti.setSelectionRange(ti.value.length, ti.value.length);
 }
-// ── 4.4.13a Packs: an optional "pick from a list" on an item (batteries, cards, filters…) ──
-// Setup lives in Customize (Packs button on the built-in battery line; Edit form on items you added).
+// ── 4.4.13a Pick lists (first called Packs): an optional "pick from a list" on an item (batteries, cards, filters…) ──
+// Setup lives in Customize (Pick list button on the built-in battery, SD card and filter lines; Edit form on items you added).
 // The saved config rides on the item: {nm:'Battery', l:[{n:'Blue', u:5, d:<ms>}], c:1 (count uses)}
-const PK_MAX = 12, PK_BUILTIN = /^Battery installed/i;
+const PK_MAX = 12, PK_BUILTIN = /^(Battery installed|SD card inserted|Filters\b)/i;
+function pkDefaultName(t) { return /^SD card/i.test(t) ? 'SD card' : /^Filters/i.test(t) ? 'Filter' : 'Battery'; }
 function pkCfgOf(it) {
   const panelEl = it.closest('.panel'); if (!panelEl) return null;
   const c = custFor(panelEl.id);
@@ -2672,10 +2673,10 @@ function pkClean(nm, namesText, count, old, multi) {         // typed form → s
   return pk;
 }
 function pkCopy(pk) { return pk ? { nm: pk.nm, l: pk.l.map(x => ({ n: x.n, u: 0, d: 0 })), c: pk.c ? 1 : undefined, m: pk.m ? 1 : undefined } : null; }   // for Copy to… and clone: names only, counts back to zero
-function pkFields(pk) {                                 // the options block shared by the Packs button and the Edit form
+function pkFields(pk) {                                 // the options block shared by the Pick list button and the Edit form
   const w = document.createElement('div'); w.className = 'pk-opts';
   w.innerHTML = '<label class="pk-sw"><input type="checkbox" class="pk-on"> <span>Pick from a list</span></label>' +
-    '<div class="pk-body" hidden><label>Name on the record</label><input type="text" class="pk-nm" maxlength="20" placeholder="Battery" autocomplete="off">' +
+    '<div class="pk-body" hidden><label>Name on the record</label><input type="text" class="pk-nm" maxlength="20" placeholder="Battery, SD card, Filter…" autocomplete="off">' +
     '<label>Names, separated by commas (up to ' + PK_MAX + ')</label><input type="text" class="pk-names" maxlength="160" placeholder="#1, #2, #3 or Red, Blue, Green" autocomplete="off" autocapitalize="words">' +
     '<label class="pk-sw"><input type="checkbox" class="pk-cnt"> <span>Count uses (suggest the one used least)</span></label><label class="pk-sw"><input type="checkbox" class="pk-mul"> <span>Allow more than one per flight</span></label></div>';
   const on = w.querySelector('.pk-on'), body = w.querySelector('.pk-body');
@@ -2686,13 +2687,13 @@ function pkFields(pk) {                                 // the options block sha
   w.read = (old) => w.querySelector('.pk-on').checked ? pkClean(w.querySelector('.pk-nm').value, w.querySelector('.pk-names').value, w.querySelector('.pk-cnt').checked, old, w.querySelector('.pk-mul').checked) : null;
   return w;
 }
-function pkOpen(e, btn) {                               // Packs button on a built-in line
+function pkOpen(e, btn) {                               // Pick list button on a built-in line
   e.stopPropagation();
   const it = btn.closest('.item'); if (!it) return;
   const old = it.querySelector(':scope > .pk-form'); if (old) { old.remove(); it.classList.remove('pk-open'); return; }
   const cur = pkCfgOf(it) || (PK_BUILTIN.test(itemTextOf(it)) ? null : null);
   const f = document.createElement('form'); f.className = 'cust-edit pk-form';
-  const fl = pkFields(cur); if (!cur) { fl.querySelector('.pk-nm').value = 'Battery'; }
+  const fl = pkFields(cur); if (!cur) { fl.querySelector('.pk-nm').value = pkDefaultName(itemTextOf(it)); }
   f.appendChild(fl);
   f.insertAdjacentHTML('beforeend', '<div class="ce-err" hidden></div><div class="ce-row"><button type="button" class="ce-cancel">Cancel</button><button type="submit" class="ce-save">Save</button></div>');
   ['click', 'pointerdown'].forEach(t => f.addEventListener(t, ev => ev.stopPropagation()));
