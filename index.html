@@ -302,6 +302,11 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   .panel.editing .item.pk-open { flex-wrap: wrap; }
   .pk-form { flex: 0 0 100% !important; margin-top: 6px; }
   .item-pk { display: none; margin-left: auto; }
+  .item-pkcp { display: none; margin-left: auto; }
+  .panel.editing .item-pkcp:not([hidden]) { display: inline-block; align-self: center; }
+  .item-pkcp:not([hidden]) + .item-pk { margin-left: 6px; }
+  .panel.editing .item:has(> .cust-copy) { flex-wrap: wrap; }
+  .item > .cust-copy { flex: 0 0 100%; }
   .panel.editing .item-pk { display: inline-block; align-self: center; }
   .item-pk + .item-x { margin-left: 6px; }
   .item-pk.on { background: var(--blue); border-color: var(--blue); color: #fff; }
@@ -1085,7 +1090,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.13c</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.13d</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -2402,7 +2407,9 @@ function addItemButton(it) {
   } else {
     if (PK_BUILTIN.test(itemTextOf(it))) {
       const pb = document.createElement('button'); pb.type = 'button'; pb.className = 'item-ed item-pk'; pb.textContent = 'Packs';
-      pb.setAttribute('onclick', 'pkOpen(event, this)'); it.appendChild(pb);
+      pb.setAttribute('onclick', 'pkOpen(event, this)');
+      const cb = document.createElement('button'); cb.type = 'button'; cb.className = 'item-ed item-pkcp'; cb.textContent = 'Copy to\u2026'; cb.hidden = true;
+      cb.setAttribute('onclick', 'itemCopy(event, this)'); it.appendChild(cb); it.appendChild(pb);
     }
     it.appendChild(b);
   }
@@ -2459,11 +2466,13 @@ function itemCopy(e, btn) {
   const old = it.querySelector(':scope > .cust-copy'); if (old) { old.remove(); return; }
   const panelEl = it.closest('.panel'), pid = panelEl.id.replace('panel-', '');
   const sec = sectionTitleOf(it.closest('.section')), text = itemTextOf(it);
-  const rec = custFor(panelEl.id).added.find(a => a.sec === sec && a.text === text); if (!rec) return;
+  let rec = custFor(panelEl.id).added.find(a => a.sec === sec && a.text === text), fromBuiltin = false;
+  if (!rec && !it.classList.contains('custom')) { const bp = pkCfgOf(it); if (bp) { rec = { sec: sec, text: text, pk: bp }; fromBuiltin = true; } }   // a built-in line with packs: copy the pack list
+  if (!rec) return;
   const box = document.createElement('div'); box.className = 'cust-copy';
   box.addEventListener('click', ev => ev.stopPropagation());
   box.addEventListener('pointerdown', ev => ev.stopPropagation());
-  const lab = document.createElement('div'); lab.className = 'cc-label'; lab.textContent = 'Copy this item to which tab?'; box.appendChild(lab);
+  const lab = document.createElement('div'); lab.className = 'cc-label'; lab.textContent = fromBuiltin ? 'Copy this pack list to which tab?' : 'Copy this item to which tab?'; box.appendChild(lab);
   const msg = document.createElement('div'); msg.className = 'cc-msg'; msg.hidden = true;
   tabEls.filter(t => t.dataset.pid && t.dataset.pid !== pid && !t.classList.contains('tab-hidden')).forEach(t => {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'item-ed'; b.textContent = tabName(t);
@@ -2474,8 +2483,17 @@ function itemCopy(e, btn) {
       const tc = custFor(tp.id);
       msg.hidden = false;
       const dup = tc.added.find(a => a.sec === tname && a.text === rec.text);
+      if (fromBuiltin && !dup) {                       // put the list on the same built-in line over there, not a second line
+        const bt = [...baseKeyMap(tp).keys()].find(x => itemTextOf(x) === rec.text && !x.classList.contains('is-hidden'));
+        if (bt) {
+          msg.hidden = false;
+          if (pkCfgOf(bt)) { msg.className = 'cc-msg bad'; msg.textContent = tabName(t) + ' already has a pack list on this line. Open Packs there to change it.'; return; }
+          pkSet(bt, pkCopy(rec.pk)); pkMarkBtn(bt); pkRender(bt);
+          msg.className = 'cc-msg'; msg.textContent = '\u2713 Pack list copied to ' + tabName(t) + ' (counts at 0).'; return;
+        }
+      }
       if (dup) {
-        msg.className = 'cc-msg bad'; msg.textContent = 'That tab already has this item in ' + tname + '.';
+        msg.hidden = false; msg.className = 'cc-msg bad'; msg.textContent = 'That tab already has this item in ' + tname + '.';
         if (rec.pk) {                                  // offer to put the pack list on the copy that is already there
           msg.textContent += dup.pk ? ' It already has its own pack list.' : '';
           const go = document.createElement('button'); go.type = 'button'; go.className = 'item-ed'; go.style.marginLeft = '8px';
@@ -2688,7 +2706,7 @@ function pkOpen(e, btn) {                               // Packs button on a bui
   });
   it.appendChild(f);
 }
-function pkMarkBtn(it) { const b = it.querySelector('.item-pk'); if (b) b.classList.toggle('on', !!pkCfgOf(it)); }
+function pkMarkBtn(it) { const b = it.querySelector('.item-pk'); if (b) b.classList.toggle('on', !!pkCfgOf(it)); const c = it.querySelector('.item-pkcp'); if (c) c.hidden = !pkCfgOf(it); }
 function pkFmtDate(ms) { return ms ? new Date(ms).toLocaleDateString([], { month: 'short', day: 'numeric' }) : ''; }
 function pkLowest(pk) { let b = null; pk.l.forEach(x => { if (!b || (x.u || 0) < (b.u || 0)) b = x; }); return b; }
 function pkRender(it) {
