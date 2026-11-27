@@ -1085,7 +1085,7 @@ try { var t = JSON.parse(localStorage.getItem('uasTheme') || '""'); if (t === 'l
   <div class="header-top">
     <div>
       <h1>Drone Preflight Checklist</h1>
-      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.13a</p>
+      <p id="verTap">🧪 TEST COPY · Weather, airspace and your checklist in one place · v4.4.14a</p>
     </div>
     <div class="hdr-actions">
       <a class="hdr-help hdr-coffee" href="https://buymeacoffee.com/JohnstonAerial" target="_blank" rel="noopener" aria-label="Buy me a coffee (opens in a new tab)"><svg class="hlp-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h13v5.5A5 5 0 0 1 12 19.5H9A5 5 0 0 1 4 14.5z" fill="#F5B83D"/><path d="M17 10.5h1.6a2.6 2.6 0 0 1 0 5.2H16.6" fill="none" stroke="#F5B83D" stroke-width="1.8"/><path d="M8 3.2c-.8 1 .8 1.6 0 2.8M12 3.2c-.8 1 .8 1.6 0 2.8" stroke="#b8c0cc" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg> Buy me a coffee</a>
@@ -2624,9 +2624,9 @@ function pkSet(it, pk) {
   }
   custSave();
 }
-function pkClean(nm, namesText, count, old) {         // typed form → saved config (counts kept for names that stay)
+function pkClean(nm, namesText, count, old, multi) {         // typed form → saved config (counts kept for names that stay)
   const seen = new Set(), l = [];
-  String(namesText || '').split(/[,\n]/).map(s => s.trim().slice(0, 14)).filter(Boolean).forEach(n => {
+  String(namesText || '').split(/[,\n]/).map(s => s.replace(/\|/g, '').trim().slice(0, 14)).filter(Boolean).forEach(n => {
     if (seen.has(n.toLowerCase()) || l.length >= PK_MAX) return;
     seen.add(n.toLowerCase());
     const o = old && old.l.find(x => x.n.toLowerCase() === n.toLowerCase());
@@ -2635,21 +2635,22 @@ function pkClean(nm, namesText, count, old) {         // typed form → saved co
   if (!l.length) return null;
   const pk = { nm: String(nm || '').trim().slice(0, 20) || 'Pack', l: l };
   if (count) pk.c = 1;
+  if (multi) pk.m = 1;
   return pk;
 }
-function pkCopy(pk) { return pk ? { nm: pk.nm, l: pk.l.map(x => ({ n: x.n, u: 0, d: 0 })), c: pk.c ? 1 : undefined } : null; }   // for Copy to… and clone: names only, counts back to zero
+function pkCopy(pk) { return pk ? { nm: pk.nm, l: pk.l.map(x => ({ n: x.n, u: 0, d: 0 })), c: pk.c ? 1 : undefined, m: pk.m ? 1 : undefined } : null; }   // for Copy to… and clone: names only, counts back to zero
 function pkFields(pk) {                                 // the options block shared by the Packs button and the Edit form
   const w = document.createElement('div'); w.className = 'pk-opts';
   w.innerHTML = '<label class="pk-sw"><input type="checkbox" class="pk-on"> <span>Pick from a list</span></label>' +
     '<div class="pk-body" hidden><label>Name on the record</label><input type="text" class="pk-nm" maxlength="20" placeholder="Battery" autocomplete="off">' +
     '<label>Names, separated by commas (up to ' + PK_MAX + ')</label><input type="text" class="pk-names" maxlength="160" placeholder="#1, #2, #3 or Red, Blue, Green" autocomplete="off" autocapitalize="words">' +
-    '<label class="pk-sw"><input type="checkbox" class="pk-cnt"> <span>Count uses (suggest the one used least)</span></label></div>';
+    '<label class="pk-sw"><input type="checkbox" class="pk-cnt"> <span>Count uses (suggest the one used least)</span></label><label class="pk-sw"><input type="checkbox" class="pk-mul"> <span>Allow more than one per flight</span></label></div>';
   const on = w.querySelector('.pk-on'), body = w.querySelector('.pk-body');
   on.checked = !!pk; body.hidden = !pk;
   on.onchange = () => { body.hidden = !on.checked; };
-  if (pk) { w.querySelector('.pk-nm').value = pk.nm; w.querySelector('.pk-names').value = pk.l.map(x => x.n).join(', '); w.querySelector('.pk-cnt').checked = !!pk.c; }
+  if (pk) { w.querySelector('.pk-nm').value = pk.nm; w.querySelector('.pk-names').value = pk.l.map(x => x.n).join(', '); w.querySelector('.pk-cnt').checked = !!pk.c; w.querySelector('.pk-mul').checked = !!pk.m; }
   ['click', 'pointerdown'].forEach(t => w.addEventListener(t, ev => ev.stopPropagation()));
-  w.read = (old) => w.querySelector('.pk-on').checked ? pkClean(w.querySelector('.pk-nm').value, w.querySelector('.pk-names').value, w.querySelector('.pk-cnt').checked, old) : null;
+  w.read = (old) => w.querySelector('.pk-on').checked ? pkClean(w.querySelector('.pk-nm').value, w.querySelector('.pk-names').value, w.querySelector('.pk-cnt').checked, old, w.querySelector('.pk-mul').checked) : null;
   return w;
 }
 function pkOpen(e, btn) {                               // Packs button on a built-in line
@@ -2680,18 +2681,19 @@ function pkRender(it) {
   const pk = pkCfgOf(it);
   it.classList.toggle('has-pk', !!pk);
   if (!pk) { delete it.dataset.pkSel; return; }
-  if (!it.classList.contains('checked')) delete it.dataset.pkSel;
+  if (!it.classList.contains('checked')) { delete it.dataset.pkSel; delete it.dataset.pkAdd; }
   if (it.classList.contains('na') || it.classList.contains('is-hidden')) return;
   const row = document.createElement('div'); row.className = 'pk-row';
   ['click', 'pointerdown'].forEach(t => row.addEventListener(t, ev => ev.stopPropagation()));
-  const sel = it.dataset.pkSel, cur = sel && pk.l.find(x => x.n === sel);
+  const selL = pkSelList(it), curL = selL.map(n => pk.l.find(x => x.n === n)).filter(Boolean), cur = curL.length && !(pk.m && it.dataset.pkAdd);
   const uses = (x) => (x.u || 0) + (x.u === 1 ? ' use' : ' uses');
   if (cur) {
-    row.innerHTML = '<span class="pk-done"></span><button type="button" class="pk-undo">Undo</button>';
-    row.querySelector('.pk-done').textContent = '✓ Using ' + cur.n + (pk.c ? ' · now ' + uses(cur) : '');
+    row.innerHTML = '<span class="pk-done"></span><button type="button" class="pk-undo">Undo</button>' + (pk.m && curL.length < pk.l.length ? '<button type="button" class="pk-more pk-add">+ Add another</button>' : '');
+    row.querySelector('.pk-done').textContent = '✓ Using ' + curL.map(x => x.n + (pk.c ? ' (' + uses(x) + ')' : '')).join(' + ');
     row.querySelector('.pk-undo').onclick = () => pkUndo(it);
+    const ad = row.querySelector('.pk-add'); if (ad) ad.onclick = () => { it.dataset.pkAdd = '1'; pkRender(it); };
   } else {
-    const low = pk.c ? pkLowest(pk) : null, grid = document.createElement('div'); grid.className = 'pk-chips';
+    const pool = { l: pk.l.filter(x => !selL.includes(x.n)) }, low = pk.c && pool.l.length ? pkLowest(pool) : null, grid = document.createElement('div'); grid.className = 'pk-chips';
     const chip = (x) => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'pk-chip' + (low && x === low ? ' low' : '');
       b.innerHTML = '<b></b>' + (pk.c ? '<i></i>' : '');
@@ -2705,35 +2707,39 @@ function pkRender(it) {
       b.addEventListener('contextmenu', ev => { ev.preventDefault(); if (pk.c) pkSheet(it); });
       return b;
     };
-    if (pk.c && pk.l.length > 5) {                      // many packs: one big suggestion, the rest on request
+    if (pk.c && pool.l.length > 5) {                      // many packs: one big suggestion, the rest on request
       const big = document.createElement('button'); big.type = 'button'; big.className = 'pk-big';
       big.textContent = 'Use ' + low.n + ' · ' + uses(low); big.onclick = () => pkPick(it, low.n);
       const more = document.createElement('button'); more.type = 'button'; more.className = 'pk-more'; more.textContent = 'Pick another';
       const all = document.createElement('div'); all.className = 'pk-chips'; all.hidden = true;
-      pk.l.slice().sort((a, b) => (a.u || 0) - (b.u || 0)).forEach(x => all.appendChild(chip(x)));
+      pool.l.slice().sort((a, b) => (a.u || 0) - (b.u || 0)).forEach(x => all.appendChild(chip(x)));
       more.onclick = () => { all.hidden = !all.hidden; };
       row.appendChild(big); row.appendChild(more); row.appendChild(all);
-    } else { pk.l.forEach(x => grid.appendChild(chip(x))); row.appendChild(grid); }
+    } else { pool.l.forEach(x => grid.appendChild(chip(x))); row.appendChild(grid); }
     if (pk.c) { const ec = document.createElement('button'); ec.type = 'button'; ec.className = 'pk-more'; ec.textContent = 'Edit counts'; ec.onclick = () => pkSheet(it); row.appendChild(ec); }
   }
   const acts = it.querySelector(':scope > .cust-acts'), form = it.querySelector(':scope > .cust-edit, :scope > .cust-copy');
   it.appendChild(row);
 }
+function pkSelList(it) { return (it.dataset.pkSel || '').split('|').filter(Boolean); }
 function pkPick(it, name) {
   const pk = pkCfgOf(it); if (!pk) return;
   const x = pk.l.find(y => y.n === name); if (!x) return;
-  const prev = it.dataset.pkSel && pk.l.find(y => y.n === it.dataset.pkSel);
-  if (pk.c && prev && prev !== x) prev.u = Math.max(0, (prev.u || 0) - 1);
+  const L = pkSelList(it);
+  if (L.includes(name)) return;
+  if (pk.m) L.push(name);
+  else { const prev = L[0] && pk.l.find(y => y.n === L[0]); if (pk.c && prev) prev.u = Math.max(0, (prev.u || 0) - 1); L.length = 0; L.push(name); }
   if (pk.c) { x.u = (x.u || 0) + 1; x.d = Date.now(); }
-  it.dataset.pkSel = name; it.dataset.pkUndo = String(Date.now());
+  it.dataset.pkSel = L.join('|'); delete it.dataset.pkAdd;
   it.classList.remove('flagged', 'na'); it.classList.add('checked');
   pkSet(it, pk); updateProgress(current); saveProgress(); autoAdvance(it);
 }
 function pkUndo(it) {
-  const pk = pkCfgOf(it), name = it.dataset.pkSel; if (!pk || !name) return;
-  const x = pk.l.find(y => y.n === name);
+  const pk = pkCfgOf(it), L = pkSelList(it); if (!pk || !L.length) return;
+  const name = L.pop(), x = pk.l.find(y => y.n === name);
   if (x && pk.c) x.u = Math.max(0, (x.u || 0) - 1);
-  delete it.dataset.pkSel; it.classList.remove('checked');
+  delete it.dataset.pkAdd;
+  if (L.length) it.dataset.pkSel = L.join('|'); else { delete it.dataset.pkSel; it.classList.remove('checked'); }
   pkSet(it, pk); updateProgress(current); saveProgress();
 }
 function pkSheet(it) {                                  // real counts: − / + per pack
@@ -2768,7 +2774,7 @@ function pkSyncPanel(p) { p.querySelectorAll('.item').forEach(it => { if (it.cla
 function pkRecordPairs() {                              // [name, pick] per ticked item that has a pick, for the record header
   const out = [], p = document.getElementById('panel-' + current); if (!p) return out;
   p.querySelectorAll('.item.checked:not(.is-hidden)').forEach(it => {
-    const pk = pkCfgOf(it); if (pk && it.dataset.pkSel) out.push([pk.nm, it.dataset.pkSel]);
+    const pk = pkCfgOf(it); if (pk && it.dataset.pkSel) out.push([pk.nm, pkSelList(it).join(', ')]);
   });
   return out;
 }
